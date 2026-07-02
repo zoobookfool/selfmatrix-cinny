@@ -133,8 +133,10 @@ export class CallEmbed {
     return widget;
   }
 
-  static getIframe(url: string): HTMLIFrameElement {
-    const iframe = document.createElement('iframe');
+  // SPIKE(ポップアウト): container が別ウィンドウ(ポップアップ)の要素でも動くよう、
+  // iframe は挿入先と同じ document から生成する
+  static getIframe(url: string, doc: Document = document): HTMLIFrameElement {
+    const iframe = doc.createElement('iframe');
 
     iframe.title = 'Call Embed';
     iframe.sandbox =
@@ -157,7 +159,8 @@ export class CallEmbed {
     initialControlState?: CallControlState
   ) {
     const iframe = CallEmbed.getIframe(
-      widget.getCompleteUrl({ currentUserId: mx.getSafeUserId() })
+      widget.getCompleteUrl({ currentUserId: mx.getSafeUserId() }),
+      container.ownerDocument
     );
     container.append(iframe);
 

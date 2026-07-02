@@ -26,6 +26,7 @@ import {
   VideoButton,
 } from './Controls';
 import { CallEmbed, useCallControlState } from '../../plugins/call';
+import { useCallPopout } from '../../hooks/useCallEmbed';
 import { useResizeObserver } from '../../hooks/useResizeObserver';
 import { stopPropagation } from '../../utils/keyboard';
 import { AsyncStatus, useAsyncCallback } from '../../hooks/useAsyncCallback';
@@ -80,6 +81,13 @@ export function CallControls({ callEmbed }: CallControlsProps) {
   const exiting =
     hangupState.status === AsyncStatus.Loading || hangupState.status === AsyncStatus.Success;
 
+  // SPIKE(ポップアウト)
+  const popoutCall = useCallPopout();
+  const [popoutState, popout] = useAsyncCallback(
+    useCallback(() => popoutCall(callEmbed), [popoutCall, callEmbed])
+  );
+  const popouting = popoutState.status === AsyncStatus.Loading;
+
   return (
     <Box
       ref={controlRef}
@@ -116,6 +124,19 @@ export function CallControls({ callEmbed }: CallControlsProps) {
         <Box alignItems="Center" gap="Inherit" grow="Yes" direction={compact ? 'Column' : 'Row'}>
           <Box shrink="No" alignItems="Inherit" justifyContent="Inherit" gap="200">
             <ChatButton />
+            {/* SPIKE(ポップアウト) */}
+            <IconButton
+              variant="Surface"
+              fill="Soft"
+              radii="400"
+              size="400"
+              onClick={popout}
+              outlined
+              disabled={popouting}
+              aria-label="Pop out call"
+            >
+              <Icon size="400" src={Icons.External} />
+            </IconButton>
             <PopOut
               anchor={cords}
               position="Top"

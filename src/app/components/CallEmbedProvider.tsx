@@ -36,7 +36,7 @@ import {
   useCallStart,
 } from '../hooks/useCallEmbed';
 import { callChatAtom, callEmbedAtom } from '../state/callEmbed';
-import { CallEmbed } from '../plugins/call';
+import { CallEmbed, CallPopout } from '../plugins/call';
 import { useSelectedRoom } from '../hooks/router/useSelectedRoom';
 import { ScreenSize, useScreenSizeContext } from '../hooks/useScreenSize';
 import { useMatrixClient } from '../hooks/useMatrixClient';
@@ -379,7 +379,11 @@ export function CallEmbedProvider({ children }: CallEmbedProviderProps) {
 
   const chatOnlyView = chat && screenSize !== ScreenSize.Desktop;
 
-  const callVisible = callEmbed && selectedRoom === callEmbed.roomId && joined && !chatOnlyView;
+  // SPIKE(ポップアウト): ポップアウト中の iframe は別ウィンドウにあるため、
+  // メインウィンドウ側の固定 div を表示するとクリックを奪う空領域になるだけ
+  const poppedOut = callEmbed instanceof CallPopout;
+  const callVisible =
+    callEmbed && selectedRoom === callEmbed.roomId && joined && !chatOnlyView && !poppedOut;
 
   return (
     <CallEmbedContextProvider value={callEmbed}>

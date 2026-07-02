@@ -67,6 +67,7 @@ import { useIgnoredUsers } from '../../../hooks/useIgnoredUsers';
 import { useReportRoomSupported } from '../../../hooks/useReportRoomSupported';
 import { useSetting } from '../../../state/hooks/settings';
 import { settingsAtom } from '../../../state/settings';
+import { BRANDING } from '../../../branding/strings';
 
 const COMPACT_CARD_WIDTH = 548;
 
@@ -214,7 +215,7 @@ function InviteCard({
           {invite.isSpace && (
             <Box shrink="No" alignItems="Center" justifyContent="Center">
               <Badge variant="Secondary" fill="Soft" size="400" radii="300">
-                <Text size="L400">Space</Text>
+                <Text size="L400">{BRANDING.space.badgeLabel}</Text>
               </Badge>
             </Box>
           )}

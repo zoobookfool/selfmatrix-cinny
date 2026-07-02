@@ -246,30 +246,32 @@ export const createRouter = (clientConfig: ClientConfig, screenSize: ScreenSize)
             }
           />
         </Route>
-        <Route
-          path={EXPLORE_PATH}
-          element={
-            <PageRoot
-              nav={
-                <MobileFriendlyPageNav path={EXPLORE_PATH}>
-                  <Explore />
-                </MobileFriendlyPageNav>
-              }
-            >
-              <Outlet />
-            </PageRoot>
-          }
-        >
-          {mobile ? null : (
-            <Route
-              index
-              loader={() => redirect(getExploreFeaturedPath())}
-              element={<WelcomePage />}
-            />
-          )}
-          <Route path={_FEATURED_PATH} element={<FeaturedRooms />} />
-          <Route path={_SERVER_PATH} element={<PublicRooms />} />
-        </Route>
+        {!clientConfig.hideExplore && (
+          <Route
+            path={EXPLORE_PATH}
+            element={
+              <PageRoot
+                nav={
+                  <MobileFriendlyPageNav path={EXPLORE_PATH}>
+                    <Explore />
+                  </MobileFriendlyPageNav>
+                }
+              >
+                <Outlet />
+              </PageRoot>
+            }
+          >
+            {mobile ? null : (
+              <Route
+                index
+                loader={() => redirect(getExploreFeaturedPath())}
+                element={<WelcomePage />}
+              />
+            )}
+            <Route path={_FEATURED_PATH} element={<FeaturedRooms />} />
+            <Route path={_SERVER_PATH} element={<PublicRooms />} />
+          </Route>
+        )}
         <Route path={CREATE_PATH} element={<Create />} />
         <Route
           path={INBOX_PATH}

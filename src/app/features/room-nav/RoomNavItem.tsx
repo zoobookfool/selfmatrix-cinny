@@ -48,6 +48,7 @@ import {
   getRoomNotificationModeIcon,
   RoomNotificationMode,
 } from '../../hooks/useRoomsNotificationPreferences';
+import { BRANDING } from '../../branding/strings';
 import { RoomNotificationModeSwitcher } from '../../components/RoomNotificationSwitcher';
 import { getRoomCreatorsForRoomId, useRoomCreators } from '../../hooks/useRoomCreators';
 import { getRoomPermissionsAPI, useRoomPermissions } from '../../hooks/useRoomPermissions';
@@ -181,7 +182,7 @@ const RoomNavItemMenu = forwardRef<HTMLDivElement, RoomNavItemMenuProps>(
             radii="300"
           >
             <Text style={{ flexGrow: 1 }} as="span" size="T300" truncate>
-              Room Settings
+              {BRANDING.room.settingsLabel}
             </Text>
           </MenuItem>
         </Box>
@@ -200,7 +201,7 @@ const RoomNavItemMenu = forwardRef<HTMLDivElement, RoomNavItemMenuProps>(
                   aria-pressed={promptLeave}
                 >
                   <Text style={{ flexGrow: 1 }} as="span" size="T300" truncate>
-                    Leave Room
+                    {BRANDING.room.leaveLabel}
                   </Text>
                 </MenuItem>
                 {promptLeave && (

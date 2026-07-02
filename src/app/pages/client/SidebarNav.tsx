@@ -18,9 +18,11 @@ import {
   SearchTab,
 } from './sidebar';
 import { CreateTab } from './sidebar/CreateTab';
+import { useClientConfig } from '../../hooks/useClientConfig';
 
 export function SidebarNav() {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { hideExplore } = useClientConfig();
 
   return (
     <Sidebar>
@@ -34,7 +36,7 @@ export function SidebarNav() {
             <SpaceTabs scrollRef={scrollRef} />
             <SidebarStackSeparator />
             <SidebarStack>
-              <ExploreTab />
+              {!hideExplore && <ExploreTab />}
               <CreateTab />
             </SidebarStack>
           </Scroll>

@@ -38,6 +38,7 @@ import { useOpenSpaceSettings } from '../../state/hooks/spaceSettings';
 import { useRoomCreators } from '../../hooks/useRoomCreators';
 import { useRoomPermissions } from '../../hooks/useRoomPermissions';
 import { InviteUserPrompt } from '../../components/invite-user-prompt';
+import { BRANDING } from '../../branding/strings';
 
 type LobbyMenuProps = {
   powerLevels: IPowerLevels;
@@ -97,7 +98,7 @@ const LobbyMenu = forwardRef<HTMLDivElement, LobbyMenuProps>(
             radii="300"
           >
             <Text style={{ flexGrow: 1 }} as="span" size="T300" truncate>
-              Space Settings
+              {BRANDING.space.settingsLabel}
             </Text>
           </MenuItem>
         </Box>

@@ -20,6 +20,7 @@ import { MatrixError } from 'matrix-js-sdk';
 import { useMatrixClient } from '../../hooks/useMatrixClient';
 import { AsyncStatus, useAsyncCallback } from '../../hooks/useAsyncCallback';
 import { stopPropagation } from '../../utils/keyboard';
+import { BRANDING } from '../../branding/strings';
 
 type LeaveSpacePromptProps = {
   roomId: string;
@@ -66,7 +67,7 @@ export function LeaveSpacePrompt({ roomId, onDone, onCancel }: LeaveSpacePromptP
               size="500"
             >
               <Box grow="Yes">
-                <Text size="H4">Leave Space</Text>
+                <Text size="H4">{BRANDING.space.leaveLabel}</Text>
               </Box>
               <IconButton size="300" onClick={onCancel} radii="300">
                 <Icon src={Icons.Cross} />
@@ -74,7 +75,7 @@ export function LeaveSpacePrompt({ roomId, onDone, onCancel }: LeaveSpacePromptP
             </Header>
             <Box style={{ padding: config.space.S400 }} direction="Column" gap="400">
               <Box direction="Column" gap="200">
-                <Text priority="400">Are you sure you want to leave this space?</Text>
+                <Text priority="400">{BRANDING.space.leavePrompt}</Text>
                 {leaveState.status === AsyncStatus.Error && (
                   <Text style={{ color: color.Critical.Main }} size="T300">
                     Failed to leave space! {leaveState.error.message}

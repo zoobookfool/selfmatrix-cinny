@@ -72,6 +72,7 @@ import { RoomSettingsPage } from '../../state/roomSettings';
 import { useCallEmbed, useCallStart } from '../../hooks/useCallEmbed';
 import { useLivekitSupport } from '../../hooks/useLivekitSupport';
 import { webRTCSupported } from '../../utils/rtc';
+import { BRANDING } from '../../branding/strings';
 
 type RoomMenuProps = {
   room: Room;
@@ -193,7 +194,7 @@ const RoomMenu = forwardRef<HTMLDivElement, RoomMenuProps>(({ room, requestClose
           radii="300"
         >
           <Text style={{ flexGrow: 1 }} as="span" size="T300" truncate>
-            Room Settings
+            {BRANDING.room.settingsLabel}
           </Text>
         </MenuItem>
         <UseStateProvider initial={false}>

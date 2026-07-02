@@ -17,6 +17,8 @@ export type ClientConfig = {
     servers?: string[];
   };
 
+  hideExplore?: boolean;
+
   hashRouter?: HashRouterConfig;
 };
 

@@ -65,6 +65,8 @@ import {
 import { UseStateProvider } from '../../../components/UseStateProvider';
 import { JoinAddressPrompt } from '../../../components/join-address-prompt';
 import { _RoomSearchParams } from '../../paths';
+import { useClientConfig } from '../../../hooks/useClientConfig';
+import { BRANDING } from '../../../branding/strings';
 
 type HomeMenuProps = {
   requestClose: () => void;
@@ -154,6 +156,7 @@ function HomeHeader() {
 
 function HomeEmpty() {
   const navigate = useNavigate();
+  const { hideExplore } = useClientConfig();
 
   return (
     <NavEmptyCenter>
@@ -161,31 +164,33 @@ function HomeEmpty() {
         icon={<Icon size="600" src={Icons.Hash} />}
         title={
           <Text size="H5" align="Center">
-            No Rooms
+            {BRANDING.room.noRoomsTitle}
           </Text>
         }
         content={
           <Text size="T300" align="Center">
-            You do not have any rooms yet.
+            {BRANDING.room.noRoomsMessage}
           </Text>
         }
         options={
           <>
             <Button onClick={() => navigate(getHomeCreatePath())} variant="Secondary" size="300">
               <Text size="B300" truncate>
-                Create Room
+                {BRANDING.room.createTitle}
               </Text>
             </Button>
-            <Button
-              onClick={() => navigate(getExplorePath())}
-              variant="Secondary"
-              fill="Soft"
-              size="300"
-            >
-              <Text size="B300" truncate>
-                Explore Community Rooms
-              </Text>
-            </Button>
+            {!hideExplore && (
+              <Button
+                onClick={() => navigate(getExplorePath())}
+                variant="Secondary"
+                fill="Soft"
+                size="300"
+              >
+                <Text size="B300" truncate>
+                  Explore Community Rooms
+                </Text>
+              </Button>
+            )}
           </>
         }
       />
@@ -250,7 +255,7 @@ export function Home() {
                       </Avatar>
                       <Box as="span" grow="Yes">
                         <Text as="span" size="Inherit" truncate>
-                          Create Room
+                          {BRANDING.room.createTitle}
                         </Text>
                       </Box>
                     </Box>

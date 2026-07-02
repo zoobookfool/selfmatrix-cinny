@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react';
+import { RoomAccountDataEvents } from 'matrix-js-sdk';
 import {
   Box,
   Text,
@@ -58,7 +59,11 @@ export function DeveloperTools({ requestClose }: DeveloperToolsProps) {
 
   const submitAccountData: AccountDataSubmitCallback = useCallback(
     async (type, content) => {
-      await mx.setRoomAccountData(room.roomId, type, content);
+      await mx.setRoomAccountData(
+        room.roomId,
+        type as keyof RoomAccountDataEvents,
+        content as RoomAccountDataEvents[keyof RoomAccountDataEvents]
+      );
     },
     [mx, room.roomId]
   );

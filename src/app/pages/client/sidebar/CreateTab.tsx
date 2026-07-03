@@ -2,6 +2,7 @@ import React, { MouseEventHandler, useState } from 'react';
 import { Box, config, Icon, Icons, Menu, PopOut, RectCords, Text } from 'folds';
 import FocusTrap from 'focus-trap-react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { SidebarAvatar, SidebarItem, SidebarItemTooltip } from '../../../components/sidebar';
 import { stopPropagation } from '../../../utils/keyboard';
 import { SequenceCard } from '../../../components/sequence-card';
@@ -19,6 +20,7 @@ import { _RoomSearchParams } from '../../paths';
 import { useBranding } from '../../../branding/strings';
 
 export function CreateTab() {
+  const { t } = useTranslation();
   const createSelected = useCreateSelected();
   const branding = useBranding();
 
@@ -92,9 +94,9 @@ export function CreateTab() {
                       onClick={handleJoinWithAddress}
                     >
                       <SettingTile before={<Icon size="400" src={Icons.Link} />}>
-                        <Text size="H6">Join with Address</Text>
+                        <Text size="H6">{t('shell.sidebar.join_with_address_title')}</Text>
                         <Text size="T300" priority="300">
-                          Become a part of existing community.
+                          {t('shell.sidebar.join_with_address_sub_title')}
                         </Text>
                       </SettingTile>
                     </SequenceCard>

@@ -31,6 +31,50 @@
       "add_label": "チャンネルを追加"
     }
   },
+  "shell": {
+    "sidebar": {
+      "join_with_address_title": "アドレスで参加",
+      "join_with_address_sub_title": "既存のコミュニティに参加します。",
+      "mark_as_read": "既読にする",
+      "direct_messages_tooltip": "ダイレクトメッセージ",
+      "explore_community_tooltip": "コミュニティを探す",
+      "home_tooltip": "ホーム",
+      "inbox_tooltip": "受信箱",
+      "search_tooltip": "検索",
+      "user_settings_tooltip": "ユーザー設定",
+      "unpin": "ピン留めを解除",
+      "invite": "招待",
+      "copy_link": "リンクをコピー",
+      "unnamed_folder": "名前なし",
+      "unverified_device_tooltip": "未検証のデバイス",
+      "unverified_devices_tooltip": "未検証のデバイス"
+    },
+    "home": {
+      "header_title": "ホーム",
+      "explore_community_rooms": "コミュニティのルームを探す",
+      "message_search": "メッセージ検索",
+      "rooms_category": "ルーム"
+    },
+    "direct": {
+      "header_title": "ダイレクトメッセージ",
+      "empty_title": "ダイレクトメッセージがありません",
+      "empty_message": "まだダイレクトメッセージがありません。",
+      "create_button": "ダイレクトメッセージ",
+      "create_chat": "チャットを作成",
+      "create_chat_sub_title": "ユーザー ID を入力して、プライベートな暗号化チャットを開始します。",
+      "chats_category": "チャット"
+    },
+    "welcome": {
+      "source_code": "ソースコード",
+      "support": "サポート"
+    },
+    "nav": {
+      "notifications": "通知",
+      "toggle_chat": "チャットの切り替え",
+      "live_count": "{{count}} 件がライブ配信中",
+      "more_options": "その他のオプション"
+    }
+  },
   "auth": {
     "common": {
       "or_divider": "または",

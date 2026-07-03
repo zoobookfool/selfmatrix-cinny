@@ -20,6 +20,7 @@ import {
 import { useFocusWithin, useHover } from 'react-aria';
 import FocusTrap from 'focus-trap-react';
 import { useAtom, useAtomValue } from 'jotai';
+import { useTranslation } from 'react-i18next';
 import { NavItem, NavItemContent, NavItemOptions, NavLink } from '../../components/nav';
 import { UnreadBadge, UnreadBadgeCenter } from '../../components/unread-badge';
 import { RoomAvatar, RoomIcon } from '../../components/room-avatar';
@@ -70,6 +71,7 @@ type RoomNavItemMenuProps = {
 };
 const RoomNavItemMenu = forwardRef<HTMLDivElement, RoomNavItemMenuProps>(
   ({ room, requestClose, notificationMode }, ref) => {
+    const { t } = useTranslation();
     const mx = useMatrixClient();
     const branding = useBranding();
     const [hideActivity] = useSetting(settingsAtom, 'hideActivity');
@@ -125,7 +127,7 @@ const RoomNavItemMenu = forwardRef<HTMLDivElement, RoomNavItemMenuProps>(
             disabled={!unread}
           >
             <Text style={{ flexGrow: 1 }} as="span" size="T300" truncate>
-              Mark as Read
+              {t('shell.sidebar.mark_as_read')}
             </Text>
           </MenuItem>
           <RoomNotificationModeSwitcher roomId={room.roomId} value={notificationMode}>
@@ -144,7 +146,7 @@ const RoomNavItemMenu = forwardRef<HTMLDivElement, RoomNavItemMenuProps>(
                 onClick={handleOpen}
               >
                 <Text style={{ flexGrow: 1 }} as="span" size="T300" truncate>
-                  Notifications
+                  {t('shell.nav.notifications')}
                 </Text>
               </MenuItem>
             )}
@@ -163,7 +165,7 @@ const RoomNavItemMenu = forwardRef<HTMLDivElement, RoomNavItemMenuProps>(
             disabled={!canInvite}
           >
             <Text style={{ flexGrow: 1 }} as="span" size="T300" truncate>
-              Invite
+              {t('shell.sidebar.invite')}
             </Text>
           </MenuItem>
           <MenuItem
@@ -173,7 +175,7 @@ const RoomNavItemMenu = forwardRef<HTMLDivElement, RoomNavItemMenuProps>(
             radii="300"
           >
             <Text style={{ flexGrow: 1 }} as="span" size="T300" truncate>
-              Copy Link
+              {t('shell.sidebar.copy_link')}
             </Text>
           </MenuItem>
           <MenuItem
@@ -222,13 +224,14 @@ const RoomNavItemMenu = forwardRef<HTMLDivElement, RoomNavItemMenuProps>(
 );
 
 function CallChatToggle() {
+  const { t } = useTranslation();
   const [chat, setChat] = useAtom(callChatAtom);
 
   return (
     <IconButton
       onClick={() => setChat(!chat)}
       aria-pressed={chat}
-      aria-label="Toggle Chat"
+      aria-label={t('shell.nav.toggle_chat')}
       variant="Background"
       fill="None"
       size="300"
@@ -261,6 +264,7 @@ export function RoomNavItem({
   linkPath,
   chip,
 }: RoomNavItemProps) {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const useAuthentication = useMediaAuthentication();
   const [hover, setHover] = useState(false);
@@ -391,7 +395,7 @@ export function RoomNavItem({
             {callMembers.length > 0 && (
               <Badge variant="Critical" fill="Solid" size="400">
                 <Text as="span" size="L400" truncate>
-                  {callMembers.length} Live
+                  {t('shell.nav.live_count', { count: callMembers.length })}
                 </Text>
               </Badge>
             )}
@@ -435,7 +439,7 @@ export function RoomNavItem({
               onClick={handleOpenMenu}
               aria-pressed={!!menuAnchor}
               aria-controls={`menu-${room.roomId}`}
-              aria-label="More Options"
+              aria-label={t('shell.nav.more_options')}
               variant="Background"
               fill="None"
               size="300"

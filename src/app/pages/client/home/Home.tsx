@@ -18,6 +18,7 @@ import {
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useAtom, useAtomValue } from 'jotai';
 import FocusTrap from 'focus-trap-react';
+import { useTranslation } from 'react-i18next';
 import { factoryRoomIdByActivity, factoryRoomIdByAtoZ } from '../../../utils/sort';
 import {
   NavButton,
@@ -72,6 +73,7 @@ type HomeMenuProps = {
   requestClose: () => void;
 };
 const HomeMenu = forwardRef<HTMLDivElement, HomeMenuProps>(({ requestClose }, ref) => {
+  const { t } = useTranslation();
   const orphanRooms = useHomeRooms();
   const [hideActivity] = useSetting(settingsAtom, 'hideActivity');
   const unread = useRoomsUnread(orphanRooms, roomToUnreadAtom);
@@ -94,7 +96,7 @@ const HomeMenu = forwardRef<HTMLDivElement, HomeMenuProps>(({ requestClose }, re
           aria-disabled={!unread}
         >
           <Text style={{ flexGrow: 1 }} as="span" size="T300" truncate>
-            Mark as Read
+            {t('shell.sidebar.mark_as_read')}
           </Text>
         </MenuItem>
       </Box>
@@ -103,6 +105,7 @@ const HomeMenu = forwardRef<HTMLDivElement, HomeMenuProps>(({ requestClose }, re
 });
 
 function HomeHeader() {
+  const { t } = useTranslation();
   const [menuAnchor, setMenuAnchor] = useState<RectCords>();
 
   const handleOpenMenu: MouseEventHandler<HTMLButtonElement> = (evt) => {
@@ -119,7 +122,7 @@ function HomeHeader() {
         <Box alignItems="Center" grow="Yes" gap="300">
           <Box grow="Yes">
             <Text size="H4" truncate>
-              Home
+              {t('shell.home.header_title')}
             </Text>
           </Box>
           <Box>
@@ -155,6 +158,7 @@ function HomeHeader() {
 }
 
 function HomeEmpty() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { hideExplore } = useClientConfig();
   const branding = useBranding();
@@ -188,7 +192,7 @@ function HomeEmpty() {
                 size="300"
               >
                 <Text size="B300" truncate>
-                  Explore Community Rooms
+                  {t('shell.home.explore_community_rooms')}
                 </Text>
               </Button>
             )}
@@ -201,6 +205,7 @@ function HomeEmpty() {
 
 const DEFAULT_CATEGORY_ID = makeNavCategoryId('home', 'room');
 export function Home() {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const branding = useBranding();
   useNavToActivePathMapper('home');
@@ -285,7 +290,7 @@ export function Home() {
                             </Avatar>
                             <Box as="span" grow="Yes">
                               <Text as="span" size="Inherit" truncate>
-                                Join with Address
+                                {t('shell.sidebar.join_with_address_title')}
                               </Text>
                             </Box>
                           </Box>
@@ -325,7 +330,7 @@ export function Home() {
                       </Avatar>
                       <Box as="span" grow="Yes">
                         <Text as="span" size="Inherit" truncate>
-                          Message Search
+                          {t('shell.home.message_search')}
                         </Text>
                       </Box>
                     </Box>
@@ -341,7 +346,7 @@ export function Home() {
                     data-category-id={DEFAULT_CATEGORY_ID}
                     onClick={handleCategoryClick}
                   >
-                    Rooms
+                    {t('shell.home.rooms_category')}
                   </RoomNavCategoryButton>
                 </NavCategoryHeader>
               )}

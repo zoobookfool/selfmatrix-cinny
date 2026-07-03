@@ -39,6 +39,7 @@ import {
 import { autoScrollForElements } from '@atlaskit/pragmatic-drag-and-drop-auto-scroll/element';
 import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine';
 import FocusTrap from 'focus-trap-react';
+import { useTranslation } from 'react-i18next';
 import {
   useOrphanSpaces,
   useRecursiveChildScopeFactory,
@@ -102,6 +103,7 @@ type SpaceMenuProps = {
 };
 const SpaceMenu = forwardRef<HTMLDivElement, SpaceMenuProps>(
   ({ room, requestClose, onUnpin }, ref) => {
+    const { t } = useTranslation();
     const mx = useMatrixClient();
     const branding = useBranding();
     const [hideActivity] = useSetting(settingsAtom, 'hideActivity');
@@ -168,7 +170,7 @@ const SpaceMenu = forwardRef<HTMLDivElement, SpaceMenuProps>(
             disabled={!unread}
           >
             <Text style={{ flexGrow: 1 }} as="span" size="T300" truncate>
-              Mark as Read
+              {t('shell.sidebar.mark_as_read')}
             </Text>
           </MenuItem>
           {onUnpin && (
@@ -179,7 +181,7 @@ const SpaceMenu = forwardRef<HTMLDivElement, SpaceMenuProps>(
               after={<Icon size="100" src={Icons.Pin} />}
             >
               <Text style={{ flexGrow: 1 }} as="span" size="T300" truncate>
-                Unpin
+                {t('shell.sidebar.unpin')}
               </Text>
             </MenuItem>
           )}
@@ -197,7 +199,7 @@ const SpaceMenu = forwardRef<HTMLDivElement, SpaceMenuProps>(
             disabled={!canInvite}
           >
             <Text style={{ flexGrow: 1 }} as="span" size="T300" truncate>
-              Invite
+              {t('shell.sidebar.invite')}
             </Text>
           </MenuItem>
           <MenuItem
@@ -207,7 +209,7 @@ const SpaceMenu = forwardRef<HTMLDivElement, SpaceMenuProps>(
             radii="300"
           >
             <Text style={{ flexGrow: 1 }} as="span" size="T300" truncate>
-              Copy Link
+              {t('shell.sidebar.copy_link')}
             </Text>
           </MenuItem>
           <MenuItem
@@ -548,6 +550,7 @@ function ClosedSpaceFolder({
   onDragging,
   disabled,
 }: ClosedSpaceFolderProps) {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const useAuthentication = useMediaAuthentication();
   const handlerRef = useRef<HTMLDivElement>(null);
@@ -558,7 +561,9 @@ function ClosedSpaceFolder({
   const dropType = dropState?.type;
 
   const tooltipName =
-    folder.name ?? folder.content.map((i) => mx.getRoom(i)?.name ?? '').join(', ') ?? 'Unnamed';
+    folder.name ??
+    folder.content.map((i) => mx.getRoom(i)?.name ?? '').join(', ') ??
+    t('shell.sidebar.unnamed_folder');
 
   return (
     <RoomsUnreadProvider rooms={folder.content}>

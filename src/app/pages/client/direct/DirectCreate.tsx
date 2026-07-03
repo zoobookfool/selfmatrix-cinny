@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Box, Icon, IconButton, Icons, Scroll } from 'folds';
+import { useTranslation } from 'react-i18next';
 import { useMatrixClient } from '../../../hooks/useMatrixClient';
 import { getDirectCreateSearchParams } from '../../pathSearchParam';
 import { getDirectRoomPath } from '../../pathUtils';
@@ -19,6 +20,7 @@ import { BackRouteHandler } from '../../../components/BackRouteHandler';
 import { CreateChat } from '../../../features/create-chat';
 
 export function DirectCreate() {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const screenSize = useScreenSizeContext();
 
@@ -60,8 +62,8 @@ export function DirectCreate() {
                 <Box direction="Column" gap="700">
                   <PageHero
                     icon={<Icon size="600" src={Icons.Mention} />}
-                    title="Create Chat"
-                    subTitle="Start a private, encrypted chat by entering a user ID."
+                    title={t('shell.direct.create_chat')}
+                    subTitle={t('shell.direct.create_chat_sub_title')}
                   />
                   <CreateChat defaultUserId={userId} />
                 </Box>

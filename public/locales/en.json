@@ -31,6 +31,50 @@
       "add_label": "Add Channel"
     }
   },
+  "shell": {
+    "sidebar": {
+      "join_with_address_title": "Join with Address",
+      "join_with_address_sub_title": "Become a part of existing community.",
+      "mark_as_read": "Mark as Read",
+      "direct_messages_tooltip": "Direct Messages",
+      "explore_community_tooltip": "Explore Community",
+      "home_tooltip": "Home",
+      "inbox_tooltip": "Inbox",
+      "search_tooltip": "Search",
+      "user_settings_tooltip": "User Settings",
+      "unpin": "Unpin",
+      "invite": "Invite",
+      "copy_link": "Copy Link",
+      "unnamed_folder": "Unnamed",
+      "unverified_device_tooltip": "Unverified Device",
+      "unverified_devices_tooltip": "Unverified Devices"
+    },
+    "home": {
+      "header_title": "Home",
+      "explore_community_rooms": "Explore Community Rooms",
+      "message_search": "Message Search",
+      "rooms_category": "Rooms"
+    },
+    "direct": {
+      "header_title": "Direct Messages",
+      "empty_title": "No Direct Messages",
+      "empty_message": "You do not have any direct messages yet.",
+      "create_button": "Direct Message",
+      "create_chat": "Create Chat",
+      "create_chat_sub_title": "Start a private, encrypted chat by entering a user ID.",
+      "chats_category": "Chats"
+    },
+    "welcome": {
+      "source_code": "Source Code",
+      "support": "Support"
+    },
+    "nav": {
+      "notifications": "Notifications",
+      "toggle_chat": "Toggle Chat",
+      "live_count": "{{count}} Live",
+      "more_options": "More Options"
+    }
+  },
   "auth": {
     "common": {
       "or_divider": "OR",

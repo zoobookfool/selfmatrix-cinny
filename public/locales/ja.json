@@ -170,5 +170,166 @@
         "failed_to_reset": "パスワードのリセットに失敗しました。"
       }
     }
+  },
+  "room": {
+    "call_chat": {
+      "title": "チャット",
+      "close_tooltip": "閉じる"
+    },
+    "command_autocomplete": {
+      "header": "コマンド"
+    },
+    "tombstone": {
+      "replaced_message": "このルームは置き換えられ、現在は無効です。",
+      "failed_to_join": "移行先のルームへの参加に失敗しました!",
+      "open_new_room": "新しいルームを開く",
+      "join_new_room": "新しいルームに参加"
+    },
+    "view": {
+      "no_permission_to_post": "このルームに投稿する権限がありません"
+    },
+    "following": {
+      "one_suffix": " が会話を追っています。",
+      "many_suffix": " が会話を追っています。",
+      "and": " と ",
+      "comma": "、",
+      "others": " 他"
+    },
+    "typing": {
+      "one_suffix": " が入力中...",
+      "many_suffix": " が入力中...",
+      "and": " と ",
+      "comma": "、",
+      "others": " 他",
+      "drop_status": "入力状態を解除"
+    },
+    "members": {
+      "count_title": "メンバー {{memberCount}} 人",
+      "close_tooltip": "閉じる",
+      "search_placeholder": "名前を入力...",
+      "no_results": "なし",
+      "result_one": "件の結果",
+      "result_other": "件の結果",
+      "scroll_to_top": "トップへスクロール",
+      "no_filtered_members": "「{{filterName}}」のメンバーはいません"
+    },
+    "jump_to_time": {
+      "title": "指定時刻へ移動",
+      "time_label": "時刻",
+      "date_label": "日付",
+      "preset_label": "プリセット",
+      "today": "今日",
+      "yesterday": "昨日",
+      "beginning": "最初",
+      "submit_button": "タイムラインを開く"
+    },
+    "reaction_viewer": {
+      "reacted_with": ":{{shortcode}}: でリアクション"
+    },
+    "pin": {
+      "open": "開く",
+      "failed_to_load_message": "メッセージの読み込みに失敗しました!",
+      "title": "ピン留めされたメッセージ",
+      "empty_title": "ピン留めされたメッセージはありません",
+      "empty_message": "十分な権限レベルを持つユーザーは、メッセージのコンテキストメニューからピン留めできます。"
+    },
+    "composer": {
+      "drop_files_title": "「{{roomName}}」にファイルをドロップ",
+      "drop_files_default_room_name": "ルーム",
+      "drop_files_message": "ここにファイルをドラッグ&ドロップするか、クリックして選択してください",
+      "placeholder": "メッセージを送信..."
+    },
+    "menu": {
+      "view_reactions": "リアクションを見る",
+      "read_receipts": "既読情報",
+      "view_source": "ソースを表示",
+      "copy_link": "リンクをコピー",
+      "unpin_message": "ピン留めを解除",
+      "pin_message": "メッセージをピン留め",
+      "add_reaction": "リアクションを追加",
+      "reply": "返信",
+      "reply_in_thread": "スレッドで返信",
+      "edit_message": "メッセージを編集",
+      "delete": "削除",
+      "report": "通報",
+      "delete_dialog": {
+        "title": "メッセージを削除",
+        "confirm_message": "この操作は取り消せません! 本当にこのメッセージを削除しますか?",
+        "reason_label": "理由",
+        "reason_optional": "(任意)",
+        "failed_message": "メッセージの削除に失敗しました。もう一度お試しください。",
+        "submitting": "削除しています..."
+      },
+      "report_dialog": {
+        "title": "メッセージを通報",
+        "description": "このメッセージをサーバーに通報します。サーバーは適切な担当者に対応を通知する場合があります。",
+        "reason_label": "理由",
+        "failed_message": "メッセージの通報に失敗しました。もう一度お試しください。",
+        "success_message": "メッセージがサーバーに通報されました。",
+        "submitting": "通報しています..."
+      }
+    },
+    "editor": {
+      "placeholder": "メッセージを編集...",
+      "save": "保存",
+      "cancel": "キャンセル"
+    },
+    "header": {
+      "mark_as_read": "既読にする",
+      "notifications": "通知",
+      "invite": "招待",
+      "copy_link": "リンクをコピー",
+      "jump_to_time": "指定時刻へ移動",
+      "leave_room": "ルームを退出",
+      "start_call": "通話を開始",
+      "voice_call": "音声",
+      "video_call": "ビデオ",
+      "in_another_call": "すでに別の通話中です — 参加するには現在の通話を終了してください!",
+      "call_tooltip": "通話",
+      "search_tooltip": "検索",
+      "pinned_messages_tooltip": "ピン留めされたメッセージ",
+      "members_tooltip": "メンバー",
+      "hide_members_tooltip": "メンバーを非表示",
+      "show_members_tooltip": "メンバーを表示",
+      "more_options_tooltip": "その他のオプション"
+    },
+    "space_menu": {
+      "mark_as_read": "既読にする",
+      "invite": "招待",
+      "copy_link": "リンクをコピー",
+      "event_timeline": "イベントタイムライン",
+      "leave_space": "サーバーを退出"
+    },
+    "space_tombstone": {
+      "title": "サーバーがアップグレードされました",
+      "replaced_message": "このサーバーは置き換えられ、現在は無効です。",
+      "failed_to_join": "移行先のサーバーへの参加に失敗しました!",
+      "open_new_space": "新しいサーバーを開く",
+      "join_new_space": "新しいサーバーに参加"
+    },
+    "space": {
+      "lobby": "ロビー",
+      "message_search": "メッセージ検索",
+      "rooms_category": "ルーム"
+    },
+    "space_search": {
+      "title": "メッセージ検索"
+    },
+    "timeline": {
+      "changed_room_topic": " がルームトピックを変更しました",
+      "changed_room_avatar": " がルームアバターを変更しました",
+      "joined_call": " が通話に参加しました",
+      "ended_call": " が通話を終了しました",
+      "sent_state_event": " が ",
+      "state_event_suffix": " ステートイベントを送信しました",
+      "sent_event": " が ",
+      "event_suffix": " イベントを送信しました",
+      "new_messages": "新着メッセージ",
+      "day_today": "今日",
+      "day_yesterday": "昨日",
+      "jump_to_unread": "未読へ移動",
+      "mark_as_read": "既読にする",
+      "jump_to_latest": "最新へ移動"
+    }
   }
 }

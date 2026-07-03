@@ -36,6 +36,7 @@ import { MatrixEvent, Room } from 'matrix-js-sdk';
 import { Relations } from 'matrix-js-sdk/lib/models/relations';
 import classNames from 'classnames';
 import { RoomPinnedEventsEventContent } from 'matrix-js-sdk/lib/types';
+import { useTranslation } from 'react-i18next';
 import {
   AvatarBase,
   BubbleLayout,
@@ -130,6 +131,7 @@ export const MessageAllReactionItem = as<
     onClose?: () => void;
   }
 >(({ room, relations, onClose, ...props }, ref) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
 
   const handleClose = () => {
@@ -176,7 +178,7 @@ export const MessageAllReactionItem = as<
         aria-pressed={open}
       >
         <Text className={css.MessageMenuItemText} as="span" size="T300" truncate>
-          View Reactions
+          {t('room.menu.view_reactions')}
         </Text>
       </MenuItem>
     </>
@@ -191,6 +193,7 @@ export const MessageReadReceiptItem = as<
     onClose?: () => void;
   }
 >(({ room, eventId, onClose, ...props }, ref) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
 
   const handleClose = () => {
@@ -226,7 +229,7 @@ export const MessageReadReceiptItem = as<
         aria-pressed={open}
       >
         <Text className={css.MessageMenuItemText} as="span" size="T300" truncate>
-          Read Receipts
+          {t('room.menu.read_receipts')}
         </Text>
       </MenuItem>
     </>
@@ -241,6 +244,7 @@ export const MessageSourceCodeItem = as<
     onClose?: () => void;
   }
 >(({ room, mEvent, onClose, ...props }, ref) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
 
   const getContent = (evt: MatrixEvent) =>
@@ -290,7 +294,7 @@ export const MessageSourceCodeItem = as<
           >
             <Modal variant="Surface" size="500">
               <TextViewer
-                name="Source Code"
+                name={t('room.menu.view_source')}
                 langName="json"
                 text={getText()}
                 requestClose={handleClose}
@@ -309,7 +313,7 @@ export const MessageSourceCodeItem = as<
         aria-pressed={open}
       >
         <Text className={css.MessageMenuItemText} as="span" size="T300" truncate>
-          View Source
+          {t('room.menu.view_source')}
         </Text>
       </MenuItem>
     </>
@@ -324,6 +328,7 @@ export const MessageCopyLinkItem = as<
     onClose?: () => void;
   }
 >(({ room, mEvent, onClose, ...props }, ref) => {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
 
   const handleCopy = () => {
@@ -343,7 +348,7 @@ export const MessageCopyLinkItem = as<
       ref={ref}
     >
       <Text className={css.MessageMenuItemText} as="span" size="T300" truncate>
-        Copy Link
+        {t('room.menu.copy_link')}
       </Text>
     </MenuItem>
   );
@@ -357,6 +362,7 @@ export const MessagePinItem = as<
     onClose?: () => void;
   }
 >(({ room, mEvent, onClose, ...props }, ref) => {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const pinnedEvents = useRoomPinnedEvents(room);
   const isPinned = pinnedEvents.includes(mEvent.getId() ?? '');
@@ -383,7 +389,7 @@ export const MessagePinItem = as<
       ref={ref}
     >
       <Text className={css.MessageMenuItemText} as="span" size="T300" truncate>
-        {isPinned ? 'Unpin Message' : 'Pin Message'}
+        {isPinned ? t('room.menu.unpin_message') : t('room.menu.pin_message')}
       </Text>
     </MenuItem>
   );
@@ -397,6 +403,7 @@ export const MessageDeleteItem = as<
     onClose?: () => void;
   }
 >(({ room, mEvent, onClose, ...props }, ref) => {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const [open, setOpen] = useState(false);
 
@@ -450,7 +457,7 @@ export const MessageDeleteItem = as<
                 size="500"
               >
                 <Box grow="Yes">
-                  <Text size="H4">Delete Message</Text>
+                  <Text size="H4">{t('room.menu.delete_dialog.title')}</Text>
                 </Box>
                 <IconButton size="300" onClick={handleClose} radii="300">
                   <Icon src={Icons.Cross} />
@@ -463,20 +470,18 @@ export const MessageDeleteItem = as<
                 direction="Column"
                 gap="400"
               >
-                <Text priority="400">
-                  This action is irreversible! Are you sure that you want to delete this message?
-                </Text>
+                <Text priority="400">{t('room.menu.delete_dialog.confirm_message')}</Text>
                 <Box direction="Column" gap="100">
                   <Text size="L400">
-                    Reason{' '}
+                    {t('room.menu.delete_dialog.reason_label')}{' '}
                     <Text as="span" size="T200">
-                      (optional)
+                      {t('room.menu.delete_dialog.reason_optional')}
                     </Text>
                   </Text>
                   <Input name="reasonInput" variant="Background" />
                   {deleteState.status === AsyncStatus.Error && (
                     <Text style={{ color: color.Critical.Main }} size="T300">
-                      Failed to delete message! Please try again.
+                      {t('room.menu.delete_dialog.failed_message')}
                     </Text>
                   )}
                 </Box>
@@ -491,7 +496,9 @@ export const MessageDeleteItem = as<
                   aria-disabled={deleteState.status === AsyncStatus.Loading}
                 >
                   <Text size="B400">
-                    {deleteState.status === AsyncStatus.Loading ? 'Deleting...' : 'Delete'}
+                    {deleteState.status === AsyncStatus.Loading
+                      ? t('room.menu.delete_dialog.submitting')
+                      : t('room.menu.delete')}
                   </Text>
                 </Button>
               </Box>
@@ -511,7 +518,7 @@ export const MessageDeleteItem = as<
         ref={ref}
       >
         <Text className={css.MessageMenuItemText} as="span" size="T300" truncate>
-          Delete
+          {t('room.menu.delete')}
         </Text>
       </Button>
     </>
@@ -526,6 +533,7 @@ export const MessageReportItem = as<
     onClose?: () => void;
   }
 >(({ room, mEvent, onClose, ...props }, ref) => {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const [open, setOpen] = useState(false);
 
@@ -580,7 +588,7 @@ export const MessageReportItem = as<
                 size="500"
               >
                 <Box grow="Yes">
-                  <Text size="H4">Report Message</Text>
+                  <Text size="H4">{t('room.menu.report_dialog.title')}</Text>
                 </Box>
                 <IconButton size="300" onClick={handleClose} radii="300">
                   <Icon src={Icons.Cross} />
@@ -593,21 +601,18 @@ export const MessageReportItem = as<
                 direction="Column"
                 gap="400"
               >
-                <Text priority="400">
-                  Report this message to server, which may then notify the appropriate people to
-                  take action.
-                </Text>
+                <Text priority="400">{t('room.menu.report_dialog.description')}</Text>
                 <Box direction="Column" gap="100">
-                  <Text size="L400">Reason</Text>
+                  <Text size="L400">{t('room.menu.report_dialog.reason_label')}</Text>
                   <Input name="reasonInput" variant="Background" required />
                   {reportState.status === AsyncStatus.Error && (
                     <Text style={{ color: color.Critical.Main }} size="T300">
-                      Failed to report message! Please try again.
+                      {t('room.menu.report_dialog.failed_message')}
                     </Text>
                   )}
                   {reportState.status === AsyncStatus.Success && (
                     <Text style={{ color: color.Success.Main }} size="T300">
-                      Message has been reported to server.
+                      {t('room.menu.report_dialog.success_message')}
                     </Text>
                   )}
                 </Box>
@@ -625,7 +630,9 @@ export const MessageReportItem = as<
                   }
                 >
                   <Text size="B400">
-                    {reportState.status === AsyncStatus.Loading ? 'Reporting...' : 'Report'}
+                    {reportState.status === AsyncStatus.Loading
+                      ? t('room.menu.report_dialog.submitting')
+                      : t('room.menu.report')}
                   </Text>
                 </Button>
               </Box>
@@ -645,7 +652,7 @@ export const MessageReportItem = as<
         ref={ref}
       >
         <Text className={css.MessageMenuItemText} as="span" size="T300" truncate>
-          Report
+          {t('room.menu.report')}
         </Text>
       </Button>
     </>
@@ -718,6 +725,7 @@ export const Message = as<'div', MessageProps>(
     },
     ref
   ) => {
+    const { t } = useTranslation();
     const mx = useMatrixClient();
     const useAuthentication = useMediaAuthentication();
     const senderId = mEvent.getSender() ?? '';
@@ -998,7 +1006,7 @@ export const Message = as<'div', MessageProps>(
                                 size="T300"
                                 truncate
                               >
-                                Add Reaction
+                                {t('room.menu.add_reaction')}
                               </Text>
                             </MenuItem>
                           )}
@@ -1025,7 +1033,7 @@ export const Message = as<'div', MessageProps>(
                               size="T300"
                               truncate
                             >
-                              Reply
+                              {t('room.menu.reply')}
                             </Text>
                           </MenuItem>
                           {!isThreadedMessage && (
@@ -1045,7 +1053,7 @@ export const Message = as<'div', MessageProps>(
                                 size="T300"
                                 truncate
                               >
-                                Reply in Thread
+                                {t('room.menu.reply_in_thread')}
                               </Text>
                             </MenuItem>
                           )}
@@ -1066,7 +1074,7 @@ export const Message = as<'div', MessageProps>(
                                 size="T300"
                                 truncate
                               >
-                                Edit Message
+                                {t('room.menu.edit_message')}
                               </Text>
                             </MenuItem>
                           )}

@@ -25,6 +25,7 @@ import {
 } from 'folds';
 import { useNavigate } from 'react-router-dom';
 import { Room } from 'matrix-js-sdk';
+import { useTranslation } from 'react-i18next';
 import { useStateEvent } from '../../hooks/useStateEvent';
 import { PageHeader } from '../../components/page';
 import { RoomAvatar, RoomIcon } from '../../components/room-avatar';
@@ -79,6 +80,7 @@ type RoomMenuProps = {
   requestClose: () => void;
 };
 const RoomMenu = forwardRef<HTMLDivElement, RoomMenuProps>(({ room, requestClose }, ref) => {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const branding = useBranding();
   const [hideActivity] = useSetting(settingsAtom, 'hideActivity');
@@ -137,7 +139,7 @@ const RoomMenu = forwardRef<HTMLDivElement, RoomMenuProps>(({ room, requestClose
           disabled={!unread}
         >
           <Text style={{ flexGrow: 1 }} as="span" size="T300" truncate>
-            Mark as Read
+            {t('room.header.mark_as_read')}
           </Text>
         </MenuItem>
         <RoomNotificationModeSwitcher roomId={room.roomId} value={notificationMode}>
@@ -156,7 +158,7 @@ const RoomMenu = forwardRef<HTMLDivElement, RoomMenuProps>(({ room, requestClose
               onClick={handleOpen}
             >
               <Text style={{ flexGrow: 1 }} as="span" size="T300" truncate>
-                Notifications
+                {t('room.header.notifications')}
               </Text>
             </MenuItem>
           )}
@@ -175,7 +177,7 @@ const RoomMenu = forwardRef<HTMLDivElement, RoomMenuProps>(({ room, requestClose
           disabled={!canInvite}
         >
           <Text style={{ flexGrow: 1 }} as="span" size="T300" truncate>
-            Invite
+            {t('room.header.invite')}
           </Text>
         </MenuItem>
         <MenuItem
@@ -185,7 +187,7 @@ const RoomMenu = forwardRef<HTMLDivElement, RoomMenuProps>(({ room, requestClose
           radii="300"
         >
           <Text style={{ flexGrow: 1 }} as="span" size="T300" truncate>
-            Copy Link
+            {t('room.header.copy_link')}
           </Text>
         </MenuItem>
         <MenuItem
@@ -209,7 +211,7 @@ const RoomMenu = forwardRef<HTMLDivElement, RoomMenuProps>(({ room, requestClose
                 aria-pressed={promptJump}
               >
                 <Text style={{ flexGrow: 1 }} as="span" size="T300" truncate>
-                  Jump to Time
+                  {t('room.header.jump_to_time')}
                 </Text>
               </MenuItem>
               {promptJump && (
@@ -241,7 +243,7 @@ const RoomMenu = forwardRef<HTMLDivElement, RoomMenuProps>(({ room, requestClose
                 aria-pressed={promptLeave}
               >
                 <Text style={{ flexGrow: 1 }} as="span" size="T300" truncate>
-                  Leave Room
+                  {t('room.header.leave_room')}
                 </Text>
               </MenuItem>
               {promptLeave && (
@@ -266,6 +268,7 @@ type CallMenuProps = {
 };
 const CallMenu = forwardRef<HTMLDivElement, CallMenuProps>(
   ({ requestClose, onVoiceCall, onVideoCall }, ref) => {
+    const { t } = useTranslation();
     const handleVoice = () => {
       onVoiceCall();
       requestClose();
@@ -278,7 +281,7 @@ const CallMenu = forwardRef<HTMLDivElement, CallMenuProps>(
     return (
       <Menu ref={ref} style={{ padding: config.space.S200, minWidth: toRem(150) }}>
         <Box direction="Column" gap="200">
-          <Text size="L400">Start Call</Text>
+          <Text size="L400">{t('room.header.start_call')}</Text>
           <Box direction="Column" gap="200">
             <Button
               size="300"
@@ -289,7 +292,7 @@ const CallMenu = forwardRef<HTMLDivElement, CallMenuProps>(
               before={<Icon size="100" src={Icons.Phone} filled />}
               onClick={handleVoice}
             >
-              <Text size="B300">Voice</Text>
+              <Text size="B300">{t('room.header.voice_call')}</Text>
             </Button>
             <Button
               size="300"
@@ -298,7 +301,7 @@ const CallMenu = forwardRef<HTMLDivElement, CallMenuProps>(
               before={<Icon size="100" src={Icons.VideoCamera} filled />}
               onClick={handleVideo}
             >
-              <Text size="B300">Video</Text>
+              <Text size="B300">{t('room.header.video_call')}</Text>
             </Button>
           </Box>
         </Box>
@@ -308,6 +311,7 @@ const CallMenu = forwardRef<HTMLDivElement, CallMenuProps>(
 );
 
 function CallButton() {
+  const { t } = useTranslation();
   const room = useRoom();
   const direct = useIsDirectRoom();
 
@@ -329,9 +333,9 @@ function CallButton() {
         tooltip={
           <Tooltip>
             {inAnotherCall ? (
-              <Text size="L400">Already in another call — End the current call to join!</Text>
+              <Text size="L400">{t('room.header.in_another_call')}</Text>
             ) : (
-              <Text>Call</Text>
+              <Text>{t('room.header.call_tooltip')}</Text>
             )}
           </Tooltip>
         }
@@ -386,6 +390,7 @@ function CallButton() {
 }
 
 export function RoomViewHeader({ callView }: { callView?: boolean }) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const mx = useMatrixClient();
   const useAuthentication = useMediaAuthentication();
@@ -528,7 +533,7 @@ export function RoomViewHeader({ callView }: { callView?: boolean }) {
               offset={4}
               tooltip={
                 <Tooltip>
-                  <Text>Search</Text>
+                  <Text>{t('room.header.search_tooltip')}</Text>
                 </Tooltip>
               }
             >
@@ -544,7 +549,7 @@ export function RoomViewHeader({ callView }: { callView?: boolean }) {
             offset={4}
             tooltip={
               <Tooltip>
-                <Text>Pinned Messages</Text>
+                <Text>{t('room.header.pinned_messages_tooltip')}</Text>
               </Tooltip>
             }
           >
@@ -606,9 +611,13 @@ export function RoomViewHeader({ callView }: { callView?: boolean }) {
               tooltip={
                 <Tooltip>
                   {callView ? (
-                    <Text>Members</Text>
+                    <Text>{t('room.header.members_tooltip')}</Text>
                   ) : (
-                    <Text>{peopleDrawer ? 'Hide Members' : 'Show Members'}</Text>
+                    <Text>
+                      {peopleDrawer
+                        ? t('room.header.hide_members_tooltip')
+                        : t('room.header.show_members_tooltip')}
+                    </Text>
                   )}
                 </Tooltip>
               }
@@ -627,7 +636,7 @@ export function RoomViewHeader({ callView }: { callView?: boolean }) {
             offset={4}
             tooltip={
               <Tooltip>
-                <Text>More Options</Text>
+                <Text>{t('room.header.more_options_tooltip')}</Text>
               </Tooltip>
             }
           >

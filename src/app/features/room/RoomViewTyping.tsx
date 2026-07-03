@@ -3,6 +3,7 @@ import { Box, Icon, IconButton, Icons, Text, as } from 'folds';
 import { Room } from 'matrix-js-sdk';
 import classNames from 'classnames';
 import { useSetAtom } from 'jotai';
+import { useTranslation } from 'react-i18next';
 import { roomIdToTypingMembersAtom } from '../../state/typingMembers';
 import { TypingIndicator } from '../../components/typing-indicator';
 import { getMemberDisplayName } from '../../utils/room';
@@ -16,6 +17,7 @@ export type RoomViewTypingProps = {
 };
 export const RoomViewTyping = as<'div', RoomViewTypingProps>(
   ({ className, room, ...props }, ref) => {
+    const { t } = useTranslation();
     const setTypingMembers = useSetAtom(roomIdToTypingMembersAtom);
     const mx = useMatrixClient();
     const typingMembers = useRoomTypingMember(room.roomId);
@@ -58,7 +60,7 @@ export const RoomViewTyping = as<'div', RoomViewTypingProps>(
               <>
                 <b>{typingNames[0]}</b>
                 <Text as="span" size="Inherit" priority="300">
-                  {' is typing...'}
+                  {t('room.typing.one_suffix')}
                 </Text>
               </>
             )}
@@ -66,11 +68,11 @@ export const RoomViewTyping = as<'div', RoomViewTypingProps>(
               <>
                 <b>{typingNames[0]}</b>
                 <Text as="span" size="Inherit" priority="300">
-                  {' and '}
+                  {t('room.typing.and')}
                 </Text>
                 <b>{typingNames[1]}</b>
                 <Text as="span" size="Inherit" priority="300">
-                  {' are typing...'}
+                  {t('room.typing.many_suffix')}
                 </Text>
               </>
             )}
@@ -78,15 +80,15 @@ export const RoomViewTyping = as<'div', RoomViewTypingProps>(
               <>
                 <b>{typingNames[0]}</b>
                 <Text as="span" size="Inherit" priority="300">
-                  {', '}
+                  {t('room.typing.comma')}
                 </Text>
                 <b>{typingNames[1]}</b>
                 <Text as="span" size="Inherit" priority="300">
-                  {' and '}
+                  {t('room.typing.and')}
                 </Text>
                 <b>{typingNames[2]}</b>
                 <Text as="span" size="Inherit" priority="300">
-                  {' are typing...'}
+                  {t('room.typing.many_suffix')}
                 </Text>
               </>
             )}
@@ -94,24 +96,32 @@ export const RoomViewTyping = as<'div', RoomViewTypingProps>(
               <>
                 <b>{typingNames[0]}</b>
                 <Text as="span" size="Inherit" priority="300">
-                  {', '}
+                  {t('room.typing.comma')}
                 </Text>
                 <b>{typingNames[1]}</b>
                 <Text as="span" size="Inherit" priority="300">
-                  {', '}
+                  {t('room.typing.comma')}
                 </Text>
                 <b>{typingNames[2]}</b>
                 <Text as="span" size="Inherit" priority="300">
-                  {' and '}
+                  {t('room.typing.and')}
                 </Text>
-                <b>{typingNames.length - 3} others</b>
+                <b>
+                  {typingNames.length - 3}
+                  {t('room.typing.others')}
+                </b>
                 <Text as="span" size="Inherit" priority="300">
-                  {' are typing...'}
+                  {t('room.typing.many_suffix')}
                 </Text>
               </>
             )}
           </Text>
-          <IconButton title="Drop Typing Status" size="300" radii="Pill" onClick={handleDropAll}>
+          <IconButton
+            title={t('room.typing.drop_status')}
+            size="300"
+            radii="Pill"
+            onClick={handleDropAll}
+          >
             <Icon size="50" src={Icons.Cross} />
           </IconButton>
         </Box>

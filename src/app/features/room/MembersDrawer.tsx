@@ -29,6 +29,7 @@ import {
 import { MatrixClient, Room, RoomMember } from 'matrix-js-sdk';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 
 import * as css from './MembersDrawer.css';
 import { useMatrixClient } from '../../hooks/useMatrixClient';
@@ -64,14 +65,19 @@ type MemberDrawerHeaderProps = {
   room: Room;
 };
 function MemberDrawerHeader({ room }: MemberDrawerHeaderProps) {
+  const { t } = useTranslation();
   const setPeopleDrawer = useSetSetting(settingsAtom, 'isPeopleDrawer');
 
   return (
     <Header className={css.MembersDrawerHeader} variant="Background" size="600">
       <Box grow="Yes" alignItems="Center" gap="200">
         <Box grow="Yes" alignItems="Center" gap="200">
-          <Text title={`${room.getJoinedMemberCount()} Members`} size="H5" truncate>
-            {`${millify(room.getJoinedMemberCount())} Members`}
+          <Text
+            title={t('room.members.count_title', { memberCount: room.getJoinedMemberCount() })}
+            size="H5"
+            truncate
+          >
+            {t('room.members.count_title', { memberCount: millify(room.getJoinedMemberCount()) })}
           </Text>
         </Box>
         <Box shrink="No" alignItems="Center">
@@ -81,7 +87,7 @@ function MemberDrawerHeader({ room }: MemberDrawerHeaderProps) {
             offset={4}
             tooltip={
               <Tooltip>
-                <Text>Close</Text>
+                <Text>{t('room.members.close_tooltip')}</Text>
               </Tooltip>
             }
           >
@@ -177,6 +183,7 @@ type MembersDrawerProps = {
   members: RoomMember[];
 };
 export function MembersDrawer({ room, members }: MembersDrawerProps) {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const useAuthentication = useMediaAuthentication();
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -326,7 +333,7 @@ export function MembersDrawer({ room, members }: MembersDrawerProps) {
                   ref={searchInputRef}
                   onChange={handleSearchChange}
                   style={{ paddingRight: config.space.S200 }}
-                  placeholder="Type name..."
+                  placeholder={t('room.members.search_placeholder')}
                   variant="Surface"
                   size="400"
                   radii="400"
@@ -347,9 +354,15 @@ export function MembersDrawer({ room, members }: MembersDrawerProps) {
                         }}
                         after={<Icon size="50" src={Icons.Cross} />}
                       >
-                        <Text size="B300">{`${result.items.length || 'No'} ${
-                          result.items.length === 1 ? 'Result' : 'Results'
-                        }`}</Text>
+                        <Text size="B300">
+                          {result.items.length > 0
+                            ? t('room.members.result', {
+                                count: result.items.length,
+                              })
+                            : `${t('room.members.no_results')} ${t('room.members.result', {
+                                count: 0,
+                              })}`}
+                        </Text>
                       </Chip>
                     )
                   }
@@ -364,7 +377,7 @@ export function MembersDrawer({ room, members }: MembersDrawerProps) {
                 radii="Pill"
                 outlined
                 size="300"
-                aria-label="Scroll to Top"
+                aria-label={t('room.members.scroll_to_top')}
               >
                 <Icon src={Icons.ChevronTop} size="300" />
               </IconButton>
@@ -372,7 +385,7 @@ export function MembersDrawer({ room, members }: MembersDrawerProps) {
 
             {!fetchingMembers && !result && processMembers.length === 0 && (
               <Text style={{ padding: config.space.S300 }} align="Center">
-                {`No "${membershipFilter.name}" Members`}
+                {t('room.members.no_filtered_members', { filterName: membershipFilter.name })}
               </Text>
             )}
 

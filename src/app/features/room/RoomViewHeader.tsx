@@ -72,7 +72,7 @@ import { RoomSettingsPage } from '../../state/roomSettings';
 import { useCallEmbed, useCallStart } from '../../hooks/useCallEmbed';
 import { useLivekitSupport } from '../../hooks/useLivekitSupport';
 import { webRTCSupported } from '../../utils/rtc';
-import { BRANDING } from '../../branding/strings';
+import { useBranding } from '../../branding/strings';
 
 type RoomMenuProps = {
   room: Room;
@@ -80,6 +80,7 @@ type RoomMenuProps = {
 };
 const RoomMenu = forwardRef<HTMLDivElement, RoomMenuProps>(({ room, requestClose }, ref) => {
   const mx = useMatrixClient();
+  const branding = useBranding();
   const [hideActivity] = useSetting(settingsAtom, 'hideActivity');
   const unread = useRoomUnread(room.roomId, roomToUnreadAtom);
   const powerLevels = usePowerLevelsContext();
@@ -194,7 +195,7 @@ const RoomMenu = forwardRef<HTMLDivElement, RoomMenuProps>(({ room, requestClose
           radii="300"
         >
           <Text style={{ flexGrow: 1 }} as="span" size="T300" truncate>
-            {BRANDING.room.settingsLabel}
+            {branding.room.settingsLabel}
           </Text>
         </MenuItem>
         <UseStateProvider initial={false}>

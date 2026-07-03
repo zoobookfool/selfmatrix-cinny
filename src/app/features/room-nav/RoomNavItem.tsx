@@ -48,7 +48,7 @@ import {
   getRoomNotificationModeIcon,
   RoomNotificationMode,
 } from '../../hooks/useRoomsNotificationPreferences';
-import { BRANDING } from '../../branding/strings';
+import { useBranding } from '../../branding/strings';
 import { RoomNotificationModeSwitcher } from '../../components/RoomNotificationSwitcher';
 import { getRoomCreatorsForRoomId, useRoomCreators } from '../../hooks/useRoomCreators';
 import { getRoomPermissionsAPI, useRoomPermissions } from '../../hooks/useRoomPermissions';
@@ -71,6 +71,7 @@ type RoomNavItemMenuProps = {
 const RoomNavItemMenu = forwardRef<HTMLDivElement, RoomNavItemMenuProps>(
   ({ room, requestClose, notificationMode }, ref) => {
     const mx = useMatrixClient();
+    const branding = useBranding();
     const [hideActivity] = useSetting(settingsAtom, 'hideActivity');
     const unread = useRoomUnread(room.roomId, roomToUnreadAtom);
     const powerLevels = usePowerLevels(room);
@@ -182,7 +183,7 @@ const RoomNavItemMenu = forwardRef<HTMLDivElement, RoomNavItemMenuProps>(
             radii="300"
           >
             <Text style={{ flexGrow: 1 }} as="span" size="T300" truncate>
-              {BRANDING.room.settingsLabel}
+              {branding.room.settingsLabel}
             </Text>
           </MenuItem>
         </Box>
@@ -201,7 +202,7 @@ const RoomNavItemMenu = forwardRef<HTMLDivElement, RoomNavItemMenuProps>(
                   aria-pressed={promptLeave}
                 >
                   <Text style={{ flexGrow: 1 }} as="span" size="T300" truncate>
-                    {BRANDING.room.leaveLabel}
+                    {branding.room.leaveLabel}
                   </Text>
                 </MenuItem>
                 {promptLeave && (

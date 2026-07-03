@@ -38,7 +38,7 @@ import { useOpenCreateSpaceModal } from '../../state/hooks/createSpaceModal';
 import { AddExistingModal } from '../add-existing';
 import { CreateRoomType } from '../../components/create-room/types';
 import { BetaNoticeBadge } from '../../components/BetaNoticeBadge';
-import { BRANDING } from '../../branding/strings';
+import { useBranding } from '../../branding/strings';
 
 function SpaceProfileLoading() {
   return (
@@ -244,6 +244,7 @@ function RootSpaceProfile({ closed, categoryId, handleClose }: RootSpaceProfileP
 }
 
 function AddRoomButton({ item }: { item: HierarchyItem }) {
+  const branding = useBranding();
   const [cords, setCords] = useState<RectCords>();
   const openCreateRoomModal = useOpenCreateRoomModal();
   const [addExisting, setAddExisting] = useState(false);
@@ -286,7 +287,7 @@ function AddRoomButton({ item }: { item: HierarchyItem }) {
               fill="None"
               onClick={() => handleCreateRoom(CreateRoomType.TextRoom)}
             >
-              <Text size="T300">{BRANDING.room.chatLabel}</Text>
+              <Text size="T300">{branding.room.chatLabel}</Text>
             </MenuItem>
             <MenuItem
               size="300"
@@ -296,10 +297,10 @@ function AddRoomButton({ item }: { item: HierarchyItem }) {
               onClick={() => handleCreateRoom(CreateRoomType.VoiceRoom)}
               after={<BetaNoticeBadge />}
             >
-              <Text size="T300">{BRANDING.room.voiceLabel}</Text>
+              <Text size="T300">{branding.room.voiceLabel}</Text>
             </MenuItem>
             <MenuItem size="300" radii="300" fill="None" onClick={handleAddExisting}>
-              <Text size="T300">{BRANDING.room.existingLabel}</Text>
+              <Text size="T300">{branding.room.existingLabel}</Text>
             </MenuItem>
           </Menu>
         </FocusTrap>
@@ -312,7 +313,7 @@ function AddRoomButton({ item }: { item: HierarchyItem }) {
         onClick={handleAddRoom}
         aria-pressed={!!cords}
       >
-        <Text size="B300">{BRANDING.room.addLabel}</Text>
+        <Text size="B300">{branding.room.addLabel}</Text>
       </Chip>
       {addExisting && (
         <AddExistingModal parentId={item.roomId} requestClose={() => setAddExisting(false)} />
@@ -322,6 +323,7 @@ function AddRoomButton({ item }: { item: HierarchyItem }) {
 }
 
 function AddSpaceButton({ item }: { item: HierarchyItem }) {
+  const branding = useBranding();
   const [cords, setCords] = useState<RectCords>();
   const openCreateSpaceModal = useOpenCreateSpaceModal();
   const [addExisting, setAddExisting] = useState(false);
@@ -363,10 +365,10 @@ function AddSpaceButton({ item }: { item: HierarchyItem }) {
               fill="None"
               onClick={handleCreateSpace}
             >
-              <Text size="T300">{BRANDING.space.newLabel}</Text>
+              <Text size="T300">{branding.space.newLabel}</Text>
             </MenuItem>
             <MenuItem size="300" radii="300" fill="None" onClick={handleAddExisting}>
-              <Text size="T300">{BRANDING.space.existingLabel}</Text>
+              <Text size="T300">{branding.space.existingLabel}</Text>
             </MenuItem>
           </Menu>
         </FocusTrap>
@@ -379,7 +381,7 @@ function AddSpaceButton({ item }: { item: HierarchyItem }) {
         onClick={handleAddSpace}
         aria-pressed={!!cords}
       >
-        <Text size="B300">{BRANDING.space.addLabel}</Text>
+        <Text size="B300">{branding.space.addLabel}</Text>
       </Chip>
       {addExisting && (
         <AddExistingModal space parentId={item.roomId} requestClose={() => setAddExisting(false)} />

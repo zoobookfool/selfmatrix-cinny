@@ -3,5 +3,32 @@
     "RoomCommon": {
       "changed_room_name": " changed room name"
     }
+  },
+  "branding": {
+    "space": {
+      "add_tooltip": "Add Server",
+      "create_title": "Create Server",
+      "create_sub_title": "Build a server for your community.",
+      "settings_label": "Server Settings",
+      "leave_label": "Leave Server",
+      "leave_prompt": "Are you sure you want to leave this server?",
+      "new_label": "New Server",
+      "existing_label": "Existing Server",
+      "add_label": "Add Server",
+      "badge_label": "Server"
+    },
+    "room": {
+      "create_title": "Create Channel",
+      "create_sub_title": "Build a channel for real-time conversations.",
+      "settings_label": "Channel Settings",
+      "leave_label": "Leave Channel",
+      "leave_prompt": "Are you sure you want to leave this channel?",
+      "no_rooms_title": "No Channels",
+      "no_rooms_message": "You do not have any channels yet.",
+      "chat_label": "Text Channel",
+      "voice_label": "Voice Channel",
+      "existing_label": "Existing Channel",
+      "add_label": "Add Channel"
+    }
   }
 }

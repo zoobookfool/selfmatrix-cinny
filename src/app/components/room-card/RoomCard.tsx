@@ -33,7 +33,7 @@ import { useElementSizeObserver } from '../../hooks/useElementSizeObserver';
 import { getRoomAvatarUrl, getStateEvent } from '../../utils/room';
 import { useStateEventCallback } from '../../hooks/useStateEventCallback';
 import { useMediaAuthentication } from '../../hooks/useMediaAuthentication';
-import { BRANDING } from '../../branding/strings';
+import { useBranding } from '../../branding/strings';
 
 type GridColumnCount = '1' | '2' | '3';
 const getGridColumnCount = (gridWidth: number): GridColumnCount => {
@@ -163,6 +163,7 @@ export const RoomCard = as<'div', RoomCardProps>(
     ref
   ) => {
     const mx = useMatrixClient();
+    const branding = useBranding();
     const useAuthentication = useMediaAuthentication();
     const joinedRoomId = useJoinedRoomId(allRooms, roomIdOrAlias);
     const joinedRoom = mx.getRoom(joinedRoomId);
@@ -225,7 +226,7 @@ export const RoomCard = as<'div', RoomCardProps>(
           </Avatar>
           {(roomType === RoomType.Space || joinedRoom?.isSpaceRoom()) && (
             <Badge variant="Secondary" fill="Soft" outlined>
-              <Text size="L400">{BRANDING.space.badgeLabel}</Text>
+              <Text size="L400">{branding.space.badgeLabel}</Text>
             </Badge>
           )}
         </Box>

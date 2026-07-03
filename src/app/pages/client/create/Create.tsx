@@ -9,10 +9,11 @@ import {
 } from '../../../components/page';
 import { CreateSpaceForm } from '../../../features/create-space';
 import { useRoomNavigate } from '../../../hooks/useRoomNavigate';
-import { BRANDING } from '../../../branding/strings';
+import { useBranding } from '../../../branding/strings';
 
 export function Create() {
   const { navigateSpace } = useRoomNavigate();
+  const branding = useBranding();
 
   return (
     <Page>
@@ -24,8 +25,8 @@ export function Create() {
                 <Box direction="Column" gap="700">
                   <PageHero
                     icon={<Icon size="600" src={Icons.Space} />}
-                    title={BRANDING.space.createTitle}
-                    subTitle={BRANDING.space.createSubTitle}
+                    title={branding.space.createTitle}
+                    subTitle={branding.space.createSubTitle}
                   />
                   <CreateSpaceForm onCreate={navigateSpace} />
                 </Box>

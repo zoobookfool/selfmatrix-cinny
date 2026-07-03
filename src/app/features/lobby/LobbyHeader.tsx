@@ -38,7 +38,7 @@ import { useOpenSpaceSettings } from '../../state/hooks/spaceSettings';
 import { useRoomCreators } from '../../hooks/useRoomCreators';
 import { useRoomPermissions } from '../../hooks/useRoomPermissions';
 import { InviteUserPrompt } from '../../components/invite-user-prompt';
-import { BRANDING } from '../../branding/strings';
+import { useBranding } from '../../branding/strings';
 
 type LobbyMenuProps = {
   powerLevels: IPowerLevels;
@@ -47,6 +47,7 @@ type LobbyMenuProps = {
 const LobbyMenu = forwardRef<HTMLDivElement, LobbyMenuProps>(
   ({ powerLevels, requestClose }, ref) => {
     const mx = useMatrixClient();
+    const branding = useBranding();
     const space = useSpace();
     const creators = useRoomCreators(space);
 
@@ -98,7 +99,7 @@ const LobbyMenu = forwardRef<HTMLDivElement, LobbyMenuProps>(
             radii="300"
           >
             <Text style={{ flexGrow: 1 }} as="span" size="T300" truncate>
-              {BRANDING.space.settingsLabel}
+              {branding.space.settingsLabel}
             </Text>
           </MenuItem>
         </Box>

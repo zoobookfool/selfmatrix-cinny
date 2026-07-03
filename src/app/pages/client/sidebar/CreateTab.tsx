@@ -16,10 +16,11 @@ import {
 import { useCreateSelected } from '../../../hooks/router/useCreateSelected';
 import { JoinAddressPrompt } from '../../../components/join-address-prompt';
 import { _RoomSearchParams } from '../../paths';
-import { BRANDING } from '../../../branding/strings';
+import { useBranding } from '../../../branding/strings';
 
 export function CreateTab() {
   const createSelected = useCreateSelected();
+  const branding = useBranding();
 
   const navigate = useNavigate();
   const [menuCords, setMenuCords] = useState<RectCords>();
@@ -41,7 +42,7 @@ export function CreateTab() {
 
   return (
     <SidebarItem active={createSelected}>
-      <SidebarItemTooltip tooltip={BRANDING.space.addTooltip}>
+      <SidebarItemTooltip tooltip={branding.space.addTooltip}>
         {(triggerRef) => (
           <PopOut
             anchor={menuCords}
@@ -74,9 +75,9 @@ export function CreateTab() {
                       onClick={handleCreateSpace}
                     >
                       <SettingTile before={<Icon size="400" src={Icons.Space} />}>
-                        <Text size="H6">{BRANDING.space.createTitle}</Text>
+                        <Text size="H6">{branding.space.createTitle}</Text>
                         <Text size="T300" priority="300">
-                          {BRANDING.space.createSubTitle}
+                          {branding.space.createSubTitle}
                         </Text>
                       </SettingTile>
                     </SequenceCard>

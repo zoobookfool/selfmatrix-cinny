@@ -12,10 +12,11 @@ import { ScreenSize, useScreenSizeContext } from '../../../hooks/useScreenSize';
 import { BackRouteHandler } from '../../../components/BackRouteHandler';
 import { CreateRoomForm } from '../../../features/create-room';
 import { useRoomNavigate } from '../../../hooks/useRoomNavigate';
-import { BRANDING } from '../../../branding/strings';
+import { useBranding } from '../../../branding/strings';
 
 export function HomeCreateRoom() {
   const screenSize = useScreenSizeContext();
+  const branding = useBranding();
 
   const { navigateRoom } = useRoomNavigate();
 
@@ -42,8 +43,8 @@ export function HomeCreateRoom() {
                 <Box direction="Column" gap="700">
                   <PageHero
                     icon={<Icon size="600" src={Icons.Hash} />}
-                    title={BRANDING.room.createTitle}
-                    subTitle={BRANDING.room.createSubTitle}
+                    title={branding.room.createTitle}
+                    subTitle={branding.room.createSubTitle}
                   />
                   <CreateRoomForm onCreate={navigateRoom} />
                 </Box>

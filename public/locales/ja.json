@@ -1,0 +1,34 @@
+{
+  "Organisms": {
+    "RoomCommon": {
+      "changed_room_name": " がルーム名を変更しました"
+    }
+  },
+  "branding": {
+    "space": {
+      "add_tooltip": "サーバーを追加",
+      "create_title": "サーバーを作成",
+      "create_sub_title": "コミュニティのためのサーバーを作成します。",
+      "settings_label": "サーバー設定",
+      "leave_label": "サーバーを退出",
+      "leave_prompt": "本当にこのサーバーを退出しますか?",
+      "new_label": "新しいサーバー",
+      "existing_label": "既存のサーバー",
+      "add_label": "サーバーを追加",
+      "badge_label": "サーバー"
+    },
+    "room": {
+      "create_title": "チャンネルを作成",
+      "create_sub_title": "リアルタイムな会話のためのチャンネルを作成します。",
+      "settings_label": "チャンネル設定",
+      "leave_label": "チャンネルを退出",
+      "leave_prompt": "本当にこのチャンネルを退出しますか?",
+      "no_rooms_title": "チャンネルがありません",
+      "no_rooms_message": "まだチャンネルがありません。",
+      "chat_label": "テキストチャンネル",
+      "voice_label": "ボイスチャンネル",
+      "existing_label": "既存のチャンネル",
+      "add_label": "チャンネルを追加"
+    }
+  }
+}

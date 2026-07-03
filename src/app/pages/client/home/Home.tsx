@@ -66,7 +66,7 @@ import { UseStateProvider } from '../../../components/UseStateProvider';
 import { JoinAddressPrompt } from '../../../components/join-address-prompt';
 import { _RoomSearchParams } from '../../paths';
 import { useClientConfig } from '../../../hooks/useClientConfig';
-import { BRANDING } from '../../../branding/strings';
+import { useBranding } from '../../../branding/strings';
 
 type HomeMenuProps = {
   requestClose: () => void;
@@ -157,6 +157,7 @@ function HomeHeader() {
 function HomeEmpty() {
   const navigate = useNavigate();
   const { hideExplore } = useClientConfig();
+  const branding = useBranding();
 
   return (
     <NavEmptyCenter>
@@ -164,19 +165,19 @@ function HomeEmpty() {
         icon={<Icon size="600" src={Icons.Hash} />}
         title={
           <Text size="H5" align="Center">
-            {BRANDING.room.noRoomsTitle}
+            {branding.room.noRoomsTitle}
           </Text>
         }
         content={
           <Text size="T300" align="Center">
-            {BRANDING.room.noRoomsMessage}
+            {branding.room.noRoomsMessage}
           </Text>
         }
         options={
           <>
             <Button onClick={() => navigate(getHomeCreatePath())} variant="Secondary" size="300">
               <Text size="B300" truncate>
-                {BRANDING.room.createTitle}
+                {branding.room.createTitle}
               </Text>
             </Button>
             {!hideExplore && (
@@ -201,6 +202,7 @@ function HomeEmpty() {
 const DEFAULT_CATEGORY_ID = makeNavCategoryId('home', 'room');
 export function Home() {
   const mx = useMatrixClient();
+  const branding = useBranding();
   useNavToActivePathMapper('home');
   const scrollRef = useRef<HTMLDivElement>(null);
   const rooms = useHomeRooms();
@@ -264,7 +266,7 @@ export function Home() {
                       </Avatar>
                       <Box as="span" grow="Yes">
                         <Text as="span" size="Inherit" truncate>
-                          {BRANDING.room.createTitle}
+                          {branding.room.createTitle}
                         </Text>
                       </Box>
                     </Box>

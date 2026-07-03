@@ -12,8 +12,16 @@ import { FeatureCheck } from './FeatureCheck';
 import { createRouter } from './Router';
 import { ScreenSizeProvider, useScreenSize } from '../hooks/useScreenSize';
 import { useCompositionEndTracking } from '../hooks/useComposingCheck';
+import { useLocaleSync } from '../hooks/useLocaleSync';
 
 const queryClient = new QueryClient();
+
+// SelfMatrix: ログイン前(認証画面)にも言語設定を反映するため、
+// JotaiProvider 配下・RouterProvider より上位でロケール同期を行う。
+function AppLocaleSync() {
+  useLocaleSync();
+  return null;
+}
 
 function App() {
   const screenSize = useScreenSize();
@@ -37,6 +45,7 @@ function App() {
                   <ClientConfigProvider value={clientConfig}>
                     <QueryClientProvider client={queryClient}>
                       <JotaiProvider>
+                        <AppLocaleSync />
                         <RouterProvider router={createRouter(clientConfig, screenSize)} />
                       </JotaiProvider>
                       <ReactQueryDevtools initialIsOpen={false} />

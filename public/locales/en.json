@@ -30,5 +30,101 @@
       "existing_label": "Existing Channel",
       "add_label": "Add Channel"
     }
+  },
+  "auth": {
+    "common": {
+      "or_divider": "OR",
+      "about": "About",
+      "powered_by_matrix": "Powered by Matrix",
+      "homeserver": "Homeserver"
+    },
+    "server_picker": {
+      "homeserver_list": "Homeserver List"
+    },
+    "sso": {
+      "continue_with": "Continue with {{provider}}",
+      "continue_with_sso": "Continue with SSO"
+    },
+    "layout": {
+      "looking_for_homeserver": "Looking for homeserver...",
+      "failed_to_find_homeserver": "Failed to find homeserver.",
+      "failed_to_connect_unusable": "Failed to connect. Homeserver configuration found with {{host}} appears unusable.",
+      "failed_to_connect_invalid_base_url": "Failed to connect. Homeserver configuration base_url appears invalid.",
+      "connecting_to": "Connecting to {{url}}",
+      "failed_to_connect_unavailable": "Failed to connect. Either homeserver is unavailable at this moment or does not exist.",
+      "loading_auth_flow": "Loading authentication flow...",
+      "failed_to_get_auth_flow": "Failed to get authentication flow information."
+    },
+    "login": {
+      "title": "Login",
+      "token_login_title": "Token Login",
+      "hint_title": "Hint",
+      "hint_username_label": "Username:",
+      "hint_matrix_id_label": "Matrix ID:",
+      "hint_email_label": "Email:",
+      "username_label": "Username",
+      "password_label": "Password",
+      "forgot_password": "Forget Password?",
+      "submit_button": "Login",
+      "unsupported_login_method": "This client does not support login on \"{{server}}\" homeserver. Password and SSO based login method not found.",
+      "no_account_prompt": "Do not have an account?",
+      "register_link": "Register",
+      "errors": {
+        "server_not_allowed": "Login with custom server not allowed by your client instance.",
+        "invalid_server": "Failed to find your Matrix ID server.",
+        "invalid_credentials": "Invalid Username or Password.",
+        "invalid_token": "Invalid login token.",
+        "user_deactivated": "This account has been deactivated.",
+        "invalid_request": "Failed to login. Part of your request data is invalid.",
+        "rate_limited": "Failed to login. Your login request has been rate-limited by server, Please try after some time.",
+        "unknown": "Failed to login. Unknown reason."
+      }
+    },
+    "register": {
+      "title": "Register",
+      "registration_disabled": "Registration has been disabled on this homeserver.",
+      "rate_limited": "You have been rate-limited! Please try after some time.",
+      "invalid_request": "Invalid Request! Failed to get any registration options.",
+      "unsupported_registration": "This application does not support registration on this homeserver.",
+      "username_label": "Username",
+      "password_label": "Password",
+      "confirm_password_label": "Confirm Password",
+      "registration_token_label": "Registration Token",
+      "registration_token_optional_label": "Registration Token (Optional)",
+      "email_label": "Email",
+      "email_optional_label": "Email (Optional)",
+      "accept_terms_prefix": "I accept server",
+      "terms_and_conditions": "Terms and Conditions",
+      "submit_button": "Register",
+      "has_account_prompt": "Already have an account?",
+      "login_link": "Login",
+      "errors": {
+        "user_taken": "This username is already taken.",
+        "user_invalid": "This username contains invalid characters.",
+        "user_exclusive": "This username is reserved.",
+        "password_weak": "Weak Password. Password rejected by server please choosing more strong Password.",
+        "password_short": "Short Password. Password rejected by server please choosing more long Password.",
+        "rate_limited": "Failed to register. Your register request has been rate-limited by server, Please try after some time.",
+        "forbidden": "Failed to register. The homeserver does not permit registration.",
+        "invalid_request": "Failed to register. Invalid request.",
+        "unknown": "Failed to register. Unknown Reason."
+      }
+    },
+    "reset_password": {
+      "title": "Reset Password",
+      "homeserver_notice_prefix": "Homeserver",
+      "homeserver_notice_suffix": "will send you an email to let you reset your password.",
+      "email_label": "Email",
+      "new_password_label": "New Password",
+      "confirm_password_label": "Confirm Password",
+      "submit_button": "Reset Password",
+      "success_message": "Password has been reset successfully. Please login with your new password.",
+      "login_button": "Login",
+      "remember_password_prompt": "Remember your password?",
+      "login_link": "Login",
+      "errors": {
+        "failed_to_reset": "Failed to reset password."
+      }
+    }
   }
 }

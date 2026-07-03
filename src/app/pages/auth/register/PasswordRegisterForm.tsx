@@ -20,6 +20,7 @@ import {
   UIAFlow,
   createClient,
 } from 'matrix-js-sdk';
+import { useTranslation } from 'react-i18next';
 import { PasswordInput } from '../../../components/password-input';
 import {
   getLoginTermUrl,
@@ -184,6 +185,7 @@ export function PasswordRegisterForm({
   defaultEmail,
   defaultRegisterToken,
 }: PasswordRegisterFormProps) {
+  const { t } = useTranslation();
   const serverDiscovery = useAutoDiscoveryInfo();
   const baseUrl = serverDiscovery['m.homeserver'].base_url;
   const mx = useMemo(() => createClient({ baseUrl }), [baseUrl]);
@@ -259,7 +261,7 @@ export function PasswordRegisterForm({
       <Box as="form" onSubmit={handleSubmit} direction="Inherit" gap="400">
         <Box direction="Column" gap="100">
           <Text as="label" size="L400" priority="300">
-            Username
+            {t('auth.register.username_label')}
           </Text>
           <Input
             variant="Background"
@@ -270,13 +272,13 @@ export function PasswordRegisterForm({
             required
           />
           {registerError?.errcode === RegisterError.UserTaken && (
-            <FieldError message="This username is already taken." />
+            <FieldError message={t('auth.register.errors.user_taken')} />
           )}
           {registerError?.errcode === RegisterError.UserInvalid && (
-            <FieldError message="This username contains invalid characters." />
+            <FieldError message={t('auth.register.errors.user_invalid')} />
           )}
           {registerError?.errcode === RegisterError.UserExclusive && (
-            <FieldError message="This username is reserved." />
+            <FieldError message={t('auth.register.errors.user_exclusive')} />
           )}
         </Box>
         <ConfirmPasswordMatch initialValue>
@@ -284,7 +286,7 @@ export function PasswordRegisterForm({
             <>
               <Box direction="Column" gap="100">
                 <Text as="label" size="L400" priority="300">
-                  Password
+                  {t('auth.register.password_label')}
                 </Text>
                 <PasswordInput
                   ref={passRef}
@@ -297,24 +299,18 @@ export function PasswordRegisterForm({
                 />
                 {registerError?.errcode === RegisterError.PasswordWeak && (
                   <FieldError
-                    message={
-                      registerError.data.error ??
-                      'Weak Password. Password rejected by server please choosing more strong Password.'
-                    }
+                    message={registerError.data.error ?? t('auth.register.errors.password_weak')}
                   />
                 )}
                 {registerError?.errcode === RegisterError.PasswordShort && (
                   <FieldError
-                    message={
-                      registerError.data.error ??
-                      'Short Password. Password rejected by server please choosing more long Password.'
-                    }
+                    message={registerError.data.error ?? t('auth.register.errors.password_short')}
                   />
                 )}
               </Box>
               <Box direction="Column" gap="100">
                 <Text as="label" size="L400" priority="300">
-                  Confirm Password
+                  {t('auth.register.confirm_password_label')}
                 </Text>
                 <PasswordInput
                   ref={confPassRef}
@@ -334,8 +330,8 @@ export function PasswordRegisterForm({
           <Box direction="Column" gap="100">
             <Text as="label" size="L400" priority="300">
               {requiredStageInFlows(uiaFlows, AuthType.RegistrationToken)
-                ? 'Registration Token'
-                : 'Registration Token (Optional)'}
+                ? t('auth.register.registration_token_label')
+                : t('auth.register.registration_token_optional_label')}
             </Text>
             <Input
               variant="Background"
@@ -350,7 +346,9 @@ export function PasswordRegisterForm({
         {hasStageInFlows(uiaFlows, AuthType.Email) && (
           <Box direction="Column" gap="100">
             <Text as="label" size="L400" priority="300">
-              {requiredStageInFlows(uiaFlows, AuthType.Email) ? 'Email' : 'Email (Optional)'}
+              {requiredStageInFlows(uiaFlows, AuthType.Email)
+                ? t('auth.register.email_label')
+                : t('auth.register.email_optional_label')}
             </Text>
             <Input
               variant="Background"
@@ -368,30 +366,32 @@ export function PasswordRegisterForm({
           <Box alignItems="Center" gap="200">
             <Checkbox name="termsInput" size="300" variant="Primary" required />
             <Text size="T300">
-              I accept server{' '}
+              {t('auth.register.accept_terms_prefix')}{' '}
               <a href={termUrl} target="_blank" rel="noreferrer">
-                Terms and Conditions
+                {t('auth.register.terms_and_conditions')}
               </a>
               .
             </Text>
           </Box>
         )}
         {registerError?.errcode === RegisterError.RateLimited && (
-          <FieldError message="Failed to register. Your register request has been rate-limited by server, Please try after some time." />
+          <FieldError message={t('auth.register.errors.rate_limited')} />
         )}
         {registerError?.errcode === RegisterError.Forbidden && (
-          <FieldError message="Failed to register. The homeserver does not permit registration." />
+          <FieldError message={t('auth.register.errors.forbidden')} />
         )}
         {registerError?.errcode === RegisterError.InvalidRequest && (
-          <FieldError message="Failed to register. Invalid request." />
+          <FieldError message={t('auth.register.errors.invalid_request')} />
         )}
         {registerError?.errcode === RegisterError.Unknown && (
-          <FieldError message={registerError.data.error ?? 'Failed to register. Unknown Reason.'} />
+          <FieldError
+            message={registerError.data.error ?? t('auth.register.errors.unknown')}
+          />
         )}
         <span data-spacing-node />
         <Button variant="Primary" size="500" type="submit">
           <Text as="span" size="B500">
-            Register
+            {t('auth.register.submit_button')}
           </Text>
         </Button>
       </Box>

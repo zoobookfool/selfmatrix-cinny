@@ -30,5 +30,101 @@
       "existing_label": "既存のチャンネル",
       "add_label": "チャンネルを追加"
     }
+  },
+  "auth": {
+    "common": {
+      "or_divider": "または",
+      "about": "About",
+      "powered_by_matrix": "Powered by Matrix",
+      "homeserver": "ホームサーバー"
+    },
+    "server_picker": {
+      "homeserver_list": "ホームサーバー一覧"
+    },
+    "sso": {
+      "continue_with": "{{provider}} で続ける",
+      "continue_with_sso": "SSO で続ける"
+    },
+    "layout": {
+      "looking_for_homeserver": "ホームサーバーを検索しています...",
+      "failed_to_find_homeserver": "ホームサーバーが見つかりませんでした。",
+      "failed_to_connect_unusable": "接続に失敗しました。{{host}} で見つかったホームサーバー設定は利用できないようです。",
+      "failed_to_connect_invalid_base_url": "接続に失敗しました。ホームサーバー設定の base_url が無効なようです。",
+      "connecting_to": "{{url}} に接続しています",
+      "failed_to_connect_unavailable": "接続に失敗しました。ホームサーバーが現在利用できないか、存在しません。",
+      "loading_auth_flow": "認証フローを読み込んでいます...",
+      "failed_to_get_auth_flow": "認証フロー情報の取得に失敗しました。"
+    },
+    "login": {
+      "title": "ログイン",
+      "token_login_title": "トークンログイン",
+      "hint_title": "ヒント",
+      "hint_username_label": "ユーザー名:",
+      "hint_matrix_id_label": "Matrix ID:",
+      "hint_email_label": "メールアドレス:",
+      "username_label": "ユーザー名",
+      "password_label": "パスワード",
+      "forgot_password": "パスワードをお忘れですか?",
+      "submit_button": "ログイン",
+      "unsupported_login_method": "このクライアントは \"{{server}}\" ホームサーバーでのログインに対応していません。パスワードおよび SSO ログイン方式が見つかりませんでした。",
+      "no_account_prompt": "アカウントをお持ちでないですか?",
+      "register_link": "登録",
+      "errors": {
+        "server_not_allowed": "カスタムサーバーでのログインはこのクライアントでは許可されていません。",
+        "invalid_server": "Matrix ID のサーバーが見つかりませんでした。",
+        "invalid_credentials": "ユーザー名またはパスワードが正しくありません。",
+        "invalid_token": "無効なログイントークンです。",
+        "user_deactivated": "このアカウントは無効化されています。",
+        "invalid_request": "ログインに失敗しました。リクエストデータの一部が無効です。",
+        "rate_limited": "ログインに失敗しました。サーバーによりリクエストがレート制限されています。しばらくしてから再度お試しください。",
+        "unknown": "ログインに失敗しました。原因不明のエラーです。"
+      }
+    },
+    "register": {
+      "title": "登録",
+      "registration_disabled": "このホームサーバーでは登録が無効化されています。",
+      "rate_limited": "レート制限されています! しばらくしてから再度お試しください。",
+      "invalid_request": "不正なリクエストです! 登録オプションの取得に失敗しました。",
+      "unsupported_registration": "このアプリケーションはこのホームサーバーでの登録に対応していません。",
+      "username_label": "ユーザー名",
+      "password_label": "パスワード",
+      "confirm_password_label": "パスワード(確認)",
+      "registration_token_label": "登録トークン",
+      "registration_token_optional_label": "登録トークン(任意)",
+      "email_label": "メールアドレス",
+      "email_optional_label": "メールアドレス(任意)",
+      "accept_terms_prefix": "サーバーの",
+      "terms_and_conditions": "利用規約",
+      "submit_button": "登録",
+      "has_account_prompt": "すでにアカウントをお持ちですか?",
+      "login_link": "ログイン",
+      "errors": {
+        "user_taken": "このユーザー名はすでに使用されています。",
+        "user_invalid": "このユーザー名には無効な文字が含まれています。",
+        "user_exclusive": "このユーザー名は予約されています。",
+        "password_weak": "パスワードが脆弱です。サーバーによって拒否されました。より強力なパスワードを選択してください。",
+        "password_short": "パスワードが短すぎます。サーバーによって拒否されました。より長いパスワードを選択してください。",
+        "rate_limited": "登録に失敗しました。サーバーによりリクエストがレート制限されています。しばらくしてから再度お試しください。",
+        "forbidden": "登録に失敗しました。このホームサーバーでは登録が許可されていません。",
+        "invalid_request": "登録に失敗しました。不正なリクエストです。",
+        "unknown": "登録に失敗しました。原因不明のエラーです。"
+      }
+    },
+    "reset_password": {
+      "title": "パスワードリセット",
+      "homeserver_notice_prefix": "ホームサーバー",
+      "homeserver_notice_suffix": "がパスワードリセット用のメールを送信します。",
+      "email_label": "メールアドレス",
+      "new_password_label": "新しいパスワード",
+      "confirm_password_label": "パスワード(確認)",
+      "submit_button": "パスワードをリセット",
+      "success_message": "パスワードのリセットに成功しました。新しいパスワードでログインしてください。",
+      "login_button": "ログイン",
+      "remember_password_prompt": "パスワードを思い出しましたか?",
+      "login_link": "ログイン",
+      "errors": {
+        "failed_to_reset": "パスワードのリセットに失敗しました。"
+      }
+    }
   }
 }

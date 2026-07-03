@@ -16,6 +16,7 @@ import {
   WidgetDriver,
 } from 'matrix-widget-api';
 import { CallWidgetDriver } from './CallWidgetDriver';
+import i18n from '../../i18n';
 import { trimTrailingSlash } from '../../utils/common';
 import {
   ElementCallIntent,
@@ -104,7 +105,8 @@ export class CallEmbed {
       appPrompt: 'false',
       hideVideoButton: 'true',
       perParticipantE2EE: room.hasEncryptionStateEvent().toString(),
-      lang: 'en-EN',
+      // SelfMatrix: 通話 UI の言語を cinny の選択言語に合わせる (EC の locales/<lng>/app.json が使われる)
+      lang: i18n.resolvedLanguage ?? 'en',
       theme: themeKind,
       header: 'none',
     });

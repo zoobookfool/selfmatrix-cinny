@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { Box, Button, Icon, Icons, Spinner, Text } from 'folds';
 import { SequenceCard } from '../../components/sequence-card';
 import * as css from './styles.css';
-import { ChatButton, ControlDivider, MicrophoneButton, SoundButton, VideoButton } from './Controls';
+import { ChatButton, ControlDivider, MicrophoneButton, SoundButton } from './Controls';
 import { useIsDirectRoom, useRoom } from '../../hooks/useRoom';
 import { useCallEmbed, useCallJoined, useCallStart } from '../../hooks/useCallEmbed';
 import { useCallPreferences } from '../../state/hooks/callPreferences';
@@ -23,12 +23,11 @@ export function PrescreenControls({ canJoin }: PrescreenControlsProps) {
 
   const disabled = inOtherCall || !canJoin;
 
-  const { microphone, video, sound, toggleMicrophone, toggleVideo, toggleSound } =
-    useCallPreferences();
-
+  // video/toggleVideo: 機能(発信時の初期カメラ状態)は温存するが、SelfMatrix は配信特化のため
+  // カメラ UI(VideoButton)は表示しない
+  const { microphone, video, sound, toggleMicrophone, toggleSound } = useCallPreferences();
 
   const handleMicrophoneToggle = useCallback(async () => toggleMicrophone(), [toggleMicrophone]);
-  const handleVideoToggle = useCallback(async () => toggleVideo(), [toggleVideo]);
 
   return (
     <SequenceCard
@@ -46,7 +45,7 @@ export function PrescreenControls({ canJoin }: PrescreenControlsProps) {
       </Box>
       <ControlDivider />
       <Box shrink="No" alignItems="Inherit" justifyContent="SpaceBetween" gap="200">
-        <VideoButton enabled={video} onToggle={handleVideoToggle} />
+        {/* SelfMatrix: 配信特化のためカメラ UI は表示しない (機能は EC 側に温存) */}
         <ChatButton />
       </Box>
       <Box grow="Yes" direction="Column">

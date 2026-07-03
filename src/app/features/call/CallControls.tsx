@@ -23,7 +23,6 @@ import {
   MicrophoneButton,
   ScreenShareButton,
   SoundButton,
-  VideoButton,
 } from './Controls';
 import { CallEmbed, useCallControlState } from '../../plugins/call';
 import { useResizeObserver } from '../../hooks/useResizeObserver';
@@ -46,9 +45,8 @@ export function CallControls({ callEmbed }: CallControlsProps) {
     useCallback(() => controlRef.current, [])
   );
 
-  const { microphone, video, sound, screenshare, spotlight } = useCallControlState(
-    callEmbed.control
-  );
+  // SelfMatrix: 配信特化のためカメラ UI は表示しない (機能は EC 側に温存)
+  const { microphone, sound, screenshare, spotlight } = useCallControlState(callEmbed.control);
 
   const [cords, setCords] = useState<RectCords>();
 
@@ -71,8 +69,10 @@ export function CallControls({ callEmbed }: CallControlsProps) {
     setCords(undefined);
   };
 
-  const handleMicrophoneToggle = useCallback(() => callEmbed.control.toggleMicrophone(), [callEmbed]);
-  const handleVideoToggle = useCallback(() => callEmbed.control.toggleVideo(), [callEmbed]);
+  const handleMicrophoneToggle = useCallback(
+    () => callEmbed.control.toggleMicrophone(),
+    [callEmbed]
+  );
 
   const [hangupState, hangup] = useAsyncCallback(
     useCallback(() => callEmbed.hangup(), [callEmbed])
@@ -97,15 +97,12 @@ export function CallControls({ callEmbed }: CallControlsProps) {
       >
         <Box alignItems="Center" gap="Inherit" grow="Yes" direction={compact ? 'Column' : 'Row'}>
           <Box shrink="No" alignItems="Inherit" justifyContent="Inherit" gap="200">
-            <MicrophoneButton
-              enabled={microphone}
-              onToggle={handleMicrophoneToggle}
-            />
+            <MicrophoneButton enabled={microphone} onToggle={handleMicrophoneToggle} />
             <SoundButton enabled={sound} onToggle={() => callEmbed.control.toggleSound()} />
           </Box>
           {!compact && <ControlDivider />}
           <Box shrink="No" alignItems="Inherit" justifyContent="Inherit" gap="200">
-            <VideoButton enabled={video} onToggle={handleVideoToggle} />
+            {/* SelfMatrix: 配信特化のためカメラ UI は表示しない (機能は EC 側に温存) */}
             <ScreenShareButton
               enabled={screenshare}
               onToggle={() => callEmbed.control.toggleScreenshare()}

@@ -55,7 +55,7 @@ import { useNavToActivePathMapper } from '../../../hooks/useNavToActivePathMappe
 import { useRoomName } from '../../../hooks/useRoomMeta';
 import { useSpaceJoinedHierarchy } from '../../../hooks/useSpaceHierarchy';
 import { allRoomsAtom } from '../../../state/room-list/roomList';
-import { PageNav, PageNavContent, PageNavHeader } from '../../../components/page';
+import { PageNav, PageNavContent, PageNavHeader, useChipNavLayout } from '../../../components/page';
 import { usePowerLevels } from '../../../hooks/usePowerLevels';
 import { useRecursiveChildScopeFactory, useSpaceChildren } from '../../../state/hooks/roomList';
 import { roomToParentsAtom } from '../../../state/room/roomToParents';
@@ -395,6 +395,9 @@ export function Space() {
   const callEmbed = useCallEmbed();
 
   const [closedCategories, setClosedCategories] = useAtom(useClosedNavCategoriesAtom());
+  // Stage 2: chip-row nav when the shell docks the channel list top/bottom.
+  // Space is one of the two routes (with Home) that implement it.
+  const chipNav = useChipNavLayout(true);
 
   const getRoom = useCallback(
     (rId: string): Room | undefined => {
@@ -429,8 +432,9 @@ export function Space() {
   const virtualizer = useVirtualizer({
     count: hierarchy.length,
     getScrollElement: () => scrollRef.current,
-    estimateSize: () => 0,
+    estimateSize: () => (chipNav ? 180 : 0),
     overscan: 10,
+    horizontal: chipNav,
   });
 
   const handleCategoryClick = useCategoryHandler(setClosedCategories, (categoryId) =>
@@ -441,10 +445,10 @@ export function Space() {
     getSpaceRoomPath(spaceIdOrAlias, getCanonicalAliasOrRoomId(mx, roomId));
 
   return (
-    <PageNav>
+    <PageNav chipNavSupported>
       <SpaceHeader />
-      <PageNavContent scrollRef={scrollRef}>
-        <Box direction="Column" gap="300">
+      <PageNavContent scrollRef={scrollRef} chipNavSupported>
+        <Box direction={chipNav ? 'Row' : 'Column'} gap="300">
           {tombstoneEvent && (
             <SpaceTombstone
               roomId={space.roomId}
@@ -452,7 +456,7 @@ export function Space() {
             />
           )}
           <NavCategory>
-            <NavItem variant="Background" radii="400" aria-selected={lobbySelected}>
+            <NavItem variant="Background" radii="400" chip={chipNav} aria-selected={lobbySelected}>
               <NavLink to={getSpaceLobbyPath(getCanonicalAliasOrRoomId(mx, space.roomId))}>
                 <NavItemContent>
                   <Box as="span" grow="Yes" alignItems="Center" gap="200">
@@ -468,7 +472,7 @@ export function Space() {
                 </NavItemContent>
               </NavLink>
             </NavItem>
-            <NavItem variant="Background" radii="400" aria-selected={searchSelected}>
+            <NavItem variant="Background" radii="400" chip={chipNav} aria-selected={searchSelected}>
               <NavLink to={getSpaceSearchPath(getCanonicalAliasOrRoomId(mx, space.roomId))}>
                 <NavItemContent>
                   <Box as="span" grow="Yes" alignItems="Center" gap="200">
@@ -486,10 +490,11 @@ export function Space() {
             </NavItem>
           </NavCategory>
           <NavCategory
-            style={{
-              height: virtualizer.getTotalSize(),
-              position: 'relative',
-            }}
+            style={
+              chipNav
+                ? { width: virtualizer.getTotalSize(), height: '100%', position: 'relative' }
+                : { height: virtualizer.getTotalSize(), position: 'relative' }
+            }
           >
             {virtualizer.getVirtualItems().map((vItem) => {
               const { roomId } = hierarchy[vItem.index] ?? {};
@@ -498,6 +503,22 @@ export function Space() {
 
               if (room.isSpaceRoom()) {
                 const categoryId = makeNavCategoryId(space.roomId, roomId);
+
+                // Known trade-off (Stage 2): category headers don't have a
+                // chip-row equivalent yet, so they're collapsed to a
+                // zero-size measured tile instead of a visible row.
+                if (chipNav) {
+                  return (
+                    <VirtualTile
+                      virtualItem={vItem}
+                      key={vItem.index}
+                      horizontal
+                      ref={virtualizer.measureElement}
+                    >
+                      <div style={{ width: 0, height: '100%' }} />
+                    </VirtualTile>
+                  );
+                }
 
                 return (
                   <VirtualTile
@@ -521,12 +542,18 @@ export function Space() {
               }
 
               return (
-                <VirtualTile virtualItem={vItem} key={vItem.index} ref={virtualizer.measureElement}>
+                <VirtualTile
+                  virtualItem={vItem}
+                  key={vItem.index}
+                  horizontal={chipNav}
+                  ref={virtualizer.measureElement}
+                >
                   <RoomNavItem
                     room={room}
                     selected={selectedRoomId === roomId}
                     showAvatar={mDirects.has(roomId)}
                     direct={mDirects.has(roomId)}
+                    chip={chipNav}
                     linkPath={getToLink(roomId)}
                     notificationMode={getRoomNotificationMode(notificationPreferences, room.roomId)}
                   />

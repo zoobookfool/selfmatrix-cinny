@@ -95,6 +95,19 @@ export const NavItem = recipe({
       Critical: getVariant('Critical'),
     },
     radii: RadiiVariant,
+    /**
+     * Chip-row variant for the Stage 2 top/bottom channel-list docking.
+     * `NavItemBase` defaults to `width: 100%`, which is correct for a
+     * vertical list but wrong for a horizontally scrolling chip row: here
+     * width is auto (capped) and content truncates instead of wrapping.
+     */
+    chip: {
+      true: {
+        width: 'auto',
+        maxWidth: toRem(220),
+        flexShrink: 0,
+      },
+    },
   },
   defaultVariants: {
     variant: 'Surface',

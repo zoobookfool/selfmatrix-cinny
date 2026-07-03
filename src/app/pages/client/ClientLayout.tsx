@@ -1,20 +1,33 @@
-import React, { ReactNode } from 'react';
+import React, { ComponentProps, ReactNode } from 'react';
 import { Box } from 'folds';
 import { useAtomValue } from 'jotai';
-import { getSidebarPosition, shellLayoutAtom } from '../../state/shellLayout';
+import {
+  getSidebarPosition,
+  isHorizontalDockPosition,
+  shellLayoutAtom,
+} from '../../state/shellLayout';
+import { ScreenSize, useScreenSizeContext } from '../../hooks/useScreenSize';
 
 type ClientLayoutProps = {
   nav: ReactNode;
   children: ReactNode;
 };
 export function ClientLayout({ nav, children }: ClientLayoutProps) {
+  const screenSize = useScreenSizeContext();
   const shellLayout = useAtomValue(shellLayoutAtom);
   const sidebarPosition = getSidebarPosition(shellLayout);
-  // Stage 1 only implements left/right docking. top/bottom fall back to left.
-  const reverse = sidebarPosition === 'right';
+  // Mobile keeps its own dedicated layout regardless of this setting.
+  const horizontal = screenSize !== ScreenSize.Mobile && isHorizontalDockPosition(sidebarPosition);
+
+  let direction: ComponentProps<typeof Box>['direction'];
+  if (horizontal) {
+    direction = sidebarPosition === 'bottom' ? 'ColumnReverse' : 'Column';
+  } else {
+    direction = sidebarPosition === 'right' ? 'RowReverse' : undefined;
+  }
 
   return (
-    <Box grow="Yes" direction={reverse ? 'RowReverse' : undefined}>
+    <Box grow="Yes" direction={direction}>
       <Box shrink="No">{nav}</Box>
       <Box grow="Yes">{children}</Box>
     </Box>

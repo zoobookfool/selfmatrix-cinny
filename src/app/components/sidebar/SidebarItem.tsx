@@ -3,16 +3,25 @@ import { as, Avatar, Text, Tooltip, TooltipProvider, toRem } from 'folds';
 import React, { ComponentProps, ReactNode, RefCallback } from 'react';
 import { useAtomValue } from 'jotai';
 import * as css from './Sidebar.css';
-import { getSidebarPosition, shellLayoutAtom } from '../../state/shellLayout';
+import {
+  getSidebarPosition,
+  isHorizontalDockPosition,
+  shellLayoutAtom,
+} from '../../state/shellLayout';
 
 export const SidebarItem = as<'div', css.SidebarItemVariants>(
-  ({ as: AsSidebarAvatarBox = 'div', className, active, ...props }, ref) => (
-    <AsSidebarAvatarBox
-      className={classNames(css.SidebarItem({ active }), className)}
-      {...props}
-      ref={ref}
-    />
-  )
+  ({ as: AsSidebarAvatarBox = 'div', className, active, ...props }, ref) => {
+    const shellLayout = useAtomValue(shellLayoutAtom);
+    const horizontal = isHorizontalDockPosition(getSidebarPosition(shellLayout));
+
+    return (
+      <AsSidebarAvatarBox
+        className={classNames(css.SidebarItem({ active, horizontal }), className)}
+        {...props}
+        ref={ref}
+      />
+    );
+  }
 );
 
 export const SidebarItemBadge = as<'div', css.SidebarItemBadgeVariants>(
@@ -25,6 +34,16 @@ export const SidebarItemBadge = as<'div', css.SidebarItemBadgeVariants>(
   )
 );
 
+const SIDEBAR_TOOLTIP_POSITION: Record<
+  ReturnType<typeof getSidebarPosition>,
+  'Left' | 'Right' | 'Top' | 'Bottom'
+> = {
+  left: 'Right',
+  right: 'Left',
+  top: 'Bottom',
+  bottom: 'Top',
+};
+
 export function SidebarItemTooltip({
   tooltip,
   children,
@@ -34,8 +53,7 @@ export function SidebarItemTooltip({
 }) {
   const shellLayout = useAtomValue(shellLayoutAtom);
   const sidebarPosition = getSidebarPosition(shellLayout);
-  // Stage 1 only implements left/right docking. top/bottom fall back to left.
-  const tooltipPosition = sidebarPosition === 'right' ? 'Left' : 'Right';
+  const tooltipPosition = SIDEBAR_TOOLTIP_POSITION[sidebarPosition];
 
   if (!tooltip) {
     return children(() => undefined);

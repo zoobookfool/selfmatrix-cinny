@@ -245,6 +245,11 @@ type RoomNavItemProps = {
   notificationMode?: RoomNotificationMode;
   showAvatar?: boolean;
   direct?: boolean;
+  /**
+   * Renders as a chip-row item for the Stage 2 top/bottom channel-list
+   * docking (used by Home/Space when the nav is laid out horizontally).
+   */
+  chip?: boolean;
 };
 export function RoomNavItem({
   room,
@@ -253,6 +258,7 @@ export function RoomNavItem({
   direct,
   notificationMode,
   linkPath,
+  chip,
 }: RoomNavItemProps) {
   const mx = useMatrixClient();
   const useAuthentication = useMediaAuthentication();
@@ -320,6 +326,7 @@ export function RoomNavItem({
     <NavItem
       variant="Background"
       radii="400"
+      chip={chip}
       highlight={unread !== undefined}
       aria-selected={selected}
       data-hover={!!menuAnchor}

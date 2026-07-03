@@ -51,7 +51,7 @@ import { makeNavCategoryId } from '../../../state/closedNavCategories';
 import { roomToUnreadAtom } from '../../../state/room/roomToUnread';
 import { useCategoryHandler } from '../../../hooks/useCategoryHandler';
 import { useNavToActivePathMapper } from '../../../hooks/useNavToActivePathMapper';
-import { PageNav, PageNavHeader, PageNavContent } from '../../../components/page';
+import { PageNav, PageNavHeader, PageNavContent, useChipNavLayout } from '../../../components/page';
 import { useRoomsUnread } from '../../../state/hooks/unread';
 import { markAsRead } from '../../../utils/notifications';
 import { useClosedNavCategoriesAtom } from '../../../state/hooks/closedNavCategories';
@@ -213,6 +213,9 @@ export function Home() {
   const searchSelected = useHomeSearchSelected();
   const noRoomToDisplay = rooms.length === 0;
   const [closedCategories, setClosedCategories] = useAtom(useClosedNavCategoriesAtom());
+  // Stage 2: chip-row nav when the shell docks the channel list top/bottom.
+  // Home is one of the two routes (with Space) that implement it.
+  const chipNav = useChipNavLayout(true);
 
   const sortedRooms = useMemo(() => {
     const items = Array.from(rooms).sort(
@@ -229,8 +232,9 @@ export function Home() {
   const virtualizer = useVirtualizer({
     count: sortedRooms.length,
     getScrollElement: () => scrollRef.current,
-    estimateSize: () => 38,
+    estimateSize: () => (chipNav ? 180 : 38),
     overscan: 10,
+    horizontal: chipNav,
   });
 
   const handleCategoryClick = useCategoryHandler(setClosedCategories, (categoryId) =>
@@ -238,15 +242,20 @@ export function Home() {
   );
 
   return (
-    <PageNav>
+    <PageNav chipNavSupported>
       <HomeHeader />
       {noRoomToDisplay ? (
         <HomeEmpty />
       ) : (
-        <PageNavContent scrollRef={scrollRef}>
-          <Box direction="Column" gap="300">
+        <PageNavContent scrollRef={scrollRef} chipNavSupported>
+          <Box direction={chipNav ? 'Row' : 'Column'} gap="300">
             <NavCategory>
-              <NavItem variant="Background" radii="400" aria-selected={createRoomSelected}>
+              <NavItem
+                variant="Background"
+                radii="400"
+                chip={chipNav}
+                aria-selected={createRoomSelected}
+              >
                 <NavButton onClick={() => navigate(getHomeCreatePath())}>
                   <NavItemContent>
                     <Box as="span" grow="Yes" alignItems="Center" gap="200">
@@ -265,7 +274,7 @@ export function Home() {
               <UseStateProvider initial={false}>
                 {(open, setOpen) => (
                   <>
-                    <NavItem variant="Background" radii="400">
+                    <NavItem variant="Background" radii="400" chip={chipNav}>
                       <NavButton onClick={() => setOpen(true)}>
                         <NavItemContent>
                           <Box as="span" grow="Yes" alignItems="Center" gap="200">
@@ -300,7 +309,12 @@ export function Home() {
                   </>
                 )}
               </UseStateProvider>
-              <NavItem variant="Background" radii="400" aria-selected={searchSelected}>
+              <NavItem
+                variant="Background"
+                radii="400"
+                chip={chipNav}
+                aria-selected={searchSelected}
+              >
                 <NavLink to={getHomeSearchPath()}>
                   <NavItemContent>
                     <Box as="span" grow="Yes" alignItems="Center" gap="200">
@@ -318,20 +332,23 @@ export function Home() {
               </NavItem>
             </NavCategory>
             <NavCategory>
-              <NavCategoryHeader>
-                <RoomNavCategoryButton
-                  closed={closedCategories.has(DEFAULT_CATEGORY_ID)}
-                  data-category-id={DEFAULT_CATEGORY_ID}
-                  onClick={handleCategoryClick}
-                >
-                  Rooms
-                </RoomNavCategoryButton>
-              </NavCategoryHeader>
+              {!chipNav && (
+                <NavCategoryHeader>
+                  <RoomNavCategoryButton
+                    closed={closedCategories.has(DEFAULT_CATEGORY_ID)}
+                    data-category-id={DEFAULT_CATEGORY_ID}
+                    onClick={handleCategoryClick}
+                  >
+                    Rooms
+                  </RoomNavCategoryButton>
+                </NavCategoryHeader>
+              )}
               <div
-                style={{
-                  position: 'relative',
-                  height: virtualizer.getTotalSize(),
-                }}
+                style={
+                  chipNav
+                    ? { position: 'relative', width: virtualizer.getTotalSize(), height: '100%' }
+                    : { position: 'relative', height: virtualizer.getTotalSize() }
+                }
               >
                 {virtualizer.getVirtualItems().map((vItem) => {
                   const roomId = sortedRooms[vItem.index];
@@ -343,11 +360,13 @@ export function Home() {
                     <VirtualTile
                       virtualItem={vItem}
                       key={vItem.index}
+                      horizontal={chipNav}
                       ref={virtualizer.measureElement}
                     >
                       <RoomNavItem
                         room={room}
                         selected={selected}
+                        chip={chipNav}
                         linkPath={getHomeRoomPath(getCanonicalAliasOrRoomId(mx, roomId))}
                         notificationMode={getRoomNotificationMode(
                           notificationPreferences,

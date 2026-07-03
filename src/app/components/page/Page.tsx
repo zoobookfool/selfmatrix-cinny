@@ -5,7 +5,7 @@ import { useAtomValue } from 'jotai';
 import { ContainerColor } from '../../styles/ContainerColor.css';
 import * as css from './style.css';
 import { ScreenSize, useScreenSizeContext } from '../../hooks/useScreenSize';
-import { getNavPosition, shellLayoutAtom } from '../../state/shellLayout';
+import { getNavPosition, isHorizontalDockPosition, shellLayoutAtom } from '../../state/shellLayout';
 
 type PageRootProps = {
   nav: ReactNode;
@@ -17,25 +17,49 @@ type PageRootProps = {
    * SpaceSettings, RoomSettings) so those internal layouts stay unaffected.
    */
   reverse?: boolean;
+  /**
+   * Stacks nav/content vertically (Column/ColumnReverse) instead of the
+   * default row layout. Used for the shell's top/bottom channel-list docking
+   * (Stage 2). The separator direction flips to Horizontal to match.
+   */
+  stackDirection?: 'Column' | 'ColumnReverse';
 };
 
-export function PageRoot({ nav, children, reverse }: PageRootProps) {
+export function PageRoot({ nav, children, reverse, stackDirection }: PageRootProps) {
   const screenSize = useScreenSizeContext();
 
+  let direction: ComponentProps<typeof Box>['direction'];
+  if (stackDirection) {
+    direction = stackDirection;
+  } else if (reverse) {
+    direction = 'RowReverse';
+  }
+
   return (
-    <Box
-      grow="Yes"
-      direction={reverse ? 'RowReverse' : undefined}
-      className={ContainerColor({ variant: 'Background' })}
-    >
+    <Box grow="Yes" direction={direction} className={ContainerColor({ variant: 'Background' })}>
       {nav}
       {screenSize !== ScreenSize.Mobile && (
-        <Line variant="Background" size="300" direction="Vertical" />
+        <Line
+          variant="Background"
+          size="300"
+          direction={stackDirection ? 'Horizontal' : 'Vertical'}
+        />
       )}
       {children}
     </Box>
   );
 }
+
+type MainPageRootProps = Omit<PageRootProps, 'reverse' | 'stackDirection'> & {
+  /**
+   * Whether this route's nav renders a chip-row layout when the channel list
+   * is docked top/bottom (Stage 2). Only Home and Space implement chip nav
+   * so far; other routes (Direct/Explore/Inbox) pass this as false/omit it
+   * and fall back to the classic left-docked column nav so they don't break
+   * when the user picks a top/bottom setting.
+   */
+  chipNavSupported?: boolean;
+};
 
 /**
  * PageRoot variant for the main client routes (Home/Direct/Space/Explore/
@@ -43,10 +67,20 @@ export function PageRoot({ nav, children, reverse }: PageRootProps) {
  * PageRoot accordingly. Not used by Settings/SpaceSettings/RoomSettings,
  * which render PageRoot directly and are unaffected by this setting.
  */
-export function MainPageRoot({ nav, children }: Omit<PageRootProps, 'reverse'>) {
+export function MainPageRoot({ nav, children, chipNavSupported }: MainPageRootProps) {
   const shellLayout = useAtomValue(shellLayoutAtom);
   const navPosition = getNavPosition(shellLayout);
-  // Stage 1 only implements left/right docking. top/bottom fall back to left.
+
+  if (chipNavSupported && isHorizontalDockPosition(navPosition)) {
+    return (
+      <PageRoot nav={nav} stackDirection={navPosition === 'bottom' ? 'ColumnReverse' : 'Column'}>
+        {children}
+      </PageRoot>
+    );
+  }
+
+  // Routes without chip-nav support (or non-horizontal positions) keep the
+  // Stage 1 left/right row layout. top/bottom fall back to left here.
   const reverse = navPosition === 'right';
 
   return (
@@ -59,17 +93,41 @@ export function MainPageRoot({ nav, children }: Omit<PageRootProps, 'reverse'>) 
 type ClientDrawerLayoutProps = {
   children: ReactNode;
 };
-export function PageNav({ size, children }: ClientDrawerLayoutProps & css.PageNavVariants) {
+
+/**
+ * Whether the current route should render its channel-list nav as a
+ * horizontal chip row (Stage 2). `chipNavSupported` must be passed by the
+ * calling route (only Home and Space do so today); routes that don't pass it
+ * always get the classic column nav, even when the shell's nav position is
+ * top/bottom, so they don't break before their chip-nav layout exists.
+ * Also false on Mobile, which keeps its own dedicated layout regardless of
+ * this shell setting.
+ */
+export function useChipNavLayout(chipNavSupported?: boolean): boolean {
+  const screenSize = useScreenSizeContext();
+  const shellLayout = useAtomValue(shellLayoutAtom);
+  const navPosition = getNavPosition(shellLayout);
+  return (
+    !!chipNavSupported && screenSize !== ScreenSize.Mobile && isHorizontalDockPosition(navPosition)
+  );
+}
+
+export function PageNav({
+  size,
+  chipNavSupported,
+  children,
+}: ClientDrawerLayoutProps & css.PageNavVariants & { chipNavSupported?: boolean }) {
   const screenSize = useScreenSizeContext();
   const isMobile = screenSize === ScreenSize.Mobile;
+  const chipNav = useChipNavLayout(chipNavSupported);
 
   return (
     <Box
       grow={isMobile ? 'Yes' : undefined}
-      className={css.PageNav({ size })}
+      className={chipNav ? css.PageNavHorizontal : css.PageNav({ size })}
       shrink={isMobile ? 'Yes' : 'No'}
     >
-      <Box grow="Yes" direction="Column">
+      <Box grow="Yes" direction={chipNav ? 'Row' : 'Column'}>
         {children}
       </Box>
     </Box>
@@ -90,22 +148,28 @@ export const PageNavHeader = as<'header', css.PageNavHeaderVariants>(
 
 export function PageNavContent({
   scrollRef,
+  chipNavSupported,
   children,
 }: {
   children: ReactNode;
   scrollRef?: MutableRefObject<HTMLDivElement | null>;
+  chipNavSupported?: boolean;
 }) {
+  const chipNav = useChipNavLayout(chipNavSupported);
+
   return (
-    <Box grow="Yes" direction="Column">
+    <Box grow="Yes" direction={chipNav ? 'Row' : 'Column'}>
       <Scroll
         ref={scrollRef}
         variant="Background"
-        direction="Vertical"
+        direction={chipNav ? 'Horizontal' : 'Vertical'}
         size="300"
         hideTrack
         visibility="Hover"
       >
-        <div className={css.PageNavContent}>{children}</div>
+        <div className={chipNav ? css.PageNavContentHorizontal : css.PageNavContent}>
+          {children}
+        </div>
       </Scroll>
     </Box>
   );

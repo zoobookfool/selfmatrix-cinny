@@ -16,6 +16,26 @@ export const Sidebar = style([
   },
 ]);
 
+/**
+ * Horizontal variant of `Sidebar` used when the shell's server-list docking
+ * position is "top" or "bottom" (Stage 2). Swaps the fixed width/border-right
+ * for a fixed height/border-bottom and lays the icon column out as a row.
+ */
+export const SidebarHorizontal = style([
+  DefaultReset,
+  {
+    width: '100%',
+    height: toRem(66),
+    backgroundColor: color.Background.Container,
+    borderRight: 'none',
+    borderBottom: `${config.borderWidth.B300} solid ${color.Background.ContainerLine}`,
+
+    display: 'flex',
+    flexDirection: 'row',
+    color: color.Background.OnContainer,
+  },
+]);
+
 export const SidebarStack = style([
   DefaultReset,
   {
@@ -26,6 +46,23 @@ export const SidebarStack = style([
     alignItems: 'center',
     gap: config.space.S300,
     padding: `${config.space.S300} 0`,
+  },
+]);
+
+/**
+ * Horizontal variant of `SidebarStack` for top/bottom server-list docking
+ * (Stage 2). Rows of icons instead of a column.
+ */
+export const SidebarStackHorizontal = style([
+  DefaultReset,
+  {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: config.space.S300,
+    padding: `0 ${config.space.S300}`,
   },
 ]);
 
@@ -109,6 +146,28 @@ export const SidebarItem = recipe({
           },
           '&:hover::before': {
             width: toRem(3 + PUSH_X),
+          },
+        },
+      },
+    },
+    /**
+     * Stage 2: used when the sidebar is docked top/bottom. The active/hover
+     * indicator is a left-edge pseudo-element and the hover push is a
+     * horizontal translate, both of which read wrong in a row layout. Known
+     * trade-off: we simply suppress them rather than building a top/bottom
+     * equivalent indicator.
+     */
+    horizontal: {
+      true: {
+        selectors: {
+          '&:hover': {
+            transform: 'none',
+          },
+          '&::before': {
+            display: 'none',
+          },
+          '&:hover::before': {
+            display: 'none',
           },
         },
       },

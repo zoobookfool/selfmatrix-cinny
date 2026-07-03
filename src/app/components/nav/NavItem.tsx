@@ -9,16 +9,21 @@ export const NavItem = as<
   {
     highlight?: boolean;
   } & css.RoomSelectorVariants
->(({ as: AsNavItem = 'div', className, highlight, variant, radii, children, ...props }, ref) => (
-  <AsNavItem
-    className={classNames(css.NavItem({ variant, radii }), className)}
-    data-highlight={highlight}
-    {...props}
-    ref={ref}
-  >
-    {children}
-  </AsNavItem>
-));
+>(
+  (
+    { as: AsNavItem = 'div', className, highlight, variant, radii, chip, children, ...props },
+    ref
+  ) => (
+    <AsNavItem
+      className={classNames(css.NavItem({ variant, radii, chip }), className)}
+      data-highlight={highlight}
+      {...props}
+      ref={ref}
+    >
+      {children}
+    </AsNavItem>
+  )
+);
 
 export const NavLink = forwardRef<HTMLAnchorElement, ComponentProps<typeof Link>>(
   ({ className, ...props }, ref) => (

@@ -19,6 +19,25 @@ export const PageNav = recipe({
 });
 export type PageNavVariants = RecipeVariants<typeof PageNav>;
 
+/**
+ * Horizontal (chip-row) variant of `PageNav` for the Stage 2 top/bottom
+ * channel-list docking. Fixed height + full width instead of fixed width,
+ * since the chip row scrolls horizontally rather than the page scrolling
+ * vertically.
+ */
+export const PageNavHorizontal = style({
+  width: '100%',
+  height: toRem(64),
+});
+
+export const PageNavContentHorizontal = style({
+  height: '100%',
+  padding: config.space.S200,
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+});
+
 export const PageNavHeader = recipe({
   base: {
     padding: `0 ${config.space.S200} 0 ${config.space.S300}`,
@@ -110,7 +129,6 @@ export const PageHeroSection = style([
     margin: 'auto',
   },
 ]);
-
 
 export const PageContentCenter = style([
   DefaultReset,

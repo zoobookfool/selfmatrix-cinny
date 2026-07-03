@@ -374,6 +374,8 @@ const useDockPositionItems = (): DockPositionItem[] =>
     () => [
       { position: 'left', name: 'Left' },
       { position: 'right', name: 'Right' },
+      { position: 'top', name: 'Top' },
+      { position: 'bottom', name: 'Bottom' },
     ],
     []
   );

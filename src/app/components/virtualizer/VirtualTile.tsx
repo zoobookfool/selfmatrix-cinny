@@ -6,12 +6,18 @@ import * as css from './style.css';
 
 type VirtualTileProps = {
   virtualItem: VirtualItem;
+  /**
+   * Lays the tile out along the x-axis (`left`) instead of the y-axis
+   * (`top`). Used by chip-row nav layouts (Stage 2) whose virtualizer is
+   * configured with `horizontal: true`.
+   */
+  horizontal?: boolean;
 };
 export const VirtualTile = as<'div', VirtualTileProps>(
-  ({ className, virtualItem, style, ...props }, ref) => (
+  ({ className, virtualItem, horizontal, style, ...props }, ref) => (
     <div
-      className={classNames(css.VirtualTile, className)}
-      style={{ top: virtualItem.start, ...style }}
+      className={classNames(horizontal ? css.VirtualTileHorizontal : css.VirtualTile, className)}
+      style={{ [horizontal ? 'left' : 'top']: virtualItem.start, ...style }}
       data-index={virtualItem.index}
       {...props}
       ref={ref}

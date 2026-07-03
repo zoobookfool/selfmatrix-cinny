@@ -22,6 +22,9 @@ export const getSidebarPosition = (content?: ShellLayoutContent): ShellDockPosit
 export const getNavPosition = (content?: ShellLayoutContent): ShellDockPosition =>
   content?.navPosition ?? DEFAULT_SHELL_LAYOUT.navPosition;
 
+export const isHorizontalDockPosition = (position: ShellDockPosition): boolean =>
+  position === 'top' || position === 'bottom';
+
 export type ShellLayoutAction = {
   type: 'INITIALIZE' | 'UPDATE';
   content: ShellLayoutContent;

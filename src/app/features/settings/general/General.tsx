@@ -4,6 +4,7 @@ import React, {
   KeyboardEventHandler,
   MouseEventHandler,
   useEffect,
+  useMemo,
   useState,
 } from 'react';
 import dayjs from 'dayjs';
@@ -29,6 +30,7 @@ import {
 } from 'folds';
 import { isKeyHotkey } from 'is-hotkey';
 import FocusTrap from 'focus-trap-react';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { Page, PageContent, PageHeader } from '../../../components/page';
 import { SequenceCard } from '../../../components/sequence-card';
 import { useSetting } from '../../../state/hooks/settings';
@@ -36,6 +38,15 @@ import { DateFormat, MessageLayout, MessageSpacing, settingsAtom } from '../../.
 import { SettingTile } from '../../../components/setting-tile';
 import { KeySymbol } from '../../../utils/key-symbol';
 import { isMacOS } from '../../../utils/user-agent';
+import { useMatrixClient } from '../../../hooks/useMatrixClient';
+import { AccountDataEvent } from '../../../../types/matrix/accountData';
+import {
+  ShellDockPosition,
+  getNavPosition,
+  getSidebarPosition,
+  makeShellLayoutContent,
+  shellLayoutAtom,
+} from '../../../state/shellLayout';
 import {
   DarkTheme,
   LightTheme,
@@ -349,6 +360,135 @@ function Appearance() {
 
       <SequenceCard className={SequenceCardStyle} variant="SurfaceVariant" direction="Column">
         <SettingTile title="Page Zoom" after={<PageZoomInput />} />
+      </SequenceCard>
+    </Box>
+  );
+}
+
+type DockPositionItem = {
+  position: ShellDockPosition;
+  name: string;
+};
+const useDockPositionItems = (): DockPositionItem[] =>
+  useMemo(
+    () => [
+      { position: 'left', name: 'Left' },
+      { position: 'right', name: 'Right' },
+    ],
+    []
+  );
+
+type SelectDockPositionProps = {
+  value: ShellDockPosition;
+  onChange: (position: ShellDockPosition) => void;
+};
+function SelectDockPosition({ value, onChange }: SelectDockPositionProps) {
+  const [menuCords, setMenuCords] = useState<RectCords>();
+  const dockPositionItems = useDockPositionItems();
+
+  const handleMenu: MouseEventHandler<HTMLButtonElement> = (evt) => {
+    setMenuCords(evt.currentTarget.getBoundingClientRect());
+  };
+
+  const handleSelect = (position: ShellDockPosition) => {
+    onChange(position);
+    setMenuCords(undefined);
+  };
+
+  return (
+    <>
+      <Button
+        size="300"
+        variant="Secondary"
+        outlined
+        fill="Soft"
+        radii="300"
+        after={<Icon size="300" src={Icons.ChevronBottom} />}
+        onClick={handleMenu}
+      >
+        <Text size="T300">
+          {dockPositionItems.find((i) => i.position === value)?.name ?? value}
+        </Text>
+      </Button>
+      <PopOut
+        anchor={menuCords}
+        offset={5}
+        position="Bottom"
+        align="End"
+        content={
+          <FocusTrap
+            focusTrapOptions={{
+              initialFocus: false,
+              onDeactivate: () => setMenuCords(undefined),
+              clickOutsideDeactivates: true,
+              isKeyForward: (evt: KeyboardEvent) =>
+                evt.key === 'ArrowDown' || evt.key === 'ArrowRight',
+              isKeyBackward: (evt: KeyboardEvent) =>
+                evt.key === 'ArrowUp' || evt.key === 'ArrowLeft',
+              escapeDeactivates: stopPropagation,
+            }}
+          >
+            <Menu>
+              <Box direction="Column" gap="100" style={{ padding: config.space.S100 }}>
+                {dockPositionItems.map((item) => (
+                  <MenuItem
+                    key={item.position}
+                    size="300"
+                    variant={value === item.position ? 'Primary' : 'Surface'}
+                    radii="300"
+                    onClick={() => handleSelect(item.position)}
+                  >
+                    <Text size="T300">{item.name}</Text>
+                  </MenuItem>
+                ))}
+              </Box>
+            </Menu>
+          </FocusTrap>
+        }
+      />
+    </>
+  );
+}
+
+function Layout() {
+  const mx = useMatrixClient();
+  const shellLayout = useAtomValue(shellLayoutAtom);
+  const setShellLayout = useSetAtom(shellLayoutAtom);
+
+  const sidebarPosition = getSidebarPosition(shellLayout);
+  const navPosition = getNavPosition(shellLayout);
+
+  const handleSidebarPositionChange = (position: ShellDockPosition) => {
+    const content = makeShellLayoutContent(mx, { sidebarPosition: position });
+    setShellLayout({ type: 'UPDATE', content });
+    mx.setAccountData(AccountDataEvent.ShellLayout, content);
+  };
+
+  const handleNavPositionChange = (position: ShellDockPosition) => {
+    const content = makeShellLayoutContent(mx, { navPosition: position });
+    setShellLayout({ type: 'UPDATE', content });
+    mx.setAccountData(AccountDataEvent.ShellLayout, content);
+  };
+
+  return (
+    <Box direction="Column" gap="100">
+      <Text size="L400">Layout</Text>
+      <SequenceCard className={SequenceCardStyle} variant="SurfaceVariant" direction="Column">
+        <SettingTile
+          title="Server List Position"
+          description="Choose which side of the screen the server list appears on."
+          after={
+            <SelectDockPosition value={sidebarPosition} onChange={handleSidebarPositionChange} />
+          }
+        />
+      </SequenceCard>
+
+      <SequenceCard className={SequenceCardStyle} variant="SurfaceVariant" direction="Column">
+        <SettingTile
+          title="Channel List Position"
+          description="Choose which side of the screen the channel list appears on."
+          after={<SelectDockPosition value={navPosition} onChange={handleNavPositionChange} />}
+        />
       </SequenceCard>
     </Box>
   );
@@ -1003,6 +1143,7 @@ export function General({ requestClose }: GeneralProps) {
           <PageContent>
             <Box direction="Column" gap="700">
               <Appearance />
+              <Layout />
               <DateAndTime />
               <Editor />
               <Messages />

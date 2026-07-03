@@ -1,26 +1,58 @@
 import React, { ComponentProps, MutableRefObject, ReactNode } from 'react';
 import { Box, Header, Line, Scroll, Text, as } from 'folds';
 import classNames from 'classnames';
+import { useAtomValue } from 'jotai';
 import { ContainerColor } from '../../styles/ContainerColor.css';
 import * as css from './style.css';
 import { ScreenSize, useScreenSizeContext } from '../../hooks/useScreenSize';
+import { getNavPosition, shellLayoutAtom } from '../../state/shellLayout';
 
 type PageRootProps = {
   nav: ReactNode;
   children: ReactNode;
+  /**
+   * Reverses the row order (nav <-> content) without changing DOM structure.
+   * Used by the main client routes to honor the shell's channel-list docking
+   * side. Left unset (falsy) for nested PageRoot usages (e.g. Settings,
+   * SpaceSettings, RoomSettings) so those internal layouts stay unaffected.
+   */
+  reverse?: boolean;
 };
 
-export function PageRoot({ nav, children }: PageRootProps) {
+export function PageRoot({ nav, children, reverse }: PageRootProps) {
   const screenSize = useScreenSizeContext();
 
   return (
-    <Box grow="Yes" className={ContainerColor({ variant: 'Background' })}>
+    <Box
+      grow="Yes"
+      direction={reverse ? 'RowReverse' : undefined}
+      className={ContainerColor({ variant: 'Background' })}
+    >
       {nav}
       {screenSize !== ScreenSize.Mobile && (
         <Line variant="Background" size="300" direction="Vertical" />
       )}
       {children}
     </Box>
+  );
+}
+
+/**
+ * PageRoot variant for the main client routes (Home/Direct/Space/Explore/
+ * Inbox) that reads the shell's channel-list docking preference and mirrors
+ * PageRoot accordingly. Not used by Settings/SpaceSettings/RoomSettings,
+ * which render PageRoot directly and are unaffected by this setting.
+ */
+export function MainPageRoot({ nav, children }: Omit<PageRootProps, 'reverse'>) {
+  const shellLayout = useAtomValue(shellLayoutAtom);
+  const navPosition = getNavPosition(shellLayout);
+  // Stage 1 only implements left/right docking. top/bottom fall back to left.
+  const reverse = navPosition === 'right';
+
+  return (
+    <PageRoot nav={nav} reverse={reverse}>
+      {children}
+    </PageRoot>
   );
 }
 

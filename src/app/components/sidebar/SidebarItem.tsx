@@ -1,7 +1,9 @@
 import classNames from 'classnames';
 import { as, Avatar, Text, Tooltip, TooltipProvider, toRem } from 'folds';
 import React, { ComponentProps, ReactNode, RefCallback } from 'react';
+import { useAtomValue } from 'jotai';
 import * as css from './Sidebar.css';
+import { getSidebarPosition, shellLayoutAtom } from '../../state/shellLayout';
 
 export const SidebarItem = as<'div', css.SidebarItemVariants>(
   ({ as: AsSidebarAvatarBox = 'div', className, active, ...props }, ref) => (
@@ -30,6 +32,11 @@ export function SidebarItemTooltip({
   tooltip?: ReactNode | string;
   children: (triggerRef: RefCallback<HTMLElement | SVGElement>) => ReactNode;
 }) {
+  const shellLayout = useAtomValue(shellLayoutAtom);
+  const sidebarPosition = getSidebarPosition(shellLayout);
+  // Stage 1 only implements left/right docking. top/bottom fall back to left.
+  const tooltipPosition = sidebarPosition === 'right' ? 'Left' : 'Right';
+
   if (!tooltip) {
     return children(() => undefined);
   }
@@ -37,7 +44,7 @@ export function SidebarItemTooltip({
   return (
     <TooltipProvider
       delay={400}
-      position="Right"
+      position={tooltipPosition}
       tooltip={
         <Tooltip style={{ maxWidth: toRem(280) }}>
           <Text size="H5">{tooltip}</Text>

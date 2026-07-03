@@ -5,6 +5,8 @@ export enum AccountDataEvent {
 
   CinnySpaces = 'in.cinny.spaces',
 
+  ShellLayout = 'in.selfmatrix.shell_layout',
+
   ElementRecentEmoji = 'io.element.recent_emoji',
 
   PoniesUserEmotes = 'im.ponies.user_emotes',

@@ -14,6 +14,7 @@ import {
   Text,
 } from 'folds';
 import FocusTrap from 'focus-trap-react';
+import { useTranslation } from 'react-i18next';
 import { useAllJoinedRoomsSet, useGetRoom } from '../../hooks/useGetRoom';
 import { SpaceProvider } from '../../hooks/useSpace';
 import { CreateRoomForm } from './CreateRoom';
@@ -29,6 +30,7 @@ type CreateRoomModalProps = {
   state: CreateRoomModalState;
 };
 function CreateRoomModal({ state }: CreateRoomModalProps) {
+  const { t } = useTranslation();
   const { spaceId, type } = state;
   const closeDialog = useCloseCreateRoomModal();
 
@@ -59,7 +61,9 @@ function CreateRoomModal({ state }: CreateRoomModalProps) {
                 >
                   <Box grow="Yes">
                     <Text size="H4">
-                      {type === CreateRoomType.VoiceRoom ? 'New Voice Room' : 'New Chat Room'}
+                      {type === CreateRoomType.VoiceRoom
+                        ? t('create_room.modal.voice_room_title')
+                        : t('create_room.modal.chat_room_title')}
                     </Text>
                   </Box>
                   <Box shrink="No">

@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import { IconSrc, Icons } from 'folds';
 import { MatrixEvent } from 'matrix-js-sdk';
+import { Trans, useTranslation } from 'react-i18next';
 import { IMemberContent, Membership } from '../../types/matrix/room';
 import { getMxIdLocalPart } from '../utils/matrix';
 import { isMembershipChanged } from '../utils/room';
@@ -13,17 +14,19 @@ export type ParsedResult = {
 export type MemberEventParser = (mEvent: MatrixEvent) => ParsedResult;
 
 export const useMemberEventParser = (): MemberEventParser => {
+  const { t } = useTranslation();
+
   const parseMemberEvent: MemberEventParser = (mEvent) => {
     const content = mEvent.getContent<IMemberContent>();
     const prevContent = mEvent.getPrevContent() as IMemberContent;
     const senderId = mEvent.getSender();
     const userId = mEvent.getStateKey();
-    const reason = typeof content.reason === 'string' ? content.reason : undefined;
+    const reason = typeof content.reason === 'string' ? content.reason : '';
 
     if (!senderId || !userId)
       return {
         icon: Icons.User,
-        body: 'Broken membership event',
+        body: t('room.membership.broken_event'),
       };
 
     const senderName = getMxIdLocalPart(senderId);
@@ -38,13 +41,13 @@ export const useMemberEventParser = (): MemberEventParser => {
           return {
             icon: Icons.ArrowGoRightPlus,
             body: (
-              <>
+              <Trans
+                i18nKey="room.membership.invite_accepted"
+                values={{ senderName, userName, reason }}
+              >
                 <b>{senderName}</b>
-                {' accepted '}
                 <b>{userName}</b>
-                {`'s join request `}
-                {reason}
-              </>
+              </Trans>
             ),
           };
         }
@@ -52,11 +55,10 @@ export const useMemberEventParser = (): MemberEventParser => {
         return {
           icon: Icons.ArrowGoRightPlus,
           body: (
-            <>
+            <Trans i18nKey="room.membership.invited" values={{ senderName, userName, reason }}>
               <b>{senderName}</b>
-              {' invited '}
-              <b>{userName}</b> {reason}
-            </>
+              <b>{userName}</b>
+            </Trans>
           ),
         };
       }
@@ -65,11 +67,9 @@ export const useMemberEventParser = (): MemberEventParser => {
         return {
           icon: Icons.ArrowGoRightPlus,
           body: (
-            <>
+            <Trans i18nKey="room.membership.knocked" values={{ userName, reason }}>
               <b>{userName}</b>
-              {' request to join room '}
-              {reason}
-            </>
+            </Trans>
           ),
         };
       }
@@ -78,10 +78,9 @@ export const useMemberEventParser = (): MemberEventParser => {
         return {
           icon: Icons.ArrowGoRight,
           body: (
-            <>
+            <Trans i18nKey="room.membership.joined" values={{ userName }}>
               <b>{userName}</b>
-              {' joined the room'}
-            </>
+            </Trans>
           ),
         };
       }
@@ -92,19 +91,20 @@ export const useMemberEventParser = (): MemberEventParser => {
             icon: Icons.ArrowGoRightCross,
             body:
               senderId === userId ? (
-                <>
+                <Trans
+                  i18nKey="room.membership.invite_rejected_self"
+                  values={{ userName, reason }}
+                >
                   <b>{userName}</b>
-                  {' rejected the invitation '}
-                  {reason}
-                </>
+                </Trans>
               ) : (
-                <>
+                <Trans
+                  i18nKey="room.membership.invite_rejected_by_other"
+                  values={{ senderName, userName, reason }}
+                >
                   <b>{senderName}</b>
-                  {' rejected '}
                   <b>{userName}</b>
-                  {`'s join request `}
-                  {reason}
-                </>
+                </Trans>
               ),
           };
         }
@@ -114,19 +114,17 @@ export const useMemberEventParser = (): MemberEventParser => {
             icon: Icons.ArrowGoRightCross,
             body:
               senderId === userId ? (
-                <>
+                <Trans i18nKey="room.membership.knock_revoked_self" values={{ userName, reason }}>
                   <b>{userName}</b>
-                  {' revoked joined request '}
-                  {reason}
-                </>
+                </Trans>
               ) : (
-                <>
+                <Trans
+                  i18nKey="room.membership.knock_revoked_by_other"
+                  values={{ senderName, userName, reason }}
+                >
                   <b>{senderName}</b>
-                  {' revoked '}
                   <b>{userName}</b>
-                  {`'s invite `}
-                  {reason}
-                </>
+                </Trans>
               ),
           };
         }
@@ -135,11 +133,10 @@ export const useMemberEventParser = (): MemberEventParser => {
           return {
             icon: Icons.ArrowGoLeft,
             body: (
-              <>
+              <Trans i18nKey="room.membership.unbanned" values={{ senderName, userName, reason }}>
                 <b>{senderName}</b>
-                {' unbanned '}
-                <b>{userName}</b> {reason}
-              </>
+                <b>{userName}</b>
+              </Trans>
             ),
           };
         }
@@ -148,17 +145,14 @@ export const useMemberEventParser = (): MemberEventParser => {
           icon: Icons.ArrowGoLeft,
           body:
             senderId === userId ? (
-              <>
+              <Trans i18nKey="room.membership.left" values={{ userName, reason }}>
                 <b>{userName}</b>
-                {' left the room '}
-                {reason}
-              </>
+              </Trans>
             ) : (
-              <>
+              <Trans i18nKey="room.membership.kicked" values={{ senderName, userName, reason }}>
                 <b>{senderName}</b>
-                {' kicked '}
-                <b>{userName}</b> {reason}
-              </>
+                <b>{userName}</b>
+              </Trans>
             ),
         };
       }
@@ -167,11 +161,10 @@ export const useMemberEventParser = (): MemberEventParser => {
         return {
           icon: Icons.ArrowGoLeft,
           body: (
-            <>
+            <Trans i18nKey="room.membership.banned" values={{ senderName, userName, reason }}>
               <b>{senderName}</b>
-              {' banned '}
-              <b>{userName}</b> {reason}
-            </>
+              <b>{userName}</b>
+            </Trans>
           ),
         };
       }
@@ -187,16 +180,17 @@ export const useMemberEventParser = (): MemberEventParser => {
         icon: Icons.Mention,
         body:
           typeof content.displayname === 'string' ? (
-            <>
+            <Trans
+              i18nKey="room.membership.display_name_changed"
+              values={{ prevUserName, userName }}
+            >
               <b>{prevUserName}</b>
-              {' changed display name to '}
               <b>{userName}</b>
-            </>
+            </Trans>
           ) : (
-            <>
+            <Trans i18nKey="room.membership.display_name_removed" values={{ prevUserName }}>
               <b>{prevUserName}</b>
-              {' removed their display name '}
-            </>
+            </Trans>
           ),
       };
     }
@@ -205,22 +199,20 @@ export const useMemberEventParser = (): MemberEventParser => {
         icon: Icons.User,
         body:
           content.avatar_url && typeof content.avatar_url === 'string' ? (
-            <>
+            <Trans i18nKey="room.membership.avatar_changed" values={{ userName }}>
               <b>{userName}</b>
-              {' changed their avatar'}
-            </>
+            </Trans>
           ) : (
-            <>
+            <Trans i18nKey="room.membership.avatar_removed" values={{ userName }}>
               <b>{userName}</b>
-              {' removed their avatar '}
-            </>
+            </Trans>
           ),
       };
     }
 
     return {
       icon: Icons.User,
-      body: 'Membership event with no changes',
+      body: t('room.membership.no_changes'),
     };
   };
 

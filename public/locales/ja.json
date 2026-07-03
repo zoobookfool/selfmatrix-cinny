@@ -171,6 +171,73 @@
       }
     }
   },
+  "create_room": {
+    "form": {
+      "type_label": "種類",
+      "access_label": "アクセス",
+      "name_label": "名前",
+      "topic_label": "トピック(任意)",
+      "options_label": "オプション",
+      "advanced_options": "詳細オプション",
+      "encryption_title": "エンドツーエンド暗号化",
+      "encryption_description": "この機能を有効にすると、ルーム作成後に無効化することはできません。",
+      "knock_title": "ノックして参加",
+      "knock_description": "誰でもこのルームへの参加をリクエストできます。",
+      "federation_title": "フェデレーションを許可",
+      "federation_description": "他のサーバーのユーザーが参加できます。",
+      "rate_limited_error_one": "サーバーによりリクエストが {{minutes}} 分間レート制限されました!",
+      "rate_limited_error_other": "サーバーによりリクエストが {{minutes}} 分間レート制限されました!",
+      "create_button": "作成"
+    },
+    "modal": {
+      "voice_room_title": "新しいボイスルーム",
+      "chat_room_title": "新しいチャットルーム"
+    },
+    "access": {
+      "restricted_title": "制限付き",
+      "restricted_description": "親サーバーのメンバーのみ参加できます。",
+      "private_title": "非公開",
+      "private_description": "招待されたユーザーのみ参加できます。",
+      "public_title": "公開",
+      "public_description": "アドレスを知っている誰でも参加できます。"
+    },
+    "type": {
+      "chat_title": "チャットルーム",
+      "chat_description": "- メッセージ、写真、動画。",
+      "voice_title": "ボイスルーム",
+      "voice_description": "- リアルタイムの音声・映像通話。"
+    },
+    "beta": {
+      "notice_title": "お知らせ",
+      "notice_description": "この機能はテスト中であり、今後変更される可能性があります。",
+      "badge": "ベータ"
+    },
+    "alias": {
+      "label": "アドレス(任意)",
+      "description": "見つけやすくするために一意のアドレスを設定してください。",
+      "taken_error": "このアドレスはすでに使用されています。別のアドレスを選択してください。"
+    },
+    "version": {
+      "title": "バージョン",
+      "menu_title": "バージョン一覧"
+    },
+    "founders": {
+      "title": "創設者",
+      "description": "作成時に特権を持つユーザーを割り当てることができます。これらのユーザーは高度な権限を持ち、アップグレード時にのみ変更できます。",
+      "user_id_placeholder": "@username:server",
+      "enter_button": "決定",
+      "no_suggestions_title": "候補がありません",
+      "no_suggestions_description": "ユーザー ID を入力して Enter を押してください。"
+    }
+  },
+  "join_address": {
+    "title": "アドレスで参加",
+    "description": "参加するコミュニティの公開アドレスを入力してください。アドレスの例:",
+    "address_label": "アドレス",
+    "address_placeholder": "#community:server",
+    "invalid_address": "無効なアドレスです",
+    "open_button": "開く"
+  },
   "room": {
     "call_chat": {
       "title": "チャット",
@@ -330,6 +397,63 @@
       "jump_to_unread": "未読へ移動",
       "mark_as_read": "既読にする",
       "jump_to_latest": "最新へ移動"
+    },
+    "intro": {
+      "default_topic": "これが会話の始まりです。",
+      "created_by": "<1>@{{creatorName}}</1> が {{date}} {{time}} に作成しました",
+      "invite_member": "メンバーを招待",
+      "open_old_room": "旧ルームを開く",
+      "join_old_room": "旧ルームに参加"
+    },
+    "membership": {
+      "broken_event": "破損したメンバーシップイベント",
+      "invite_accepted": "<0>{{senderName}}</0> が <1>{{userName}}</1> の参加リクエストを承認しました {{reason}}",
+      "invited": "<0>{{senderName}}</0> が <1>{{userName}}</1> を招待しました {{reason}}",
+      "knocked": "<0>{{userName}}</0> がルームへの参加をリクエストしました {{reason}}",
+      "joined": "<0>{{userName}}</0> がルームに参加しました",
+      "invite_rejected_self": "<0>{{userName}}</0> が招待を拒否しました {{reason}}",
+      "invite_rejected_by_other": "<0>{{senderName}}</0> が <1>{{userName}}</1> の参加リクエストを拒否しました {{reason}}",
+      "knock_revoked_self": "<0>{{userName}}</0> が参加リクエストを取り消しました {{reason}}",
+      "knock_revoked_by_other": "<0>{{senderName}}</0> が <1>{{userName}}</1> の招待を取り消しました {{reason}}",
+      "unbanned": "<0>{{senderName}}</0> が <1>{{userName}}</1> のBANを解除しました {{reason}}",
+      "left": "<0>{{userName}}</0> がルームを退出しました {{reason}}",
+      "kicked": "<0>{{senderName}}</0> が <1>{{userName}}</1> をキックしました {{reason}}",
+      "banned": "<0>{{senderName}}</0> が <1>{{userName}}</1> をBANしました {{reason}}",
+      "display_name_changed": "<0>{{prevUserName}}</0> が表示名を <1>{{userName}}</1> に変更しました",
+      "display_name_removed": "<0>{{prevUserName}}</0> が表示名を削除しました ",
+      "avatar_changed": "<0>{{userName}}</0> がアバターを変更しました",
+      "avatar_removed": "<0>{{userName}}</0> がアバターを削除しました ",
+      "no_changes": "変更のないメンバーシップイベント"
+    },
+    "power": {
+      "goku": "Goku",
+      "manager": "マネージャー",
+      "founder": "創設者",
+      "admin": "管理者",
+      "moderator": "モデレーター",
+      "member": "メンバー",
+      "muted": "ミュート",
+      "fallback_tag": "{{tagName}} {{power}}",
+      "fallback_team_tag": "チーム {{power}}"
+    },
+    "member_sort": {
+      "a_to_z": "A から Z",
+      "z_to_a": "Z から A",
+      "newest": "新しい順",
+      "oldest": "古い順"
+    },
+    "member_filter": {
+      "joined": "参加中",
+      "invited": "招待中",
+      "left": "退出済み",
+      "kicked": "キック済み",
+      "banned": "BAN済み"
     }
+  },
+  "invite_user": {
+    "title": "招待",
+    "user_id_label": "ユーザー ID",
+    "reason_label": "理由(任意)",
+    "invite_button": "招待"
   }
 }

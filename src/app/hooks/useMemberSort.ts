@@ -1,5 +1,6 @@
 import { RoomMember } from 'matrix-js-sdk';
 import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export const MemberSort = {
   Ascending: (a: RoomMember, b: RoomMember) =>
@@ -19,28 +20,32 @@ export type MemberSortItem = {
   sortFn: MemberSortFn;
 };
 
-export const useMemberSortMenu = (): MemberSortItem[] =>
-  useMemo(
+export const useMemberSortMenu = (): MemberSortItem[] => {
+  const { t, i18n } = useTranslation();
+
+  return useMemo(
     () => [
       {
-        name: 'A to Z',
+        name: t('room.member_sort.a_to_z'),
         sortFn: MemberSort.Ascending,
       },
       {
-        name: 'Z to A',
+        name: t('room.member_sort.z_to_a'),
         sortFn: MemberSort.Descending,
       },
       {
-        name: 'Newest',
+        name: t('room.member_sort.newest'),
         sortFn: MemberSort.NewestFirst,
       },
       {
-        name: 'Oldest',
+        name: t('room.member_sort.oldest'),
         sortFn: MemberSort.Oldest,
       },
     ],
-    []
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [t, i18n.language]
   );
+};
 
 export const useMemberSort = (index: number, memberSort: MemberSortItem[]): MemberSortItem => {
   const item = memberSort[index] ?? memberSort[0];

@@ -17,6 +17,7 @@ import {
 } from 'folds';
 import { isKeyHotkey } from 'is-hotkey';
 import FocusTrap from 'focus-trap-react';
+import { useTranslation } from 'react-i18next';
 import React, {
   ChangeEventHandler,
   KeyboardEventHandler,
@@ -83,6 +84,7 @@ export function AdditionalCreatorInput({
   onRemove,
   disabled,
 }: AdditionalCreatorInputProps) {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const [menuCords, setMenuCords] = useState<RectCords>();
   const directUsers = useDirectUsers();
@@ -150,8 +152,8 @@ export function AdditionalCreatorInput({
 
   return (
     <SettingTile
-      title="Founders"
-      description="Special privileged users can be assigned during creation. These users have elevated control and can only be modified during a upgrade."
+      title={t('create_room.founders.title')}
+      description={t('create_room.founders.description')}
     >
       <Box shrink="No" direction="Column" gap="100">
         <Box gap="200" wrap="Wrap">
@@ -201,7 +203,7 @@ export function AdditionalCreatorInput({
                           variant="Background"
                           radii="300"
                           outlined
-                          placeholder="@username:server"
+                          placeholder={t('create_room.founders.user_id_placeholder')}
                           onChange={handleCreatorChange}
                           onKeyDown={handleCreatorKeyDown}
                         />
@@ -213,7 +215,7 @@ export function AdditionalCreatorInput({
                         onClick={handleEnterClick}
                         disabled={!validUserId}
                       >
-                        <Text size="B400">Enter</Text>
+                        <Text size="B400">{t('create_room.founders.enter_button')}</Text>
                       </Button>
                     </Box>
                     <Line size="300" />
@@ -263,10 +265,10 @@ export function AdditionalCreatorInput({
                           gap="100"
                         >
                           <Text size="H6" align="Center">
-                            No Suggestions
+                            {t('create_room.founders.no_suggestions_title')}
                           </Text>
                           <Text size="T200" align="Center">
-                            Please provide the user ID and hit Enter.
+                            {t('create_room.founders.no_suggestions_description')}
                           </Text>
                         </Box>
                       )}

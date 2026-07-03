@@ -171,6 +171,73 @@
       }
     }
   },
+  "create_room": {
+    "form": {
+      "type_label": "Type",
+      "access_label": "Access",
+      "name_label": "Name",
+      "topic_label": "Topic (Optional)",
+      "options_label": "Options",
+      "advanced_options": "Advanced Options",
+      "encryption_title": "End-to-End Encryption",
+      "encryption_description": "Once this feature is enabled, it can't be disabled after the room is created.",
+      "knock_title": "Knock to Join",
+      "knock_description": "Anyone can send request to join this room.",
+      "federation_title": "Allow Federation",
+      "federation_description": "Users from other servers can join.",
+      "rate_limited_error_one": "Server rate-limited your request for {{minutes}} minute!",
+      "rate_limited_error_other": "Server rate-limited your request for {{minutes}} minutes!",
+      "create_button": "Create"
+    },
+    "modal": {
+      "voice_room_title": "New Voice Room",
+      "chat_room_title": "New Chat Room"
+    },
+    "access": {
+      "restricted_title": "Restricted",
+      "restricted_description": "Only member of parent space can join.",
+      "private_title": "Private",
+      "private_description": "Only people with invite can join.",
+      "public_title": "Public",
+      "public_description": "Anyone with the address can join."
+    },
+    "type": {
+      "chat_title": "Chat Room",
+      "chat_description": "- Messages, photos, and videos.",
+      "voice_title": "Voice Room",
+      "voice_description": "- Live audio and video conversations."
+    },
+    "beta": {
+      "notice_title": "Notice",
+      "notice_description": "This feature is under testing and may change over time.",
+      "badge": "Beta"
+    },
+    "alias": {
+      "label": "Address (Optional)",
+      "description": "Pick an unique address to make it discoverable.",
+      "taken_error": "This address is already taken. Please select a different one."
+    },
+    "version": {
+      "title": "Version",
+      "menu_title": "Versions"
+    },
+    "founders": {
+      "title": "Founders",
+      "description": "Special privileged users can be assigned during creation. These users have elevated control and can only be modified during a upgrade.",
+      "user_id_placeholder": "@username:server",
+      "enter_button": "Enter",
+      "no_suggestions_title": "No Suggestions",
+      "no_suggestions_description": "Please provide the user ID and hit Enter."
+    }
+  },
+  "join_address": {
+    "title": "Join with Address",
+    "description": "Enter public address to join the community. Addresses looks like:",
+    "address_label": "Address",
+    "address_placeholder": "#community:server",
+    "invalid_address": "Invalid Address",
+    "open_button": "Open"
+  },
   "room": {
     "call_chat": {
       "title": "Chat",
@@ -330,6 +397,63 @@
       "jump_to_unread": "Jump to Unread",
       "mark_as_read": "Mark as Read",
       "jump_to_latest": "Jump to Latest"
+    },
+    "intro": {
+      "default_topic": "This is the beginning of conversation.",
+      "created_by": "Created by <1>@{{creatorName}}</1> on {{date}} {{time}}",
+      "invite_member": "Invite Member",
+      "open_old_room": "Open Old Room",
+      "join_old_room": "Join Old Room"
+    },
+    "membership": {
+      "broken_event": "Broken membership event",
+      "invite_accepted": "<0>{{senderName}}</0> accepted <1>{{userName}}</1>'s join request {{reason}}",
+      "invited": "<0>{{senderName}}</0> invited <1>{{userName}}</1> {{reason}}",
+      "knocked": "<0>{{userName}}</0> request to join room {{reason}}",
+      "joined": "<0>{{userName}}</0> joined the room",
+      "invite_rejected_self": "<0>{{userName}}</0> rejected the invitation {{reason}}",
+      "invite_rejected_by_other": "<0>{{senderName}}</0> rejected <1>{{userName}}</1>'s join request {{reason}}",
+      "knock_revoked_self": "<0>{{userName}}</0> revoked joined request {{reason}}",
+      "knock_revoked_by_other": "<0>{{senderName}}</0> revoked <1>{{userName}}</1>'s invite {{reason}}",
+      "unbanned": "<0>{{senderName}}</0> unbanned <1>{{userName}}</1> {{reason}}",
+      "left": "<0>{{userName}}</0> left the room {{reason}}",
+      "kicked": "<0>{{senderName}}</0> kicked <1>{{userName}}</1> {{reason}}",
+      "banned": "<0>{{senderName}}</0> banned <1>{{userName}}</1> {{reason}}",
+      "display_name_changed": "<0>{{prevUserName}}</0> changed display name to <1>{{userName}}</1>",
+      "display_name_removed": "<0>{{prevUserName}}</0> removed their display name ",
+      "avatar_changed": "<0>{{userName}}</0> changed their avatar",
+      "avatar_removed": "<0>{{userName}}</0> removed their avatar ",
+      "no_changes": "Membership event with no changes"
+    },
+    "power": {
+      "goku": "Goku",
+      "manager": "Manager",
+      "founder": "Founder",
+      "admin": "Admin",
+      "moderator": "Moderator",
+      "member": "Member",
+      "muted": "Muted",
+      "fallback_tag": "{{tagName}} {{power}}",
+      "fallback_team_tag": "Team {{power}}"
+    },
+    "member_sort": {
+      "a_to_z": "A to Z",
+      "z_to_a": "Z to A",
+      "newest": "Newest",
+      "oldest": "Oldest"
+    },
+    "member_filter": {
+      "joined": "Joined",
+      "invited": "Invited",
+      "left": "Left",
+      "kicked": "Kicked",
+      "banned": "Banned"
     }
+  },
+  "invite_user": {
+    "title": "Invite",
+    "user_id_label": "User ID",
+    "reason_label": "Reason (Optional)",
+    "invite_button": "Invite"
   }
 }

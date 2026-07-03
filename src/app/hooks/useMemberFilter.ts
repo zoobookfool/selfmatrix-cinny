@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { RoomMember } from 'matrix-js-sdk';
+import { useTranslation } from 'react-i18next';
 import { Membership } from '../../types/matrix/room';
 
 export const MembershipFilter = {
@@ -21,32 +22,36 @@ export type MembershipFilterItem = {
   filterFn: MembershipFilterFn;
 };
 
-export const useMembershipFilterMenu = (): MembershipFilterItem[] =>
-  useMemo(
+export const useMembershipFilterMenu = (): MembershipFilterItem[] => {
+  const { t, i18n } = useTranslation();
+
+  return useMemo(
     () => [
       {
-        name: 'Joined',
+        name: t('room.member_filter.joined'),
         filterFn: MembershipFilter.filterJoined,
       },
       {
-        name: 'Invited',
+        name: t('room.member_filter.invited'),
         filterFn: MembershipFilter.filterInvited,
       },
       {
-        name: 'Left',
+        name: t('room.member_filter.left'),
         filterFn: MembershipFilter.filterLeaved,
       },
       {
-        name: 'Kicked',
+        name: t('room.member_filter.kicked'),
         filterFn: MembershipFilter.filterKicked,
       },
       {
-        name: 'Banned',
+        name: t('room.member_filter.banned'),
         filterFn: MembershipFilter.filterBanned,
       },
     ],
-    []
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [t, i18n.language]
   );
+};
 
 export const useMembershipFilter = (
   index: number,

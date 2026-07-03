@@ -1,5 +1,6 @@
 import { Room } from 'matrix-js-sdk';
 import { useMemo } from 'react';
+import i18n from '../i18n';
 import { IPowerLevels } from './usePowerLevels';
 import { useStateEvent } from './useStateEvent';
 import { MemberPowerTag, StateEvent } from '../../types/matrix/room';
@@ -45,36 +46,36 @@ export const getUsedPowers = (powerLevels: IPowerLevels): Set<number> => {
   return powers;
 };
 
-const DEFAULT_TAGS: PowerLevelTags = {
+const getDefaultTags = (): PowerLevelTags => ({
   9001: {
-    name: 'Goku',
+    name: i18n.t('room.power.goku'),
     color: '#ff6a00',
   },
   150: {
-    name: 'Manager',
+    name: i18n.t('room.power.manager'),
     color: '#ff6a7f',
   },
   101: {
-    name: 'Founder',
+    name: i18n.t('room.power.founder'),
     color: '#0000ff',
   },
   100: {
-    name: 'Admin',
+    name: i18n.t('room.power.admin'),
     color: '#0088ff',
   },
   50: {
-    name: 'Moderator',
+    name: i18n.t('room.power.moderator'),
     color: '#1fd81f',
   },
   0: {
-    name: 'Member',
+    name: i18n.t('room.power.member'),
     color: '#91cfdf',
   },
   [-1]: {
-    name: 'Muted',
+    name: i18n.t('room.power.muted'),
     color: '#888888',
   },
-};
+});
 
 const generateFallbackTag = (powerLevelTags: PowerLevelTags, power: number): MemberPowerTag => {
   const highToLow = sortPowers(getPowers(powerLevelTags));
@@ -83,7 +84,9 @@ const generateFallbackTag = (powerLevelTags: PowerLevelTags, power: number): Mem
   const tag = typeof tagPower === 'number' ? powerLevelTags[tagPower] : undefined;
 
   return {
-    name: tag ? `${tag.name} ${power}` : `Team ${power}`,
+    name: tag
+      ? i18n.t('room.power.fallback_tag', { tagName: tag.name, power })
+      : i18n.t('room.power.fallback_team_tag', { power }),
   };
 };
 
@@ -93,16 +96,18 @@ export const usePowerLevelTags = (room: Room, powerLevels: IPowerLevels): PowerL
   const powerLevelTags: PowerLevelTags = useMemo(() => {
     const content = tagsEvent?.getContent<PowerLevelTags>();
     const powerToTags: PowerLevelTags = { ...content };
+    const defaultTags = getDefaultTags();
 
     const powers = getUsedPowers(powerLevels);
     Array.from(powers).forEach((power) => {
       if (powerToTags[power]?.name === undefined) {
-        powerToTags[power] = DEFAULT_TAGS[power] ?? generateFallbackTag(DEFAULT_TAGS, power);
+        powerToTags[power] = defaultTags[power] ?? generateFallbackTag(defaultTags, power);
       }
     });
 
     return powerToTags;
-  }, [powerLevels, tagsEvent]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [powerLevels, tagsEvent, i18n.language]);
 
   return powerLevelTags;
 };

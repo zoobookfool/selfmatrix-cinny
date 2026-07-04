@@ -5,3 +5,6 @@ devAssets
 
 .DS_Store
 .idea
+
+# SelfMatrix: EC embedded ローカル検証成果物 (CI が生成、コミット不要)
+ec-embedded-dist/

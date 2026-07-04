@@ -1,0 +1,117 @@
+name: SelfMatrix image
+
+# SelfMatrix: cinny fork のイメージを、フォーク版 element-call の embedded
+# ビルドを同梱した状態で GHCR に publish する。
+#
+# job 1 (build-element-call) は cinny の .selfmatrix/element-call-ref に
+# 記録された SHA で zoobookfool/selfmatrix-element-call をチェックアウトし、
+# pnpm build:embedded の成果物 (dist/) を artifact として保存する。
+# job 2 (publish) はその artifact を ec-embedded-dist/ として展開し、
+# Dockerfile.selfmatrix でイメージをビルドして ghcr.io/${{ github.repository }}
+# に push する。
+
+on:
+  push:
+    branches: [product/discord-style-shell]
+  workflow_dispatch:
+
+concurrency:
+  group: selfmatrix-image-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-element-call:
+    name: Build element-call (embedded)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout cinny
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          path: cinny
+
+      - name: Read element-call ref
+        id: ec-ref
+        run: echo "sha=$(cat cinny/.selfmatrix/element-call-ref)" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout element-call
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          repository: zoobookfool/selfmatrix-element-call
+          ref: ${{ steps.ec-ref.outputs.sha }}
+          path: element-call
+
+      # element-call は .node-version (24) を参照。pnpm は package.json の
+      # packageManager (pnpm@10.33.0) を corepack が読み取って有効化する。
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Setup node
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version-file: element-call/.node-version
+          cache: pnpm
+          cache-dependency-path: element-call/pnpm-lock.yaml
+
+      - name: Install dependencies
+        working-directory: element-call
+        run: pnpm install --frozen-lockfile
+
+      - name: Build embedded bundle
+        working-directory: element-call
+        env:
+          NODE_OPTIONS: --max_old_space_size=4096
+        run: pnpm build:embedded
+
+      - name: Upload embedded build artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: ec-embedded-dist
+          path: element-call/dist
+          retention-days: 7
+
+  publish:
+    name: Build and push cinny image
+    needs: build-element-call
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout cinny
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Download embedded build artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: ec-embedded-dist
+          path: ec-embedded-dist
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5 # v4.1.0
+
+      - name: Login to the Github Container registry
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker, GHCR
+        id: meta
+        uses: docker/metadata-action@80c7e94dd9b9319bd5eb7a0e0fe9291e23a2a2e9 # v6.1.0
+        with:
+          images: |
+            ghcr.io/${{ github.repository }}
+          tags: |
+            type=raw,value=latest
+            type=sha
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf # v7.2.0
+        with:
+          context: .
+          file: Dockerfile.selfmatrix
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

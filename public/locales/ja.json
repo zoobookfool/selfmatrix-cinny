@@ -467,6 +467,14 @@
     "logout_button": "ログアウト",
     "cancel_button": "キャンセル"
   },
+  "verification_reminder": {
+    "setup_title": "暗号化メッセージを保護しましょう",
+    "setup_description": "デバイス認証を有効にしてキーバックアップを作成すると、このデバイスで暗号化メッセージへのアクセスを維持できます。",
+    "verify_title": "このデバイスを認証",
+    "verify_description": "認証済みの他のデバイスから、またはリカバリーキーで手動でこのデバイスを認証すると、暗号化メッセージを読めるようになります。",
+    "open_settings_button": "設定を開く",
+    "later_button": "後で"
+  },
   "settings": {
     "tabs": {
       "title": "設定",

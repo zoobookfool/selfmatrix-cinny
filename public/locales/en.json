@@ -467,6 +467,14 @@
     "logout_button": "Logout",
     "cancel_button": "Cancel"
   },
+  "verification_reminder": {
+    "setup_title": "Protect your encrypted messages",
+    "setup_description": "Enable device verification to create a key backup and keep access to your encrypted messages on this device.",
+    "verify_title": "Verify this device",
+    "verify_description": "Verify this device from another verified device, or manually with your recovery key, to read your encrypted messages.",
+    "open_settings_button": "Open Settings",
+    "later_button": "Later"
+  },
   "settings": {
     "tabs": {
       "title": "Settings",

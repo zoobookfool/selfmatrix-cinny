@@ -1498,5 +1498,12 @@
       "indexeddb_description": "No IndexedDB support found. This application requires IndexedDB to store session data locally. Please make sure your browser support IndexedDB and have it enabled.",
       "indexeddb_link": "What is IndexedDB?"
     }
+  },
+  "time": {
+    "hour_minute_12": "hh:mm A",
+    "hour_minute_24": "HH:mm",
+    "date_full": "D MMMM YYYY",
+    "yesterday": "Yesterday {{time}}",
+    "date_time": "{{date}} {{time}}"
   }
 }

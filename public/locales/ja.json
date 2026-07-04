@@ -1498,5 +1498,12 @@
       "indexeddb_description": "IndexedDB のサポートが見つかりません。このアプリケーションはセッションデータをローカルに保存するために IndexedDB を必要とします。お使いのブラウザが IndexedDB に対応し、有効になっていることをご確認ください。",
       "indexeddb_link": "IndexedDB とは？"
     }
+  },
+  "time": {
+    "hour_minute_12": "A hh:mm",
+    "hour_minute_24": "HH:mm",
+    "date_full": "YYYY年M月D日",
+    "yesterday": "昨日 {{time}}",
+    "date_time": "{{date}} {{time}}"
   }
 }

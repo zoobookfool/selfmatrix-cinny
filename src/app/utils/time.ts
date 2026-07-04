@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import isToday from 'dayjs/plugin/isToday';
 import isYesterday from 'dayjs/plugin/isYesterday';
+import i18n from '../i18n';
 
 dayjs.extend(isToday);
 dayjs.extend(isYesterday);
@@ -19,12 +20,17 @@ export const timeMonth = (ts: number): string => dayjs(ts).format('MMMM');
 export const timeYear = (ts: number): string => dayjs(ts).format('YYYY');
 
 export const timeHourMinute = (ts: number, hour24Clock: boolean): string =>
-  dayjs(ts).format(hour24Clock ? 'HH:mm' : 'hh:mm A');
+  dayjs(ts).format(
+    hour24Clock
+      ? i18n.t('time.hour_minute_24', { defaultValue: 'HH:mm' })
+      : i18n.t('time.hour_minute_12', { defaultValue: 'hh:mm A' })
+  );
 
 export const timeDayMonYear = (ts: number, dateFormatString: string): string =>
   dayjs(ts).format(dateFormatString);
 
-export const timeDayMonthYear = (ts: number): string => dayjs(ts).format('D MMMM YYYY');
+export const timeDayMonthYear = (ts: number): string =>
+  dayjs(ts).format(i18n.t('time.date_full', { defaultValue: 'D MMMM YYYY' }));
 
 export const daysInMonth = (month: number, year: number): number =>
   dayjs(`${year}-${month}-1`).daysInMonth();

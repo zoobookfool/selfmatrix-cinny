@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { AccountDataEvents } from 'matrix-js-sdk';
 import { Box, Text, IconButton, Icon, Icons, Scroll, Switch, Button } from 'folds';
+import { useTranslation } from 'react-i18next';
 import { Page, PageContent, PageHeader } from '../../../components/page';
 import { SequenceCard } from '../../../components/sequence-card';
 import { SequenceCardStyle } from '../styles.css';
@@ -19,6 +20,7 @@ type DeveloperToolsProps = {
   requestClose: () => void;
 };
 export function DeveloperTools({ requestClose }: DeveloperToolsProps) {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const [developerTools, setDeveloperTools] = useSetting(settingsAtom, 'developerTools');
   const [expand, setExpend] = useState(false);
@@ -52,7 +54,7 @@ export function DeveloperTools({ requestClose }: DeveloperToolsProps) {
         <Box grow="Yes" gap="200">
           <Box grow="Yes" alignItems="Center" gap="200">
             <Text size="H3" truncate>
-              Developer Tools
+              {t('settings.developer_tools.title')}
             </Text>
           </Box>
           <Box shrink="No">
@@ -67,7 +69,7 @@ export function DeveloperTools({ requestClose }: DeveloperToolsProps) {
           <PageContent>
             <Box direction="Column" gap="700">
               <Box direction="Column" gap="100">
-                <Text size="L400">Options</Text>
+                <Text size="L400">{t('settings.developer_tools.options_title')}</Text>
                 <SequenceCard
                   className={SequenceCardStyle}
                   variant="SurfaceVariant"
@@ -75,7 +77,7 @@ export function DeveloperTools({ requestClose }: DeveloperToolsProps) {
                   gap="400"
                 >
                   <SettingTile
-                    title="Enable Developer Tools"
+                    title={t('settings.developer_tools.enable_developer_tools_title')}
                     after={
                       <Switch
                         variant="Primary"
@@ -93,8 +95,8 @@ export function DeveloperTools({ requestClose }: DeveloperToolsProps) {
                     gap="400"
                   >
                     <SettingTile
-                      title="Access Token"
-                      description="Copy access token to clipboard."
+                      title={t('settings.developer_tools.access_token_title')}
+                      description={t('settings.developer_tools.access_token_description')}
                       after={
                         <Button
                           onClick={() =>
@@ -106,7 +108,7 @@ export function DeveloperTools({ requestClose }: DeveloperToolsProps) {
                           radii="300"
                           outlined
                         >
-                          <Text size="B300">Copy</Text>
+                          <Text size="B300">{t('settings.developer_tools.copy_button')}</Text>
                         </Button>
                       }
                     />

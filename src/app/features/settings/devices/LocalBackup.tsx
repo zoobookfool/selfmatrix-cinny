@@ -1,6 +1,7 @@
 import React, { FormEventHandler, useCallback, useEffect, useState } from 'react';
 import { Box, Button, color, Icon, Icons, Spinner, Text, toRem } from 'folds';
 import FileSaver from 'file-saver';
+import { useTranslation } from 'react-i18next';
 import { SequenceCard } from '../../../components/sequence-card';
 import { SettingTile } from '../../../components/setting-tile';
 import { SequenceCardStyle } from '../styles.css';
@@ -13,6 +14,7 @@ import { useAlive } from '../../../hooks/useAlive';
 import { useFilePicker } from '../../../hooks/useFilePicker';
 
 function ExportKeys() {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const alive = useAlive();
 
@@ -20,7 +22,7 @@ function ExportKeys() {
     useCallback(
       async (password) => {
         const crypto = mx.getCrypto();
-        if (!crypto) throw new Error('Unexpected Error! Crypto module not found!');
+        if (!crypto) throw new Error(t('settings.devices.local_backup.crypto_not_found_error'));
         const keysJSON = await crypto.exportRoomKeysAsJson();
 
         const encKeys = await encryptMegolmKeyFile(keysJSON, password);
@@ -30,7 +32,7 @@ function ExportKeys() {
         });
         FileSaver.saveAs(blob, 'cinny-keys.txt');
       },
-      [mx]
+      [mx, t]
     )
   );
 
@@ -66,7 +68,7 @@ function ExportKeys() {
             {(match, doMatch, passRef, confPassRef) => (
               <>
                 <Box grow="Yes" direction="Column" gap="100">
-                  <Text size="L400">New Password</Text>
+                  <Text size="L400">{t('settings.devices.local_backup.new_password_label')}</Text>
                   <PasswordInput
                     ref={passRef}
                     name="passwordInput"
@@ -80,7 +82,9 @@ function ExportKeys() {
                   />
                 </Box>
                 <Box grow="Yes" direction="Column" gap="100">
-                  <Text size="L400">Confirm Password</Text>
+                  <Text size="L400">
+                    {t('settings.devices.local_backup.confirm_password_label')}
+                  </Text>
                   <PasswordInput
                     ref={confPassRef}
                     style={{ color: match ? undefined : color.Critical.Main }}
@@ -107,7 +111,7 @@ function ExportKeys() {
             before={exporting ? <Spinner size="200" variant="Secondary" fill="Soft" /> : undefined}
           >
             <Text as="span" size="B400">
-              Export
+              {t('settings.devices.local_backup.export_button')}
             </Text>
           </Button>
         </Box>
@@ -122,13 +126,14 @@ function ExportKeys() {
 }
 
 function ExportKeysTile() {
+  const { t } = useTranslation();
   const [expand, setExpand] = useState(false);
 
   return (
     <>
       <SettingTile
-        title="Export Messages Data"
-        description="Save password protected copy of encryption data on your device to decrypt messages later."
+        title={t('settings.devices.local_backup.export_title')}
+        description={t('settings.devices.local_backup.export_description')}
         after={
           <Box>
             <Button
@@ -144,7 +149,9 @@ function ExportKeysTile() {
               }
             >
               <Text as="span" size="B300" truncate>
-                {expand ? 'Collapse' : 'Expand'}
+                {expand
+                  ? t('settings.devices.local_backup.collapse_button')
+                  : t('settings.devices.local_backup.expand_button')}
               </Text>
             </Button>
           </Box>
@@ -160,6 +167,7 @@ type ImportKeysProps = {
   onDone?: () => void;
 };
 function ImportKeys({ file, onDone }: ImportKeysProps) {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const alive = useAlive();
 
@@ -167,14 +175,14 @@ function ImportKeys({ file, onDone }: ImportKeysProps) {
     useCallback(
       async (password) => {
         const crypto = mx.getCrypto();
-        if (!crypto) throw new Error('Unexpected Error! Crypto module not found!');
+        if (!crypto) throw new Error(t('settings.devices.local_backup.crypto_not_found_error'));
 
         const arrayBuffer = await file.arrayBuffer();
         const keys = await decryptMegolmKeyFile(arrayBuffer, password);
 
         await crypto.importRoomKeysAsJson(keys);
       },
-      [file, mx]
+      [file, mx, t]
     )
   );
 
@@ -209,7 +217,7 @@ function ImportKeys({ file, onDone }: ImportKeysProps) {
       <Box as="form" onSubmit={handleSubmit} direction="Column" gap="100">
         <Box gap="200" alignItems="End">
           <Box grow="Yes" direction="Column" gap="100">
-            <Text size="L400">Password</Text>
+            <Text size="L400">{t('settings.devices.local_backup.password_label')}</Text>
             <PasswordInput
               name="passwordInput"
               size="400"
@@ -231,7 +239,7 @@ function ImportKeys({ file, onDone }: ImportKeysProps) {
             before={decrypting ? <Spinner size="200" variant="Secondary" fill="Soft" /> : undefined}
           >
             <Text as="span" size="B400">
-              Decrypt
+              {t('settings.devices.local_backup.decrypt_button')}
             </Text>
           </Button>
         </Box>
@@ -246,6 +254,7 @@ function ImportKeys({ file, onDone }: ImportKeysProps) {
 }
 
 function ImportKeysTile() {
+  const { t } = useTranslation();
   const [file, setFile] = useState<File>();
   const pickFile = useFilePicker(setFile);
 
@@ -256,8 +265,8 @@ function ImportKeysTile() {
   return (
     <>
       <SettingTile
-        title="Import Messages Data"
-        description="Load password protected copy of encryption data from device to decrypt your messages."
+        title={t('settings.devices.local_backup.import_title')}
+        description={t('settings.devices.local_backup.import_description')}
         after={
           <Box>
             {file ? (
@@ -288,7 +297,7 @@ function ImportKeysTile() {
                 before={<Icon size="100" src={Icons.ArrowRight} />}
               >
                 <Text as="span" size="B300">
-                  Import
+                  {t('settings.devices.local_backup.import_button')}
                 </Text>
               </Button>
             )}
@@ -301,9 +310,10 @@ function ImportKeysTile() {
 }
 
 export function LocalBackup() {
+  const { t } = useTranslation();
   return (
     <Box direction="Column" gap="100">
-      <Text size="L400">Local Backup</Text>
+      <Text size="L400">{t('settings.devices.local_backup.title')}</Text>
       <SequenceCard
         className={SequenceCardStyle}
         variant="SurfaceVariant"

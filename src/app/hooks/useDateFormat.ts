@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { DateFormat } from '../state/settings';
 
 export type DateFormatItem = {
@@ -6,8 +7,10 @@ export type DateFormatItem = {
   format: DateFormat;
 };
 
-export const useDateFormatItems = (): DateFormatItem[] =>
-  useMemo(
+export const useDateFormatItems = (): DateFormatItem[] => {
+  const { t, i18n } = useTranslation();
+
+  return useMemo(
     () => [
       {
         format: 'D MMM YYYY',
@@ -31,8 +34,10 @@ export const useDateFormatItems = (): DateFormatItem[] =>
       },
       {
         format: '',
-        name: 'Custom',
+        name: t('settings.general.date_format_custom'),
       },
     ],
-    []
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [t, i18n.language]
   );
+};

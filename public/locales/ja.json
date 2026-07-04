@@ -46,8 +46,8 @@
       "invite": "招待",
       "copy_link": "リンクをコピー",
       "unnamed_folder": "名前なし",
-      "unverified_device_tooltip": "未検証のデバイス",
-      "unverified_devices_tooltip": "未検証のデバイス"
+      "unverified_device_tooltip": "未認証のデバイス",
+      "unverified_devices_tooltip": "未認証のデバイス"
     },
     "home": {
       "header_title": "ホーム",
@@ -455,5 +455,369 @@
     "user_id_label": "ユーザー ID",
     "reason_label": "理由(任意)",
     "invite_button": "招待"
+  },
+  "logout": {
+    "title": "ログアウト",
+    "unverified_title": "未認証のデバイス",
+    "unverified_description": "暗号化されたメッセージを失わないよう、ログアウトする前にデバイスを認証してください。",
+    "alert_title": "警告",
+    "alert_description": "メッセージへのアクセスを失わないよう、デバイス認証を有効にするか、設定から暗号化データをエクスポートしてください。",
+    "confirm": "ログアウトしようとしています。よろしいですか?",
+    "failed": "ログアウトに失敗しました! {{error}}",
+    "logout_button": "ログアウト",
+    "cancel_button": "キャンセル"
+  },
+  "settings": {
+    "tabs": {
+      "title": "設定",
+      "general": "全般",
+      "account": "アカウント",
+      "notifications": "通知",
+      "devices": "デバイス",
+      "emojis_stickers": "絵文字とスタンプ",
+      "developer_tools": "開発者ツール",
+      "about": "このアプリについて",
+      "logout": "ログアウト"
+    },
+    "general": {
+      "title": "全般",
+      "light_theme_label": "ライトテーマ:",
+      "dark_theme_label": "ダークテーマ:",
+      "theme_names": {
+        "light": "ライト",
+        "silver": "シルバー",
+        "dark": "ダーク",
+        "butter": "バター"
+      },
+      "appearance": {
+        "title": "外観",
+        "system_theme": {
+          "title": "システムテーマ",
+          "description": "システムの設定に応じてライトテーマとダークテーマを切り替えます。"
+        },
+        "theme": {
+          "title": "テーマ",
+          "description": "システムテーマが無効な場合に使用するテーマです。"
+        },
+        "monochrome_mode": "モノクロモード",
+        "twitter_emoji": "Twitter絵文字",
+        "page_zoom": "ページズーム",
+        "language": {
+          "title": "言語",
+          "description": "アプリの表示言語を選択します。"
+        }
+      },
+      "language_names": {
+        "system": "自動 (システム設定)"
+      },
+      "dock_position_names": {
+        "left": "左",
+        "right": "右",
+        "top": "上",
+        "bottom": "下"
+      },
+      "layout": {
+        "title": "レイアウト",
+        "server_list_position": {
+          "title": "サーバーリストの位置",
+          "description": "画面のどちら側にサーバーリストを表示するか選択します。"
+        },
+        "channel_list_position": {
+          "title": "チャンネルリストの位置",
+          "description": "画面のどちら側にチャンネルリストを表示するか選択します。"
+        }
+      },
+      "date_hint": {
+        "formatting": "書式について",
+        "year": {
+          "title": "年",
+          "yy": "2桁の年",
+          "yyyy": "4桁の年"
+        },
+        "month": {
+          "title": "月",
+          "m": "月",
+          "mm": "2桁の月",
+          "mmm": "月の短縮名",
+          "mmmm": "月のフル表記"
+        },
+        "day_of_month": {
+          "title": "日",
+          "d": "日",
+          "dd": "2桁の日"
+        },
+        "day_of_week": {
+          "title": "曜日",
+          "d": "曜日 (日曜日 = 0)",
+          "dd": "曜日の2文字表記",
+          "ddd": "曜日の短縮名",
+          "dddd": "曜日のフル表記"
+        }
+      },
+      "date_format": {
+        "title": "日付の形式",
+        "save": "保存"
+      },
+      "date_format_custom": "カスタム",
+      "date_and_time": {
+        "title": "日付と時刻",
+        "hour24_clock": "24時間表記"
+      },
+      "editor": {
+        "title": "エディター",
+        "enter_for_newline": {
+          "title": "ENTERで改行",
+          "description": "{{key}} + ENTER でメッセージを送信し、ENTER で改行します。"
+        },
+        "markdown_formatting": "Markdown 記法",
+        "hide_typing_read_receipts": {
+          "title": "入力状況と既読情報を非表示",
+          "description": "入力状況と既読情報の両方をオフにして、自分の活動状況を非公開にします。"
+        }
+      },
+      "message_layout_names": {
+        "modern": "モダン",
+        "compact": "コンパクト",
+        "bubble": "バブル"
+      },
+      "message_spacing_names": {
+        "none": "なし",
+        "ultra_small": "極小",
+        "extra_small": "とても小さい",
+        "small": "小さい",
+        "normal": "標準",
+        "large": "大きい"
+      },
+      "messages": {
+        "title": "メッセージ",
+        "message_layout": "メッセージレイアウト",
+        "message_spacing": "メッセージ間隔",
+        "legacy_username_color": "従来のユーザー名カラー",
+        "hide_membership_change": "メンバーシップの変更を非表示",
+        "hide_profile_change": "プロフィールの変更を非表示",
+        "disable_media_auto_load": "メディアの自動読み込みを無効化",
+        "url_preview": "URLプレビュー",
+        "url_preview_in_encrypted_room": "暗号化ルームでのURLプレビュー",
+        "show_hidden_events": "非表示イベントを表示"
+      }
+    },
+    "account": {
+      "title": "アカウント",
+      "profile": {
+        "title": "プロフィール",
+        "avatar_title": "アバター",
+        "upload_button": "アップロード",
+        "remove_button": "削除",
+        "unnamed_image": "無題",
+        "remove_avatar_title": "アバターを削除",
+        "remove_avatar_confirm": "本当にプロフィールアバターを削除しますか?",
+        "display_name_title": "表示名",
+        "save_button": "保存"
+      },
+      "matrix_id": {
+        "title": "Matrix ID",
+        "copy_button": "コピー"
+      },
+      "contact_info": {
+        "title": "連絡先情報",
+        "email_title": "メールアドレス",
+        "email_description": "アカウントに登録されているメールアドレスです。"
+      },
+      "ignored_users": {
+        "title": "ブロックしたユーザー",
+        "select_user_title": "ユーザーを選択",
+        "select_user_description": "ユーザー ID を追加して、そのユーザーからのメッセージや招待の受信を防ぎます。",
+        "block_button": "ブロック",
+        "users_label": "ユーザー"
+      }
+    },
+    "notifications": {
+      "page_title": "通知",
+      "badge_label": "バッジ: ",
+      "block_messages": {
+        "section_label": "メッセージのブロック",
+        "moved_notice": "この設定は「アカウント > ユーザーのブロック」セクションに移動しました。"
+      },
+      "all_messages": {
+        "section_label": "すべてのメッセージ",
+        "dm_title": "1対1のチャット",
+        "dm_encrypted_title": "1対1のチャット(暗号化)",
+        "rooms_title": "ルーム",
+        "rooms_encrypted_title": "ルーム(暗号化)"
+      },
+      "keyword": {
+        "section_label": "キーワードメッセージ",
+        "select_title": "キーワードを選択",
+        "select_description": "指定したキーワードを含むメッセージの通知設定です。",
+        "save_button": "保存",
+        "pattern_title": "「{{pattern}}」"
+      },
+      "special": {
+        "section_label": "特別なメッセージ",
+        "mention_user_id_title": "ユーザー ID へのメンション(「{{userId}}」)",
+        "contains_displayname_title": "表示名を含む",
+        "contains_displayname_named_title": "表示名を含む(「{{displayName}}」)",
+        "contains_username_title": "ユーザー名を含む(「{{username}}」)",
+        "mention_room_title": "@room へのメンション",
+        "contains_room_title": "@room を含む"
+      },
+      "mode": {
+        "disable": "無効",
+        "notify_silent": "サイレント通知",
+        "notify_loud": "通知"
+      },
+      "system": {
+        "section_label": "システム",
+        "desktop": {
+          "title": "デスクトップ通知",
+          "permission_blocked": "通知の許可がブロックされています。ブラウザのアドレスバーから通知を許可してください。",
+          "not_supported": "このシステムでは通知がサポートされていません。",
+          "description": "メッセージが届いたときにデスクトップ通知を表示します。",
+          "enable_button": "有効にする"
+        },
+        "sound": {
+          "title": "通知音",
+          "description": "新しいメッセージが届いたときに音を再生します。"
+        },
+        "email": {
+          "title": "メール通知",
+          "no_email_attached": "アカウントにメールアドレスが登録されていません。",
+          "description_with_email": "登録されたメールアドレスに通知を送信します。(「{{email}}」)",
+          "unexpected_error": "予期しないエラーが発生しました!",
+          "description": "登録されたメールアドレスに通知を送信します。"
+        }
+      }
+    },
+    "devices": {
+      "title": "デバイス",
+      "security_label": "セキュリティ",
+      "current_label": "現在のセッション",
+      "verification": {
+        "title": "デバイス認証",
+        "description": "デバイスの識別情報を認証し、暗号化されたメッセージへのアクセスを許可します。",
+        "unverified_badge": "未認証",
+        "others_unverified_badge_one": "{{count}} 件未認証",
+        "others_unverified_badge_other": "{{count}} 件未認証",
+        "verified_badge": "認証済み",
+        "start_verification_prompt": "他のデバイスから認証を開始するか、手動で認証してください。",
+        "learn_more_button": "詳細を見る",
+        "view_less_button": "閉じる",
+        "verify_manually_button": "手動で認証",
+        "other_device_description": "デバイスの識別情報を認証し、暗号化されたメッセージへのアクセスを許可します。",
+        "verify_button": "認証",
+        "enable_button": "有効にする",
+        "reset_menu_item": "リセット",
+        "learn_more": {
+          "steps_title": "他のデバイスから認証する手順です。",
+          "step_open_device": "認証済みの他のデバイスを開きます。",
+          "step_open_settings": "<1>設定</1>を開きます。",
+          "step_find_device": "<1>デバイス/セッション</1>セクションでこのデバイスを見つけます。",
+          "step_initiate": "認証を開始します。",
+          "no_verified_device_notice": "認証済みのデバイスがない場合は、<1>「手動で認証」</1>ボタンを押してください。"
+        }
+      },
+      "tile": {
+        "last_activity_prefix": "最終アクティビティ: ",
+        "today": "今日",
+        "yesterday": "昨日",
+        "device_id_prefix": "セッション ID:",
+        "ip_address_prefix": "IP アドレス:",
+        "device_key_prefix": "デバイスキー:",
+        "loading": "読み込み中...",
+        "device_name_label": "セッション名",
+        "save_button": "保存",
+        "cancel_button": "キャンセル",
+        "device_name_visibility_notice": "セッション名は公開されます。",
+        "logout_button": "サインアウト",
+        "undo_button": "元に戻す",
+        "edit_button": "編集"
+      },
+      "other_devices": {
+        "title": "その他",
+        "dashboard_title": "デバイスダッシュボード",
+        "dashboard_description": "OIDC ダッシュボードでデバイスを管理します。",
+        "open_button": "開く",
+        "logout_failed_error": "デバイスのサインアウトに失敗しました!もう一度お試しください。{{message}}",
+        "logout_selected_prompt_one": "選択したデバイスをサインアウトします。({{count}} 件選択中)",
+        "logout_selected_prompt_other": "選択したデバイスをサインアウトします。({{count}} 件選択中)",
+        "uia_unsupported": "この操作を行うための認証手順は、このクライアントではサポートされていません。",
+        "cancel_button": "キャンセル",
+        "logout_button": "サインアウト"
+      },
+      "local_backup": {
+        "title": "ローカルバックアップ",
+        "crypto_not_found_error": "予期しないエラーが発生しました!暗号化モジュールが見つかりません!",
+        "new_password_label": "新しいパスワード",
+        "confirm_password_label": "パスワードの確認",
+        "export_button": "エクスポート",
+        "export_title": "メッセージデータをエクスポート",
+        "export_description": "暗号化データのパスワード保護されたコピーをデバイスに保存し、後でメッセージを復号できるようにします。",
+        "collapse_button": "折りたたむ",
+        "expand_button": "展開",
+        "password_label": "パスワード",
+        "decrypt_button": "復号",
+        "import_title": "メッセージデータをインポート",
+        "import_description": "デバイスからパスワード保護された暗号化データのコピーを読み込み、メッセージを復号します。",
+        "import_button": "インポート"
+      }
+    },
+    "emojis_stickers": {
+      "title": "絵文字とスタンプ",
+      "room_packs_title": "ルームのパック",
+      "save_button": "保存",
+      "close_button": "閉じる",
+      "unselect_all_button": "すべて選択解除",
+      "select_all_button": "すべて選択",
+      "unknown_pack_name": "不明",
+      "no_packs_title": "パックがありません",
+      "no_packs_description": "ルームのパックがここに表示されます。パックのあるルームにまだ参加していません。",
+      "view_button": "表示",
+      "favorite_packs_title": "お気に入りのパック",
+      "select_pack_title": "パックを選択",
+      "select_pack_description": "すべてのルームで使う絵文字とスタンプのパックをルームから選んでください。",
+      "select_button": "選択",
+      "apply_error": "変更の適用に失敗しました。もう一度お試しください。",
+      "changes_saved": "変更を保存しました。準備ができたら適用してください。",
+      "reset_button": "リセット",
+      "apply_changes_button": "変更を適用",
+      "default_pack_title": "デフォルトパック"
+    },
+    "developer_tools": {
+      "title": "開発者ツール",
+      "options_title": "オプション",
+      "enable_developer_tools_title": "開発者ツールを有効にする",
+      "access_token_title": "アクセストークン",
+      "access_token_description": "アクセストークンをクリップボードにコピーします。",
+      "copy_button": "コピー",
+      "account_data_title": "アカウントデータ",
+      "global_title": "グローバル",
+      "global_description": "グローバルアカウントデータに保存されているデータです。",
+      "collapse_button": "折りたたむ",
+      "expand_button": "展開",
+      "events_title": "イベント",
+      "events_total_one": "合計: {{count}}",
+      "events_total_other": "合計: {{count}}",
+      "add_new_button": "新規追加"
+    },
+    "about": {
+      "title": "このアプリについて",
+      "logo_alt": "Cinny のロゴ",
+      "tagline": "Discord-style chat on Matrix — a fork of Cinny.",
+      "source_code": "ソースコード",
+      "support": "サポート",
+      "options": "オプション",
+      "clear_cache": {
+        "title": "キャッシュを削除して再読み込み",
+        "description": "ローカルに保存されたデータをすべて削除し、サーバーから再読み込みします。",
+        "button": "キャッシュを削除"
+      },
+      "credits": {
+        "title": "クレジット",
+        "matrix_js_sdk": "<0>matrix-js-sdk</0> は © <1>The Matrix.org Foundation C.I.C</1> による著作物であり、<2>Apache 2.0</2> の条件の下で使用されています。",
+        "twemoji_colr": "<0>twemoji-colr</0> フォントは © <1>Mozilla Foundation</1> による著作物であり、<2>Apache 2.0</2> の条件の下で使用されています。",
+        "twemoji": "<0>Twemoji</0> の絵文字アートは © <1>Twitter, Inc and other contributors</1> による著作物であり、<2>CC-BY 4.0</2> の条件の下で使用されています。",
+        "material_sound": "<0>Material sound resources</0> は © <1>Google</1> による著作物であり、<2>CC-BY 4.0</2> の条件の下で使用されています。"
+      }
+    }
   }
 }

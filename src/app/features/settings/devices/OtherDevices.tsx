@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { Box, Button, config, Menu, Spinner, Text } from 'folds';
 import { AuthDict, IMyDevice, MatrixError } from 'matrix-js-sdk';
+import { useTranslation } from 'react-i18next';
 import { SequenceCard } from '../../../components/sequence-card';
 import { SequenceCardStyle } from '../styles.css';
 import { ActionUIA, ActionUIAFlowsLoader } from '../../../components/ActionUIA';
@@ -22,6 +23,7 @@ type OtherDevicesProps = {
   showVerification?: boolean;
 };
 export function OtherDevices({ devices, refreshDeviceList, showVerification }: OtherDevicesProps) {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const crypto = mx.getCrypto();
   const authMetadata = useAuthMetadata();
@@ -104,7 +106,7 @@ export function OtherDevices({ devices, refreshDeviceList, showVerification }: O
   return devices.length > 0 ? (
     <>
       <Box direction="Column" gap="100">
-        <Text size="L400">Others</Text>
+        <Text size="L400">{t('settings.devices.other_devices.title')}</Text>
         {authMetadata && (
           <SequenceCard
             className={SequenceCardStyle}
@@ -113,8 +115,8 @@ export function OtherDevices({ devices, refreshDeviceList, showVerification }: O
             gap="400"
           >
             <SettingTile
-              title="Device Dashboard"
-              description="Manage your devices on OIDC dashboard."
+              title={t('settings.devices.other_devices.dashboard_title')}
+              description={t('settings.devices.other_devices.dashboard_description')}
               after={
                 <Button
                   size="300"
@@ -124,7 +126,7 @@ export function OtherDevices({ devices, refreshDeviceList, showVerification }: O
                   outlined
                   onClick={handleDashboardOIDC}
                 >
-                  <Text size="B300">Open</Text>
+                  <Text size="B300">{t('settings.devices.other_devices.open_button')}</Text>
                 </Button>
               }
             />
@@ -198,11 +200,19 @@ export function OtherDevices({ devices, refreshDeviceList, showVerification }: O
             <Box grow="Yes" direction="Column">
               {deleteError ? (
                 <Text size="T200">
-                  <b>Failed to logout devices! Please try again. {deleteError.message}</b>
+                  <b>
+                    {t('settings.devices.other_devices.logout_failed_error', {
+                      message: deleteError.message,
+                    })}
+                  </b>
                 </Text>
               ) : (
                 <Text size="T200">
-                  <b>Logout from selected devices. ({deleted.size} selected)</b>
+                  <b>
+                    {t('settings.devices.other_devices.logout_selected_prompt', {
+                      count: deleted.size,
+                    })}
+                  </b>
                 </Text>
               )}
               {authData && (
@@ -210,7 +220,7 @@ export function OtherDevices({ devices, refreshDeviceList, showVerification }: O
                   authData={authData}
                   unsupported={() => (
                     <Text size="T200">
-                      Authentication steps to perform this action are not supported by client.
+                      {t('settings.devices.other_devices.uia_unsupported')}
                     </Text>
                   )}
                 >
@@ -234,7 +244,7 @@ export function OtherDevices({ devices, refreshDeviceList, showVerification }: O
                 disabled={deleting}
                 onClick={handleCancelDelete}
               >
-                <Text size="B300">Cancel</Text>
+                <Text size="B300">{t('settings.devices.other_devices.cancel_button')}</Text>
               </Button>
               <Button
                 size="300"
@@ -244,7 +254,7 @@ export function OtherDevices({ devices, refreshDeviceList, showVerification }: O
                 before={deleting && <Spinner variant="Critical" fill="Solid" size="100" />}
                 onClick={() => deleteDevices()}
               >
-                <Text size="B300">Logout</Text>
+                <Text size="B300">{t('settings.devices.other_devices.logout_button')}</Text>
               </Button>
             </Box>
           </Box>

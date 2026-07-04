@@ -455,5 +455,369 @@
     "user_id_label": "User ID",
     "reason_label": "Reason (Optional)",
     "invite_button": "Invite"
+  },
+  "logout": {
+    "title": "Logout",
+    "unverified_title": "Unverified Device",
+    "unverified_description": "Verify your device before logging out to save your encrypted messages.",
+    "alert_title": "Alert",
+    "alert_description": "Enable device verification or export your encrypted data from settings to avoid losing access to your messages.",
+    "confirm": "You’re about to log out. Are you sure?",
+    "failed": "Failed to logout! {{error}}",
+    "logout_button": "Logout",
+    "cancel_button": "Cancel"
+  },
+  "settings": {
+    "tabs": {
+      "title": "Settings",
+      "general": "General",
+      "account": "Account",
+      "notifications": "Notifications",
+      "devices": "Devices",
+      "emojis_stickers": "Emojis & Stickers",
+      "developer_tools": "Developer Tools",
+      "about": "About",
+      "logout": "Logout"
+    },
+    "general": {
+      "title": "General",
+      "light_theme_label": "Light Theme:",
+      "dark_theme_label": "Dark Theme:",
+      "theme_names": {
+        "light": "Light",
+        "silver": "Silver",
+        "dark": "Dark",
+        "butter": "Butter"
+      },
+      "appearance": {
+        "title": "Appearance",
+        "system_theme": {
+          "title": "System Theme",
+          "description": "Choose between light and dark theme based on system preference."
+        },
+        "theme": {
+          "title": "Theme",
+          "description": "Theme to use when system theme is not enabled."
+        },
+        "monochrome_mode": "Monochrome Mode",
+        "twitter_emoji": "Twitter Emoji",
+        "page_zoom": "Page Zoom",
+        "language": {
+          "title": "Language",
+          "description": "Choose the display language for the app."
+        }
+      },
+      "language_names": {
+        "system": "Auto (System)"
+      },
+      "dock_position_names": {
+        "left": "Left",
+        "right": "Right",
+        "top": "Top",
+        "bottom": "Bottom"
+      },
+      "layout": {
+        "title": "Layout",
+        "server_list_position": {
+          "title": "Server List Position",
+          "description": "Choose which side of the screen the server list appears on."
+        },
+        "channel_list_position": {
+          "title": "Channel List Position",
+          "description": "Choose which side of the screen the channel list appears on."
+        }
+      },
+      "date_hint": {
+        "formatting": "Formatting",
+        "year": {
+          "title": "Year",
+          "yy": "Two-digit year",
+          "yyyy": "Four-digit year"
+        },
+        "month": {
+          "title": "Month",
+          "m": "The month",
+          "mm": "Two-digit month",
+          "mmm": "Short month name",
+          "mmmm": "Full month name"
+        },
+        "day_of_month": {
+          "title": "Day of the Month",
+          "d": "Day of the month",
+          "dd": "Two-digit day of the month"
+        },
+        "day_of_week": {
+          "title": "Day of the Week",
+          "d": "Day of the week (Sunday = 0)",
+          "dd": "Two-letter day name",
+          "ddd": "Short day name",
+          "dddd": "Full day name"
+        }
+      },
+      "date_format": {
+        "title": "Date Format",
+        "save": "Save"
+      },
+      "date_format_custom": "Custom",
+      "date_and_time": {
+        "title": "Date & Time",
+        "hour24_clock": "24-Hour Time Format"
+      },
+      "editor": {
+        "title": "Editor",
+        "enter_for_newline": {
+          "title": "ENTER for Newline",
+          "description": "Use {{key}} + ENTER to send message and ENTER for newline."
+        },
+        "markdown_formatting": "Markdown Formatting",
+        "hide_typing_read_receipts": {
+          "title": "Hide Typing & Read Receipts",
+          "description": "Turn off both typing status and read receipts to keep your activity private."
+        }
+      },
+      "message_layout_names": {
+        "modern": "Modern",
+        "compact": "Compact",
+        "bubble": "Bubble"
+      },
+      "message_spacing_names": {
+        "none": "None",
+        "ultra_small": "Ultra Small",
+        "extra_small": "Extra Small",
+        "small": "Small",
+        "normal": "Normal",
+        "large": "Large"
+      },
+      "messages": {
+        "title": "Messages",
+        "message_layout": "Message Layout",
+        "message_spacing": "Message Spacing",
+        "legacy_username_color": "Legacy Username Color",
+        "hide_membership_change": "Hide Membership Change",
+        "hide_profile_change": "Hide Profile Change",
+        "disable_media_auto_load": "Disable Media Auto Load",
+        "url_preview": "Url Preview",
+        "url_preview_in_encrypted_room": "Url Preview in Encrypted Room",
+        "show_hidden_events": "Show Hidden Events"
+      }
+    },
+    "account": {
+      "title": "Account",
+      "profile": {
+        "title": "Profile",
+        "avatar_title": "Avatar",
+        "upload_button": "Upload",
+        "remove_button": "Remove",
+        "unnamed_image": "Unnamed",
+        "remove_avatar_title": "Remove Avatar",
+        "remove_avatar_confirm": "Are you sure you want to remove profile avatar?",
+        "display_name_title": "Display Name",
+        "save_button": "Save"
+      },
+      "matrix_id": {
+        "title": "Matrix ID",
+        "copy_button": "Copy"
+      },
+      "contact_info": {
+        "title": "Contact Information",
+        "email_title": "Email Address",
+        "email_description": "Email address attached to your account."
+      },
+      "ignored_users": {
+        "title": "Blocked Users",
+        "select_user_title": "Select User",
+        "select_user_description": "Prevent receiving messages or invites from user by adding their userId.",
+        "block_button": "Block",
+        "users_label": "Users"
+      }
+    },
+    "notifications": {
+      "page_title": "Notifications",
+      "badge_label": "Badge: ",
+      "block_messages": {
+        "section_label": "Block Messages",
+        "moved_notice": "This option has been moved to \"Account > Block Users\" section."
+      },
+      "all_messages": {
+        "section_label": "All Messages",
+        "dm_title": "1-to-1 Chats",
+        "dm_encrypted_title": "1-to-1 Chats (Encrypted)",
+        "rooms_title": "Rooms",
+        "rooms_encrypted_title": "Rooms (Encrypted)"
+      },
+      "keyword": {
+        "section_label": "Keyword Messages",
+        "select_title": "Select Keyword",
+        "select_description": "Set a notification preference for message containing given keyword.",
+        "save_button": "Save",
+        "pattern_title": "\"{{pattern}}\""
+      },
+      "special": {
+        "section_label": "Special Messages",
+        "mention_user_id_title": "Mention User ID (\"{{userId}}\")",
+        "contains_displayname_title": "Contains Displayname",
+        "contains_displayname_named_title": "Contains Displayname (\"{{displayName}}\")",
+        "contains_username_title": "Contains Username (\"{{username}}\")",
+        "mention_room_title": "Mention @room",
+        "contains_room_title": "Contains @room"
+      },
+      "mode": {
+        "disable": "Disable",
+        "notify_silent": "Notify Silent",
+        "notify_loud": "Notify Loud"
+      },
+      "system": {
+        "section_label": "System",
+        "desktop": {
+          "title": "Desktop Notifications",
+          "permission_blocked": "Notification permission is blocked. Please allow notification permission from browser address bar.",
+          "not_supported": "Notifications are not supported by the system.",
+          "description": "Show desktop notifications when message arrive.",
+          "enable_button": "Enable"
+        },
+        "sound": {
+          "title": "Notification Sound",
+          "description": "Play sound when new message arrive."
+        },
+        "email": {
+          "title": "Email Notification",
+          "no_email_attached": "Your account does not have any email attached.",
+          "description_with_email": "Send notification to your email. (\"{{email}}\")",
+          "unexpected_error": "Unexpected Error!",
+          "description": "Send notification to your email."
+        }
+      }
+    },
+    "devices": {
+      "title": "Devices",
+      "security_label": "Security",
+      "current_label": "Current",
+      "verification": {
+        "title": "Device Verification",
+        "description": "To verify device identity and grant access to encrypted messages.",
+        "unverified_badge": "Unverified",
+        "others_unverified_badge_one": "{{count}} Unverified",
+        "others_unverified_badge_other": "{{count}} Unverified",
+        "verified_badge": "Verified",
+        "start_verification_prompt": "Start verification from other device or verify manually.",
+        "learn_more_button": "Learn More",
+        "view_less_button": "View Less",
+        "verify_manually_button": "Verify Manually",
+        "other_device_description": "Verify device identity and grant access to encrypted messages.",
+        "verify_button": "Verify",
+        "enable_button": "Enable",
+        "reset_menu_item": "Reset",
+        "learn_more": {
+          "steps_title": "Steps to verify from other device.",
+          "step_open_device": "Open your other verified device.",
+          "step_open_settings": "Open <1>Settings</1>.",
+          "step_find_device": "Find this device in <1>Devices/Sessions</1> section.",
+          "step_initiate": "Initiate verification.",
+          "no_verified_device_notice": "If you do not have any verified device press the <1>\"Verify Manually\"</1> button."
+        }
+      },
+      "tile": {
+        "last_activity_prefix": "Last activity: ",
+        "today": "Today",
+        "yesterday": "Yesterday",
+        "device_id_prefix": "Device ID:",
+        "ip_address_prefix": "IP Address:",
+        "device_key_prefix": "Device Key:",
+        "loading": "loading...",
+        "device_name_label": "Device Name",
+        "save_button": "Save",
+        "cancel_button": "Cancel",
+        "device_name_visibility_notice": "Device names are visible to public.",
+        "logout_button": "Logout",
+        "undo_button": "Undo",
+        "edit_button": "Edit"
+      },
+      "other_devices": {
+        "title": "Others",
+        "dashboard_title": "Device Dashboard",
+        "dashboard_description": "Manage your devices on OIDC dashboard.",
+        "open_button": "Open",
+        "logout_failed_error": "Failed to logout devices! Please try again. {{message}}",
+        "logout_selected_prompt_one": "Logout from selected devices. ({{count}} selected)",
+        "logout_selected_prompt_other": "Logout from selected devices. ({{count}} selected)",
+        "uia_unsupported": "Authentication steps to perform this action are not supported by client.",
+        "cancel_button": "Cancel",
+        "logout_button": "Logout"
+      },
+      "local_backup": {
+        "title": "Local Backup",
+        "crypto_not_found_error": "Unexpected Error! Crypto module not found!",
+        "new_password_label": "New Password",
+        "confirm_password_label": "Confirm Password",
+        "export_button": "Export",
+        "export_title": "Export Messages Data",
+        "export_description": "Save password protected copy of encryption data on your device to decrypt messages later.",
+        "collapse_button": "Collapse",
+        "expand_button": "Expand",
+        "password_label": "Password",
+        "decrypt_button": "Decrypt",
+        "import_title": "Import Messages Data",
+        "import_description": "Load password protected copy of encryption data from device to decrypt your messages.",
+        "import_button": "Import"
+      }
+    },
+    "emojis_stickers": {
+      "title": "Emojis & Stickers",
+      "room_packs_title": "Room Packs",
+      "save_button": "Save",
+      "close_button": "Close",
+      "unselect_all_button": "Unselect All",
+      "select_all_button": "Select All",
+      "unknown_pack_name": "Unknown",
+      "no_packs_title": "No Packs",
+      "no_packs_description": "Pack from rooms will appear here. You do not have any room with packs yet.",
+      "view_button": "View",
+      "favorite_packs_title": "Favorite Packs",
+      "select_pack_title": "Select Pack",
+      "select_pack_description": "Pick emojis and stickers pack from rooms to use in all rooms.",
+      "select_button": "Select",
+      "apply_error": "Failed to apply changes! Please try again.",
+      "changes_saved": "Changes saved! Apply when ready.",
+      "reset_button": "Reset",
+      "apply_changes_button": "Apply Changes",
+      "default_pack_title": "Default Pack"
+    },
+    "developer_tools": {
+      "title": "Developer Tools",
+      "options_title": "Options",
+      "enable_developer_tools_title": "Enable Developer Tools",
+      "access_token_title": "Access Token",
+      "access_token_description": "Copy access token to clipboard.",
+      "copy_button": "Copy",
+      "account_data_title": "Account Data",
+      "global_title": "Global",
+      "global_description": "Data stored in your global account data.",
+      "collapse_button": "Collapse",
+      "expand_button": "Expand",
+      "events_title": "Events",
+      "events_total_one": "Total: {{count}}",
+      "events_total_other": "Total: {{count}}",
+      "add_new_button": "Add New"
+    },
+    "about": {
+      "title": "About",
+      "logo_alt": "Cinny logo",
+      "tagline": "Discord-style chat on Matrix — a fork of Cinny.",
+      "source_code": "Source Code",
+      "support": "Support",
+      "options": "Options",
+      "clear_cache": {
+        "title": "Clear Cache & Reload",
+        "description": "Clear all your locally stored data and reload from server.",
+        "button": "Clear Cache"
+      },
+      "credits": {
+        "title": "Credits",
+        "matrix_js_sdk": "The <0>matrix-js-sdk</0> is © <1>The Matrix.org Foundation C.I.C</1> used under the terms of <2>Apache 2.0</2>.",
+        "twemoji_colr": "The <0>twemoji-colr</0> font is © <1>Mozilla Foundation</1> used under the terms of <2>Apache 2.0</2>.",
+        "twemoji": "The <0>Twemoji</0> emoji art is © <1>Twitter, Inc and other contributors</1> used under the terms of <2>CC-BY 4.0</2>.",
+        "material_sound": "The <0>Material sound resources</0> are © <1>Google</1> used under the terms of <2>CC-BY 4.0</2>."
+      }
+    }
   }
 }

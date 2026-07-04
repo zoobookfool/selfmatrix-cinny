@@ -14,6 +14,7 @@ import {
 import { IPushRule } from 'matrix-js-sdk';
 import React, { MouseEventHandler, useMemo, useState } from 'react';
 import FocusTrap from 'focus-trap-react';
+import { useTranslation } from 'react-i18next';
 import { NotificationMode, useNotificationActionsMode } from '../../../hooks/useNotificationMode';
 import { stopPropagation } from '../../../utils/keyboard';
 import { AsyncStatus, useAsyncCallback } from '../../../hooks/useAsyncCallback';
@@ -21,15 +22,18 @@ import { AsyncStatus, useAsyncCallback } from '../../../hooks/useAsyncCallback';
 export const useNotificationModes = (): NotificationMode[] =>
   useMemo(() => [NotificationMode.NotifyLoud, NotificationMode.Notify, NotificationMode.OFF], []);
 
-const useNotificationModeStr = (): Record<NotificationMode, string> =>
-  useMemo(
+const useNotificationModeStr = (): Record<NotificationMode, string> => {
+  const { t, i18n } = useTranslation();
+  return useMemo(
     () => ({
-      [NotificationMode.OFF]: 'Disable',
-      [NotificationMode.Notify]: 'Notify Silent',
-      [NotificationMode.NotifyLoud]: 'Notify Loud',
+      [NotificationMode.OFF]: t('settings.notifications.mode.disable'),
+      [NotificationMode.Notify]: t('settings.notifications.mode.notify_silent'),
+      [NotificationMode.NotifyLoud]: t('settings.notifications.mode.notify_loud'),
     }),
-    []
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [t, i18n.language]
   );
+};
 
 type NotificationModeSwitcherProps = {
   pushRule: IPushRule;

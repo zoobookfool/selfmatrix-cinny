@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { MessageSpacing } from '../state/settings';
 
 export type MessageSpacingItem = {
@@ -6,33 +7,37 @@ export type MessageSpacingItem = {
   spacing: MessageSpacing;
 };
 
-export const useMessageSpacingItems = (): MessageSpacingItem[] =>
-  useMemo(
+export const useMessageSpacingItems = (): MessageSpacingItem[] => {
+  const { t, i18n } = useTranslation();
+
+  return useMemo(
     () => [
       {
         spacing: '0',
-        name: 'None',
+        name: t('settings.general.message_spacing_names.none'),
       },
       {
         spacing: '100',
-        name: 'Ultra Small',
+        name: t('settings.general.message_spacing_names.ultra_small'),
       },
       {
         spacing: '200',
-        name: 'Extra Small',
+        name: t('settings.general.message_spacing_names.extra_small'),
       },
       {
         spacing: '300',
-        name: 'Small',
+        name: t('settings.general.message_spacing_names.small'),
       },
       {
         spacing: '400',
-        name: 'Normal',
+        name: t('settings.general.message_spacing_names.normal'),
       },
       {
         spacing: '500',
-        name: 'Large',
+        name: t('settings.general.message_spacing_names.large'),
       },
     ],
-    []
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [t, i18n.language]
   );
+};

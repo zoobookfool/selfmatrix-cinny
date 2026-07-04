@@ -15,6 +15,7 @@ import {
   Text,
 } from 'folds';
 import FocusTrap from 'focus-trap-react';
+import { useTranslation } from 'react-i18next';
 import { General } from './general';
 import { PageNav, PageNavContent, PageNavHeader, PageRoot } from '../../components/page';
 import { ScreenSize, useScreenSizeContext } from '../../hooks/useScreenSize';
@@ -50,53 +51,58 @@ type SettingsMenuItem = {
   icon: IconSrc;
 };
 
-const useSettingsMenuItems = (): SettingsMenuItem[] =>
-  useMemo(
+const useSettingsMenuItems = (): SettingsMenuItem[] => {
+  const { t, i18n } = useTranslation();
+
+  return useMemo(
     () => [
       {
         page: SettingsPages.GeneralPage,
-        name: 'General',
+        name: t('settings.tabs.general'),
         icon: Icons.Setting,
       },
       {
         page: SettingsPages.AccountPage,
-        name: 'Account',
+        name: t('settings.tabs.account'),
         icon: Icons.User,
       },
       {
         page: SettingsPages.NotificationPage,
-        name: 'Notifications',
+        name: t('settings.tabs.notifications'),
         icon: Icons.Bell,
       },
       {
         page: SettingsPages.DevicesPage,
-        name: 'Devices',
+        name: t('settings.tabs.devices'),
         icon: Icons.Monitor,
       },
       {
         page: SettingsPages.EmojisStickersPage,
-        name: 'Emojis & Stickers',
+        name: t('settings.tabs.emojis_stickers'),
         icon: Icons.Smile,
       },
       {
         page: SettingsPages.DeveloperToolsPage,
-        name: 'Developer Tools',
+        name: t('settings.tabs.developer_tools'),
         icon: Icons.Terminal,
       },
       {
         page: SettingsPages.AboutPage,
-        name: 'About',
+        name: t('settings.tabs.about'),
         icon: Icons.Info,
       },
     ],
-    []
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [t, i18n.language]
   );
+};
 
 type SettingsProps = {
   initialPage?: SettingsPages;
   requestClose: () => void;
 };
 export function Settings({ initialPage, requestClose }: SettingsProps) {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const useAuthentication = useMediaAuthentication();
   const userId = mx.getUserId()!;
@@ -136,7 +142,7 @@ export function Settings({ initialPage, requestClose }: SettingsProps) {
                   />
                 </Avatar>
                 <Text size="H4" truncate>
-                  Settings
+                  {t('settings.tabs.title')}
                 </Text>
               </Box>
               <Box shrink="No">
@@ -184,7 +190,7 @@ export function Settings({ initialPage, requestClose }: SettingsProps) {
                         before={<Icon src={Icons.Power} size="100" />}
                         onClick={() => setLogout(true)}
                       >
-                        <Text size="B400">Logout</Text>
+                        <Text size="B400">{t('settings.tabs.logout')}</Text>
                       </Button>
                       {logout && (
                         <Overlay open backdrop={<OverlayBackdrop />}>

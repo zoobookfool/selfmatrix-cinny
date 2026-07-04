@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 import { ConditionKind, IPushRules, PushRuleKind, RuleId } from 'matrix-js-sdk';
 import { Box, Text, Badge } from 'folds';
+import { useTranslation } from 'react-i18next';
 import { useAccountData } from '../../../hooks/useAccountData';
 import { AccountDataEvent } from '../../../../types/matrix/accountData';
 import { SequenceCard } from '../../../components/sequence-card';
@@ -112,6 +113,7 @@ function MentionModeSwitcher({ ruleId, pushRules, defaultPushRuleData }: PushRul
 }
 
 export function SpecialMessagesNotifications() {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const userId = mx.getUserId()!;
   const { displayName } = useUserProfile(userId);
@@ -124,9 +126,9 @@ export function SpecialMessagesNotifications() {
   return (
     <Box direction="Column" gap="100">
       <Box alignItems="Center" justifyContent="SpaceBetween" gap="200">
-        <Text size="L400">Special Messages</Text>
+        <Text size="L400">{t('settings.notifications.special.section_label')}</Text>
         <Box gap="100">
-          <Text size="T200">Badge: </Text>
+          <Text size="T200">{t('settings.notifications.badge_label')}</Text>
           <Badge radii="300" variant="Success" fill="Solid">
             <Text size="L400">1</Text>
           </Badge>
@@ -139,7 +141,7 @@ export function SpecialMessagesNotifications() {
         gap="400"
       >
         <SettingTile
-          title={`Mention User ID ("${userId}")`}
+          title={t('settings.notifications.special.mention_user_id_title', { userId })}
           after={
             <MentionModeSwitcher
               pushRules={pushRules}
@@ -156,7 +158,13 @@ export function SpecialMessagesNotifications() {
         gap="400"
       >
         <SettingTile
-          title={`Contains Displayname ${displayName ? `("${displayName}")` : ''}`}
+          title={
+            displayName
+              ? t('settings.notifications.special.contains_displayname_named_title', {
+                  displayName,
+                })
+              : t('settings.notifications.special.contains_displayname_title')
+          }
           after={
             <MentionModeSwitcher
               pushRules={pushRules}
@@ -173,7 +181,9 @@ export function SpecialMessagesNotifications() {
         gap="400"
       >
         <SettingTile
-          title={`Contains Username ("${getMxIdLocalPart(userId)}")`}
+          title={t('settings.notifications.special.contains_username_title', {
+            username: getMxIdLocalPart(userId),
+          })}
           after={
             <MentionModeSwitcher
               pushRules={pushRules}
@@ -190,7 +200,7 @@ export function SpecialMessagesNotifications() {
         gap="400"
       >
         <SettingTile
-          title="Mention @room"
+          title={t('settings.notifications.special.mention_room_title')}
           after={
             <MentionModeSwitcher
               pushRules={pushRules}
@@ -207,7 +217,7 @@ export function SpecialMessagesNotifications() {
         gap="400"
       >
         <SettingTile
-          title="Contains @room"
+          title={t('settings.notifications.special.contains_room_title')}
           after={
             <MentionModeSwitcher
               pushRules={pushRules}

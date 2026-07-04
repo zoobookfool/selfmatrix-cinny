@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { RoomAccountDataEvents } from 'matrix-js-sdk';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Text,
@@ -36,6 +37,7 @@ type DeveloperToolsProps = {
   requestClose: () => void;
 };
 export function DeveloperTools({ requestClose }: DeveloperToolsProps) {
+  const { t } = useTranslation();
   const [developerTools, setDeveloperTools] = useSetting(settingsAtom, 'developerTools');
   const mx = useMatrixClient();
   const room = useRoom();
@@ -93,7 +95,7 @@ export function DeveloperTools({ requestClose }: DeveloperToolsProps) {
         <Box grow="Yes" gap="200">
           <Box grow="Yes" alignItems="Center" gap="200">
             <Text size="H3" truncate>
-              Developer Tools
+              {t('room_settings.developer_tools.title')}
             </Text>
           </Box>
           <Box shrink="No">
@@ -108,7 +110,7 @@ export function DeveloperTools({ requestClose }: DeveloperToolsProps) {
           <PageContent>
             <Box direction="Column" gap="700">
               <Box direction="Column" gap="100">
-                <Text size="L400">Options</Text>
+                <Text size="L400">{t('room_settings.developer_tools.options_title')}</Text>
                 <SequenceCard
                   className={SequenceCardStyle}
                   variant="SurfaceVariant"
@@ -116,7 +118,7 @@ export function DeveloperTools({ requestClose }: DeveloperToolsProps) {
                   gap="400"
                 >
                   <SettingTile
-                    title="Enable Developer Tools"
+                    title={t('room_settings.developer_tools.enable_developer_tools_title')}
                     after={
                       <Switch
                         variant="Primary"
@@ -134,8 +136,10 @@ export function DeveloperTools({ requestClose }: DeveloperToolsProps) {
                     gap="400"
                   >
                     <SettingTile
-                      title="Room ID"
-                      description={`Copy room ID to clipboard. ("${room.roomId}")`}
+                      title={t('room_settings.developer_tools.room_id_title')}
+                      description={t('room_settings.developer_tools.room_id_description', {
+                        roomId: room.roomId,
+                      })}
                       after={
                         <Button
                           onClick={() => copyToClipboard(room.roomId ?? '<NO_ROOM_ID_FOUND>')}
@@ -145,7 +149,7 @@ export function DeveloperTools({ requestClose }: DeveloperToolsProps) {
                           radii="300"
                           outlined
                         >
-                          <Text size="B300">Copy</Text>
+                          <Text size="B300">{t('room_settings.developer_tools.copy_button')}</Text>
                         </Button>
                       }
                     />
@@ -155,7 +159,7 @@ export function DeveloperTools({ requestClose }: DeveloperToolsProps) {
 
               {developerTools && (
                 <Box direction="Column" gap="100">
-                  <Text size="L400">Data</Text>
+                  <Text size="L400">{t('room_settings.developer_tools.data_title')}</Text>
 
                   <SequenceCard
                     className={SequenceCardStyle}
@@ -164,8 +168,10 @@ export function DeveloperTools({ requestClose }: DeveloperToolsProps) {
                     gap="400"
                   >
                     <SettingTile
-                      title="New Message Event"
-                      description="Create and send a new message event within the room."
+                      title={t('room_settings.developer_tools.new_message_event_title')}
+                      description={t(
+                        'room_settings.developer_tools.new_message_event_description'
+                      )}
                       after={
                         <Button
                           onClick={() => setComposeEvent({})}
@@ -175,7 +181,9 @@ export function DeveloperTools({ requestClose }: DeveloperToolsProps) {
                           radii="300"
                           outlined
                         >
-                          <Text size="B300">Compose</Text>
+                          <Text size="B300">
+                            {t('room_settings.developer_tools.compose_button')}
+                          </Text>
                         </Button>
                       }
                     />
@@ -187,8 +195,8 @@ export function DeveloperTools({ requestClose }: DeveloperToolsProps) {
                     gap="400"
                   >
                     <SettingTile
-                      title="Room State"
-                      description="State events of the room."
+                      title={t('room_settings.developer_tools.room_state_title')}
+                      description={t('room_settings.developer_tools.room_state_description')}
                       after={
                         <Button
                           onClick={() => setExpandState(!expandState)}
@@ -205,15 +213,23 @@ export function DeveloperTools({ requestClose }: DeveloperToolsProps) {
                             />
                           }
                         >
-                          <Text size="B300">{expandState ? 'Collapse' : 'Expand'}</Text>
+                          <Text size="B300">
+                            {expandState
+                              ? t('room_settings.developer_tools.collapse_button')
+                              : t('room_settings.developer_tools.expand_button')}
+                          </Text>
                         </Button>
                       }
                     />
                     {expandState && (
                       <Box direction="Column" gap="100">
                         <Box justifyContent="SpaceBetween">
-                          <Text size="L400">Events</Text>
-                          <Text size="L400">Total: {roomState.size}</Text>
+                          <Text size="L400">{t('room_settings.developer_tools.events_title')}</Text>
+                          <Text size="L400">
+                            {t('room_settings.developer_tools.events_total', {
+                              count: roomState.size,
+                            })}
+                          </Text>
                         </Box>
                         <CutoutCard>
                           <MenuItem
@@ -226,7 +242,7 @@ export function DeveloperTools({ requestClose }: DeveloperToolsProps) {
                           >
                             <Box grow="Yes">
                               <Text size="T200" truncate>
-                                Add New
+                                {t('room_settings.developer_tools.add_new_button')}
                               </Text>
                             </Box>
                           </MenuItem>
@@ -280,7 +296,7 @@ export function DeveloperTools({ requestClose }: DeveloperToolsProps) {
                                       >
                                         <Box grow="Yes">
                                           <Text size="T200" truncate>
-                                            Add New
+                                            {t('room_settings.developer_tools.add_new_button')}
                                           </Text>
                                         </Box>
                                       </MenuItem>
@@ -303,7 +319,11 @@ export function DeveloperTools({ requestClose }: DeveloperToolsProps) {
                                           >
                                             <Box grow="Yes">
                                               <Text size="T200" truncate>
-                                                {stateKey ? `"${stateKey}"` : 'Default'}
+                                                {stateKey
+                                                  ? `"${stateKey}"`
+                                                  : t(
+                                                      'room_settings.developer_tools.default_state_key'
+                                                    )}
                                               </Text>
                                             </Box>
                                           </MenuItem>
@@ -324,8 +344,8 @@ export function DeveloperTools({ requestClose }: DeveloperToolsProps) {
                     gap="400"
                   >
                     <SettingTile
-                      title="Account Data"
-                      description="Private personalization data stored within room."
+                      title={t('room_settings.developer_tools.account_data_title')}
+                      description={t('room_settings.developer_tools.account_data_description')}
                       after={
                         <Button
                           onClick={() => setExpandAccountData(!expandAccountData)}
@@ -342,15 +362,23 @@ export function DeveloperTools({ requestClose }: DeveloperToolsProps) {
                             />
                           }
                         >
-                          <Text size="B300">{expandAccountData ? 'Collapse' : 'Expand'}</Text>
+                          <Text size="B300">
+                            {expandAccountData
+                              ? t('room_settings.developer_tools.collapse_button')
+                              : t('room_settings.developer_tools.expand_button')}
+                          </Text>
                         </Button>
                       }
                     />
                     {expandAccountData && (
                       <Box direction="Column" gap="100">
                         <Box justifyContent="SpaceBetween">
-                          <Text size="L400">Events</Text>
-                          <Text size="L400">Total: {accountData.size}</Text>
+                          <Text size="L400">{t('room_settings.developer_tools.events_title')}</Text>
+                          <Text size="L400">
+                            {t('room_settings.developer_tools.events_total', {
+                              count: accountData.size,
+                            })}
+                          </Text>
                         </Box>
                         <CutoutCard>
                           <MenuItem
@@ -363,7 +391,7 @@ export function DeveloperTools({ requestClose }: DeveloperToolsProps) {
                           >
                             <Box grow="Yes">
                               <Text size="T200" truncate>
-                                Add New
+                                {t('room_settings.developer_tools.add_new_button')}
                               </Text>
                             </Box>
                           </MenuItem>

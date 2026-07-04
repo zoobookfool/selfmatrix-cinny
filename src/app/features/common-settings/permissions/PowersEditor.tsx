@@ -1,4 +1,5 @@
 import React, { FormEventHandler, MouseEventHandler, useCallback, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Text,
@@ -58,6 +59,7 @@ type EditPowerProps = {
   onClose: () => void;
 };
 function EditPower({ maxPower, power, tag, onSave, onClose }: EditPowerProps) {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const room = useRoom();
   const roomToParents = useAtomValue(roomToParentsAtom);
@@ -120,7 +122,7 @@ function EditPower({ maxPower, power, tag, onSave, onClose }: EditPowerProps) {
       <Box direction="Column" gap="300">
         <Box gap="200">
           <Box shrink="No" direction="Column" gap="100">
-            <Text size="L400">Color</Text>
+            <Text size="L400">{t('room_settings.permissions.color_label')}</Text>
             <Box gap="200">
               <HexColorPickerPopOut
                 picker={<HexColorPicker color={tagColor} onChange={setTagColor} />}
@@ -137,18 +139,18 @@ function EditPower({ maxPower, power, tag, onSave, onClose }: EditPowerProps) {
                     radii="300"
                     before={<PowerColorBadge color={tagColor} />}
                   >
-                    <Text size="B300">Pick</Text>
+                    <Text size="B300">{t('room_settings.permissions.pick_color_button')}</Text>
                   </Button>
                 )}
               </HexColorPickerPopOut>
             </Box>
           </Box>
           <Box grow="Yes" direction="Column" gap="100">
-            <Text size="L400">Name</Text>
+            <Text size="L400">{t('room_settings.permissions.name_label')}</Text>
             <Input
               name="nameInput"
               defaultValue={tag?.name}
-              placeholder="Bot"
+              placeholder={t('room_settings.permissions.name_placeholder')}
               size="300"
               variant="Secondary"
               radii="300"
@@ -156,7 +158,7 @@ function EditPower({ maxPower, power, tag, onSave, onClose }: EditPowerProps) {
             />
           </Box>
           <Box style={{ maxWidth: toRem(74) }} grow="Yes" direction="Column" gap="100">
-            <Text size="L400">Power</Text>
+            <Text size="L400">{t('room_settings.permissions.power_label')}</Text>
             <Input
               defaultValue={power}
               name="powerInput"
@@ -164,7 +166,7 @@ function EditPower({ maxPower, power, tag, onSave, onClose }: EditPowerProps) {
               variant={typeof power === 'number' ? 'SurfaceVariant' : 'Secondary'}
               radii="300"
               type="number"
-              placeholder="75"
+              placeholder={t('room_settings.permissions.power_placeholder')}
               max={supportCreators ? undefined : maxPower}
               outlined={typeof power === 'number'}
               readOnly={typeof power === 'number'}
@@ -174,7 +176,7 @@ function EditPower({ maxPower, power, tag, onSave, onClose }: EditPowerProps) {
         </Box>
       </Box>
       <Box direction="Column" gap="100">
-        <Text size="L400">Icon</Text>
+        <Text size="L400">{t('room_settings.permissions.icon_label')}</Text>
         {iconUploadAtom && !tagIconSrc ? (
           <CompactUploadCardRenderer
             uploadAtom={iconUploadAtom}
@@ -194,7 +196,7 @@ function EditPower({ maxPower, power, tag, onSave, onClose }: EditPowerProps) {
                   fill="None"
                   radii="300"
                 >
-                  <Text size="B300">Remove</Text>
+                  <Text size="B300">{t('room_settings.permissions.remove_button')}</Text>
                 </Button>
               </>
             ) : (
@@ -238,7 +240,7 @@ function EditPower({ maxPower, power, tag, onSave, onClose }: EditPowerProps) {
                         radii="300"
                         before={<Icon size="50" src={Icons.SmilePlus} />}
                       >
-                        <Text size="B300">Pick</Text>
+                        <Text size="B300">{t('room_settings.permissions.pick_icon_button')}</Text>
                       </Button>
                     </PopOut>
                   )}
@@ -251,7 +253,7 @@ function EditPower({ maxPower, power, tag, onSave, onClose }: EditPowerProps) {
                   fill="None"
                   radii="300"
                 >
-                  <Text size="B300">Import</Text>
+                  <Text size="B300">{t('room_settings.permissions.import_button')}</Text>
                 </Button>
               </>
             )}
@@ -267,7 +269,7 @@ function EditPower({ maxPower, power, tag, onSave, onClose }: EditPowerProps) {
           radii="300"
           disabled={uploadingIcon}
         >
-          <Text size="B300">Save</Text>
+          <Text size="B300">{t('room_settings.permissions.save_button')}</Text>
         </Button>
         <Button
           type="button"
@@ -277,7 +279,7 @@ function EditPower({ maxPower, power, tag, onSave, onClose }: EditPowerProps) {
           radii="300"
           onClick={onClose}
         >
-          <Text size="B300">Cancel</Text>
+          <Text size="B300">{t('room_settings.permissions.cancel_button')}</Text>
         </Button>
       </Box>
     </Box>
@@ -289,6 +291,7 @@ type PowersEditorProps = {
   requestClose: () => void;
 };
 export function PowersEditor({ powerLevels, requestClose }: PowersEditorProps) {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const useAuthentication = useMediaAuthentication();
   const room = useRoom();
@@ -365,7 +368,7 @@ export function PowersEditor({ powerLevels, requestClose }: PowersEditorProps) {
               onClick={requestClose}
               before={<Icon size="100" src={Icons.ArrowLeft} />}
             >
-              <Text size="T300">Permissions</Text>
+              <Text size="T300">{t('room_settings.permissions.permissions_title')}</Text>
             </Chip>
           </Box>
           <Box shrink="No">
@@ -381,7 +384,7 @@ export function PowersEditor({ powerLevels, requestClose }: PowersEditorProps) {
             <Box direction="Column" gap="700">
               <Box direction="Column" gap="100">
                 <Box alignItems="Baseline" gap="200" justifyContent="SpaceBetween">
-                  <Text size="L400">Power Levels</Text>
+                  <Text size="L400">{t('room_settings.permissions.power_levels_title')}</Text>
                   <BetaNoticeBadge />
                 </Box>
                 <SequenceCard
@@ -391,8 +394,8 @@ export function PowersEditor({ powerLevels, requestClose }: PowersEditorProps) {
                   gap="400"
                 >
                   <SettingTile
-                    title="New Power Level"
-                    description="Create a new power level."
+                    title={t('room_settings.permissions.new_power_level_title')}
+                    description={t('room_settings.permissions.new_power_level_description')}
                     after={
                       !createTag && (
                         <Button
@@ -404,7 +407,7 @@ export function PowersEditor({ powerLevels, requestClose }: PowersEditorProps) {
                           outlined
                           disabled={applyingChanges}
                         >
-                          <Text size="B300">Create</Text>
+                          <Text size="B300">{t('room_settings.permissions.create_button')}</Text>
                         </Button>
                       )
                     }
@@ -462,7 +465,7 @@ export function PowersEditor({ powerLevels, requestClose }: PowersEditorProps) {
                                     disabled={applyingChanges}
                                     onClick={() => handleToggleDelete(power)}
                                   >
-                                    <Text size="B300">Undo</Text>
+                                    <Text size="B300">{t('room_settings.permissions.undo_button')}</Text>
                                   </Chip>
                                 ) : (
                                   <Box shrink="No" alignItems="Center" gap="200">
@@ -471,13 +474,17 @@ export function PowersEditor({ powerLevels, requestClose }: PowersEditorProps) {
                                         <Tooltip style={{ maxWidth: toRem(200) }}>
                                           {usedPowers.has(power) ? (
                                             <Box direction="Column">
-                                              <Text size="L400">Used Power Level</Text>
+                                              <Text size="L400">
+                                                {t('room_settings.permissions.used_power_level_title')}
+                                              </Text>
                                               <Text size="T200">
-                                                You have to remove its use before you can delete it.
+                                                {t(
+                                                  'room_settings.permissions.used_power_level_description'
+                                                )}
                                               </Text>
                                             </Box>
                                           ) : (
-                                            <Text>Delete</Text>
+                                            <Text>{t('room_settings.permissions.delete_tooltip')}</Text>
                                           )}
                                         </Tooltip>
                                       }
@@ -506,7 +513,7 @@ export function PowersEditor({ powerLevels, requestClose }: PowersEditorProps) {
                                       disabled={applyingChanges}
                                       onClick={() => setEdit(true)}
                                     >
-                                      <Text size="B300">Edit</Text>
+                                      <Text size="B300">{t('room_settings.permissions.edit_button')}</Text>
                                     </Chip>
                                   </Box>
                                 )
@@ -536,11 +543,11 @@ export function PowersEditor({ powerLevels, requestClose }: PowersEditorProps) {
                     <Box grow="Yes" direction="Column">
                       {applyState.status === AsyncStatus.Error ? (
                         <Text size="T200">
-                          <b>Failed to apply changes! Please try again.</b>
+                          <b>{t('room_settings.permissions.apply_error')}</b>
                         </Text>
                       ) : (
                         <Text size="T200">
-                          <b>Changes saved! Apply when ready.</b>
+                          <b>{t('room_settings.permissions.changes_saved')}</b>
                         </Text>
                       )}
                     </Box>
@@ -553,7 +560,7 @@ export function PowersEditor({ powerLevels, requestClose }: PowersEditorProps) {
                         disabled={applyingChanges}
                         onClick={resetChanges}
                       >
-                        <Text size="B300">Reset</Text>
+                        <Text size="B300">{t('room_settings.permissions.reset_button')}</Text>
                       </Button>
                       <Button
                         size="300"
@@ -565,7 +572,9 @@ export function PowersEditor({ powerLevels, requestClose }: PowersEditorProps) {
                         }
                         onClick={handleApplyChanges}
                       >
-                        <Text size="B300">Apply Changes</Text>
+                        <Text size="B300">
+                          {t('room_settings.permissions.apply_changes_button')}
+                        </Text>
                       </Button>
                     </Box>
                   </Box>

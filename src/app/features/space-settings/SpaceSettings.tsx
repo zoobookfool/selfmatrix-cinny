@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { Avatar, Box, config, Icon, IconButton, Icons, IconSrc, MenuItem, Text } from 'folds';
 import { JoinRule } from 'matrix-js-sdk';
+import { useTranslation } from 'react-i18next';
 import { PageNav, PageNavContent, PageNavHeader, PageRoot } from '../../components/page';
 import { ScreenSize, useScreenSizeContext } from '../../hooks/useScreenSize';
 import { useMatrixClient } from '../../hooks/useMatrixClient';
@@ -24,37 +25,41 @@ type SpaceSettingsMenuItem = {
   icon: IconSrc;
 };
 
-const useSpaceSettingsMenuItems = (): SpaceSettingsMenuItem[] =>
-  useMemo(
+const useSpaceSettingsMenuItems = (): SpaceSettingsMenuItem[] => {
+  const { t, i18n } = useTranslation();
+
+  return useMemo(
     () => [
       {
         page: SpaceSettingsPage.GeneralPage,
-        name: 'General',
+        name: t('room_settings.tabs.general'),
         icon: Icons.Setting,
       },
       {
         page: SpaceSettingsPage.MembersPage,
-        name: 'Members',
+        name: t('room_settings.tabs.members'),
         icon: Icons.User,
       },
       {
         page: SpaceSettingsPage.PermissionsPage,
-        name: 'Permissions',
+        name: t('room_settings.tabs.permissions'),
         icon: Icons.Lock,
       },
       {
         page: SpaceSettingsPage.EmojisStickersPage,
-        name: 'Emojis & Stickers',
+        name: t('room_settings.tabs.emojis_stickers'),
         icon: Icons.Smile,
       },
       {
         page: SpaceSettingsPage.DeveloperToolsPage,
-        name: 'Developer Tools',
+        name: t('room_settings.tabs.developer_tools'),
         icon: Icons.Terminal,
       },
     ],
-    []
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [t, i18n.language]
   );
+};
 
 type SpaceSettingsProps = {
   initialPage?: SpaceSettingsPage;

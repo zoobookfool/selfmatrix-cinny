@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Button,
   color,
@@ -41,6 +42,7 @@ import { useRoomCreators } from '../../../hooks/useRoomCreators';
 import { BreakWord } from '../../../styles/Text.css';
 
 function RoomUpgradeDialog({ requestClose }: { requestClose: () => void }) {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const room = useRoom();
   const alive = useAlive();
@@ -103,7 +105,11 @@ function RoomUpgradeDialog({ requestClose }: { requestClose: () => void }) {
               size="500"
             >
               <Box grow="Yes">
-                <Text size="H4">{room.isSpaceRoom() ? 'Space Upgrade' : 'Room Upgrade'}</Text>
+                <Text size="H4">
+                  {room.isSpaceRoom()
+                    ? t('room_settings.general.upgrade.dialog_title_space')
+                    : t('room_settings.general.upgrade.dialog_title_room')}
+                </Text>
               </Box>
               <IconButton size="300" onClick={requestClose} radii="300">
                 <Icon src={Icons.Cross} />
@@ -111,10 +117,10 @@ function RoomUpgradeDialog({ requestClose }: { requestClose: () => void }) {
             </Header>
             <Box style={{ padding: config.space.S400 }} direction="Column" gap="400">
               <Text priority="400" style={{ color: color.Critical.Main }}>
-                <b>This action is irreversible!</b>
+                <b>{t('room_settings.general.upgrade.irreversible_warning')}</b>
               </Text>
               <Box direction="Column" gap="100">
-                <Text size="L400">Options</Text>
+                <Text size="L400">{t('room_settings.general.upgrade.options_label')}</Text>
                 <RoomVersionSelector
                   versions={roomVersions?.available ? Object.keys(roomVersions.available) : ['1']}
                   value={selectedRoomVersion}
@@ -148,7 +154,11 @@ function RoomUpgradeDialog({ requestClose }: { requestClose: () => void }) {
                 disabled={upgrading}
                 before={upgrading && <Spinner size="200" variant="Secondary" fill="Solid" />}
               >
-                <Text size="B400">{room.isSpaceRoom() ? 'Upgrade Space' : 'Upgrade Room'}</Text>
+                <Text size="B400">
+                  {room.isSpaceRoom()
+                    ? t('room_settings.general.upgrade.dialog_submit_button_space')
+                    : t('room_settings.general.upgrade.dialog_submit_button_room')}
+                </Text>
               </Button>
             </Box>
           </Dialog>
@@ -163,6 +173,7 @@ type RoomUpgradeProps = {
   requestClose: () => void;
 };
 export function RoomUpgrade({ permissions, requestClose }: RoomUpgradeProps) {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const room = useRoom();
   const { navigateRoom, navigateSpace } = useRoomNavigate();
@@ -213,12 +224,18 @@ export function RoomUpgrade({ permissions, requestClose }: RoomUpgradeProps) {
       gap="400"
     >
       <SettingTile
-        title={room.isSpaceRoom() ? 'Upgrade Space' : 'Upgrade Room'}
+        title={
+          room.isSpaceRoom()
+            ? t('room_settings.general.upgrade.title_space')
+            : t('room_settings.general.upgrade.title_room')
+        }
         description={
           replacementRoom
             ? tombstoneContent.body ||
-              `This ${room.isSpaceRoom() ? 'space' : 'room'} has been replaced!`
-            : `Current version: ${roomVersion}.`
+              (room.isSpaceRoom()
+                ? t('room_settings.general.upgrade.replaced_description_space')
+                : t('room_settings.general.upgrade.replaced_description_room'))
+            : t('room_settings.general.upgrade.current_version_description', { roomVersion })
         }
         after={
           <Box alignItems="Center" gap="200">
@@ -231,7 +248,11 @@ export function RoomUpgrade({ permissions, requestClose }: RoomUpgradeProps) {
                 radii="300"
                 onClick={handleOpenOldRoom}
               >
-                <Text size="B300">{room.isSpaceRoom() ? 'Old Space' : 'Old Room'}</Text>
+                <Text size="B300">
+                  {room.isSpaceRoom()
+                    ? t('room_settings.general.upgrade.old_space_button')
+                    : t('room_settings.general.upgrade.old_room_button')}
+                </Text>
               </Button>
             )}
             {replacementRoom ? (
@@ -242,7 +263,11 @@ export function RoomUpgrade({ permissions, requestClose }: RoomUpgradeProps) {
                 radii="300"
                 onClick={handleOpenRoom}
               >
-                <Text size="B300">{room.isSpaceRoom() ? 'Open New Space' : 'Open New Room'}</Text>
+                <Text size="B300">
+                  {room.isSpaceRoom()
+                    ? t('room_settings.general.upgrade.open_new_space_button')
+                    : t('room_settings.general.upgrade.open_new_room_button')}
+                </Text>
               </Button>
             ) : (
               <Button
@@ -253,7 +278,7 @@ export function RoomUpgrade({ permissions, requestClose }: RoomUpgradeProps) {
                 disabled={!canUpgrade}
                 onClick={() => setPrompt(true)}
               >
-                <Text size="B300">Upgrade</Text>
+                <Text size="B300">{t('room_settings.general.upgrade.upgrade_button')}</Text>
               </Button>
             )}
           </Box>

@@ -2,6 +2,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Badge, Box, Button, Chip, config, Icon, Icons, Menu, Spinner, Text } from 'folds';
 import produce from 'immer';
+import { useTranslation } from 'react-i18next';
 import { SequenceCard } from '../../../components/sequence-card';
 import { SequenceCardStyle } from '../styles.css';
 import { SettingTile } from '../../../components/setting-tile';
@@ -34,6 +35,7 @@ export function PermissionGroups({
   permissionGroups,
   canEdit,
 }: PermissionGroupsProps) {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const room = useRoom();
   const alive = useAlive();
@@ -114,7 +116,7 @@ export function PermissionGroups({
 
     return (
       <Box direction="Column" gap="100">
-        <Text size="L400">Users</Text>
+        <Text size="L400">{t('room_settings.permissions.users_group_title')}</Text>
         <SequenceCard
           variant="SurfaceVariant"
           className={SequenceCardStyle}
@@ -122,8 +124,8 @@ export function PermissionGroups({
           gap="400"
         >
           <SettingTile
-            title="Default Power"
-            description="Default power level for all users."
+            title={t('room_settings.permissions.default_power_title')}
+            description={t('room_settings.permissions.default_power_description')}
             after={
               <PowerSwitcher
                 powerLevelTags={powerLevelTags}
@@ -220,7 +222,11 @@ export function PermissionGroups({
                           <Text size="B300" truncate>
                             {tag.name}
                           </Text>
-                          {value < maxPower && <Text size="T200">& Above</Text>}
+                          {value < maxPower && (
+                            <Text size="T200">
+                              {t('room_settings.permissions.and_above_suffix')}
+                            </Text>
+                          )}
                         </Chip>
                       )}
                     </PowerSwitcher>
@@ -249,11 +255,11 @@ export function PermissionGroups({
             <Box grow="Yes" direction="Column">
               {applyState.status === AsyncStatus.Error ? (
                 <Text size="T200">
-                  <b>Failed to apply changes! Please try again.</b>
+                  <b>{t('room_settings.permissions.apply_error')}</b>
                 </Text>
               ) : (
                 <Text size="T200">
-                  <b>Changes saved! Apply when ready.</b>
+                  <b>{t('room_settings.permissions.changes_saved')}</b>
                 </Text>
               )}
             </Box>
@@ -266,7 +272,7 @@ export function PermissionGroups({
                 disabled={applyingChanges}
                 onClick={resetChanges}
               >
-                <Text size="B300">Reset</Text>
+                <Text size="B300">{t('room_settings.permissions.reset_button')}</Text>
               </Button>
               <Button
                 size="300"
@@ -276,7 +282,7 @@ export function PermissionGroups({
                 before={applyingChanges && <Spinner variant="Success" fill="Solid" size="100" />}
                 onClick={handleApplyChanges}
               >
-                <Text size="B300">Apply Changes</Text>
+                <Text size="B300">{t('room_settings.permissions.apply_changes_button')}</Text>
               </Button>
             </Box>
           </Box>

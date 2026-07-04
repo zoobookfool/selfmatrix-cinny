@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { color, Text } from 'folds';
 import { JoinRule, MatrixError, RestrictedAllowType } from 'matrix-js-sdk';
 import { RoomJoinRulesEventContent } from 'matrix-js-sdk/lib/types';
@@ -41,6 +42,7 @@ type RoomJoinRulesProps = {
   permissions: RoomPermissionsAPI;
 };
 export function RoomJoinRules({ permissions }: RoomJoinRulesProps) {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const room = useRoom();
   const allowKnockRestricted = knockRestrictedSupported(room.getVersion());
@@ -127,11 +129,15 @@ export function RoomJoinRules({ permissions }: RoomJoinRulesProps) {
       gap="400"
     >
       <SettingTile
-        title={room.isSpaceRoom() ? 'Space Access' : 'Room Access'}
+        title={
+          room.isSpaceRoom()
+            ? t('room_settings.general.join_rules.title_space')
+            : t('room_settings.general.join_rules.title_room')
+        }
         description={
           room.isSpaceRoom()
-            ? 'Change how people can join the space.'
-            : 'Change how people can join the room.'
+            ? t('room_settings.general.join_rules.description_space')
+            : t('room_settings.general.join_rules.description_room')
         }
         after={
           <JoinRulesSwitcher

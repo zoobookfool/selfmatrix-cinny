@@ -1,4 +1,5 @@
 import React, { MouseEventHandler, useCallback, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Button,
   color,
@@ -26,16 +27,21 @@ import { useStateEvent } from '../../../hooks/useStateEvent';
 import { stopPropagation } from '../../../utils/keyboard';
 import { RoomPermissionsAPI } from '../../../hooks/useRoomPermissions';
 
-const useVisibilityStr = () =>
-  useMemo(
+const useVisibilityStr = () => {
+  const { t, i18n } = useTranslation();
+  return useMemo(
     () => ({
-      [HistoryVisibility.Invited]: 'After Invite',
-      [HistoryVisibility.Joined]: 'After Join',
-      [HistoryVisibility.Shared]: 'All Messages',
-      [HistoryVisibility.WorldReadable]: 'All Messages (Guests)',
+      [HistoryVisibility.Invited]: t('room_settings.general.history_visibility.after_invite'),
+      [HistoryVisibility.Joined]: t('room_settings.general.history_visibility.after_join'),
+      [HistoryVisibility.Shared]: t('room_settings.general.history_visibility.all_messages'),
+      [HistoryVisibility.WorldReadable]: t(
+        'room_settings.general.history_visibility.all_messages_guests'
+      ),
     }),
-    []
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [t, i18n.language]
   );
+};
 
 const useVisibilityMenu = () =>
   useMemo(
@@ -52,6 +58,7 @@ type RoomHistoryVisibilityProps = {
   permissions: RoomPermissionsAPI;
 };
 export function RoomHistoryVisibility({ permissions }: RoomHistoryVisibilityProps) {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const room = useRoom();
 
@@ -96,8 +103,8 @@ export function RoomHistoryVisibility({ permissions }: RoomHistoryVisibilityProp
       gap="400"
     >
       <SettingTile
-        title="Message History Visibility"
-        description="Changes to history visibility will only apply to future messages. The visibility of existing history will have no effect."
+        title={t('room_settings.general.history_visibility.title')}
+        description={t('room_settings.general.history_visibility.description')}
         after={
           <PopOut
             anchor={menuAnchor}

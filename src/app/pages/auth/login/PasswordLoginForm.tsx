@@ -38,6 +38,7 @@ import { PasswordInput } from '../../../components/password-input';
 import { FieldError } from '../FiledError';
 import { getResetPasswordPath } from '../../pathUtils';
 import { stopPropagation } from '../../../utils/keyboard';
+import { WEB_DEVICE_NAME } from '../../../branding/strings';
 
 function UsernameHint({ server }: { server: string }) {
   const { t } = useTranslation();
@@ -136,7 +137,7 @@ export function PasswordLoginForm({ defaultUsername, defaultEmail }: PasswordLog
         user: username,
       },
       password,
-      initial_device_display_name: 'Cinny Web',
+      initial_device_display_name: WEB_DEVICE_NAME,
     });
   };
 
@@ -154,7 +155,7 @@ export function PasswordLoginForm({ defaultUsername, defaultEmail }: PasswordLog
         user: mxIdUsername,
       },
       password,
-      initial_device_display_name: 'Cinny Web',
+      initial_device_display_name: WEB_DEVICE_NAME,
     });
   };
   const handleEmailLogin = (email: string, password: string) => {
@@ -166,7 +167,7 @@ export function PasswordLoginForm({ defaultUsername, defaultEmail }: PasswordLog
         address: email,
       },
       password,
-      initial_device_display_name: 'Cinny Web',
+      initial_device_display_name: WEB_DEVICE_NAME,
     });
   };
 

@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { useAutoDiscoveryInfo } from '../../../hooks/useAutoDiscoveryInfo';
 import { AsyncStatus, useAsyncCallback } from '../../../hooks/useAsyncCallback';
 import { CustomLoginResponse, LoginError, login, useLoginComplete } from './loginUtil';
+import { WEB_DEVICE_NAME } from '../../../branding/strings';
 
 function LoginTokenError({ message }: { message: string }) {
   const { t } = useTranslation();
@@ -60,7 +61,7 @@ export function TokenLogin({ token }: TokenLoginProps) {
     startLogin(baseUrl, {
       type: 'm.login.token',
       token,
-      initial_device_display_name: 'Cinny Web',
+      initial_device_display_name: WEB_DEVICE_NAME,
     });
   }, [baseUrl, token, startLogin]);
 

@@ -2,6 +2,10 @@
 // 値は public/locales/<lng>.json の "branding" 名前空間から i18next 経由で取得する。
 import { useTranslation } from 'react-i18next';
 
+// プロトコル側に送るアプリ識別子 (翻訳しない)。
+export const APP_NAME = 'SelfMatrix';
+export const WEB_DEVICE_NAME = `${APP_NAME} Web`;
+
 export type Branding = {
   space: {
     addTooltip: string;

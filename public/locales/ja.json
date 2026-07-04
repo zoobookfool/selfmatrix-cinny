@@ -1058,5 +1058,445 @@
       "cancel_button": "キャンセル",
       "edit_button": "編集"
     }
+  },
+  "lobby": {
+    "scroll_to_top": "先頭へスクロール",
+    "reordering": "並べ替え中",
+    "common": {
+      "unknown": "不明",
+      "suggested": "おすすめ",
+      "inaccessible": "アクセス不可"
+    },
+    "menu": {
+      "unset_suggested": "おすすめ解除",
+      "set_suggested": "おすすめに設定",
+      "remove": "削除",
+      "invite": "招待",
+      "settings": "設定",
+      "unpin_from_sidebar": "サイドバーから固定解除",
+      "pin_to_sidebar": "サイドバーに固定",
+      "leave": "退出"
+    },
+    "room": {
+      "join": "参加",
+      "members_count_one": "{{formattedCount}} 人のメンバー",
+      "members_count_other": "{{formattedCount}} 人のメンバー",
+      "open_room": "ルームを開く"
+    },
+    "space_hierarchy": {
+      "no_rooms_title": "ルームがありません",
+      "no_rooms_body": "このスペースにはまだルームがありません。"
+    },
+    "space": {
+      "root_rooms_label": "ルーム"
+    },
+    "header": {
+      "invite": "招待",
+      "leave_space": "スペースを退出",
+      "members_tooltip": "メンバー",
+      "more_options_tooltip": "その他のオプション"
+    }
+  },
+  "inbox": {
+    "filter_label": "フィルター",
+    "nav": {
+      "title": "受信箱",
+      "notifications": "通知",
+      "invites": "招待"
+    },
+    "notifications": {
+      "title": "通知メッセージ",
+      "mark_as_read": "既読にする",
+      "open": "開く",
+      "all_notifications": "すべての通知",
+      "highlighted": "ハイライト",
+      "scroll_to_top": "先頭へスクロール",
+      "empty_title": "通知はありません",
+      "empty_subtitle": "表示する新しい通知はまだありません。",
+      "room_tombstone": "ルームトゥームストーン。{{body}}",
+      "unknown_event_suffix": "イベント"
+    },
+    "invites": {
+      "page_title": "招待",
+      "encrypted": "暗号化",
+      "direct_message": "ダイレクトメッセージ",
+      "decline": "拒否",
+      "accept": "承諾",
+      "from_label": "差出人: <1>{{senderId}}</1>",
+      "reason_label": "理由: {{reason}}",
+      "filter_primary": "メイン",
+      "filter_public": "公開",
+      "filter_spam": "スパム",
+      "no_invites_title": "招待はありません",
+      "known_empty_subtitle": "ルームを共有しているユーザーから招待が届くと、ここに表示されます。",
+      "unknown_empty_subtitle": "ルームを共有していないユーザーからの招待は、ここに表示されます。",
+      "decline_all": "すべて拒否",
+      "report_all": "すべて通報",
+      "block_all": "すべてブロック",
+      "hide_all": "すべて隠す",
+      "view_all": "すべて表示",
+      "spam_count_title_one": "スパムの招待 {{count}} 件",
+      "spam_count_title_other": "スパムの招待 {{count}} 件",
+      "spam_subtitle": "以下の招待には有害なコンテンツが含まれるか、BANされたユーザーから送信された可能性があります。",
+      "no_spam_invites_title": "スパムの招待はありません",
+      "no_spam_invites_subtitle": "スパムと判定された招待はここに表示されます。"
+    }
+  },
+  "explore": {
+    "title": "コミュニティを探す",
+    "featured_nav_label": "注目",
+    "servers_nav_category": "サーバー",
+    "add_server": {
+      "button": "サーバーを追加",
+      "title": "サーバーを追加",
+      "description": "公開コミュニティを探すサーバー名を追加します。",
+      "server_name_label": "サーバー名",
+      "load_error": "公開ルームの読み込みに失敗しました。もう一度お試しください。",
+      "view_button": "表示"
+    },
+    "featured": {
+      "title": "クライアント提供の注目コンテンツ",
+      "sub_title": "クライアントプロバイダーが注目する公開ルームやスペースを探せます。",
+      "spaces_heading": "注目のスペース",
+      "rooms_heading": "注目のルーム",
+      "empty": "クライアントプロバイダーが注目するルームやスペースはありません。"
+    },
+    "server": {
+      "filter_all": "すべて",
+      "filter_spaces": "スペース",
+      "filter_rooms": "ルーム",
+      "search_label": "検索",
+      "search_placeholder": "キーワードを検索",
+      "search_clear_button": "クリア",
+      "search_enter_button": "実行",
+      "protocols_menu_label": "プロトコル",
+      "limit_presets_label": "プリセット",
+      "limit_custom_label": "カスタム上限",
+      "limit_input_aria_label": "1ページあたりの表示件数",
+      "limit_change_button": "上限を変更",
+      "limit_button_label": "表示件数: {{limit}}",
+      "search_header_title": "検索",
+      "search_results_heading": "「{{term}}」の検索結果",
+      "popular_communities_heading": "人気のコミュニティ",
+      "previous_page_button": "前のページ",
+      "next_page_button": "次のページ",
+      "no_communities_found": "コミュニティが見つかりませんでした。"
+    }
+  },
+  "search": {
+    "message_search": {
+      "scroll_to_top": "トップへスクロール",
+      "hero_title": "メッセージを検索",
+      "hero_subtitle": "関連キーワードで検索して、コミュニティ内の役立つメッセージを見つけましょう。",
+      "no_results": "「{{term}}」に一致する結果が見つかりませんでした",
+      "results_for": "「{{term}}」の検索結果"
+    },
+    "filters": {
+      "sort_by": "並び替え",
+      "sort_recent": "新しい順",
+      "sort_relevance": "関連度順",
+      "search_label": "検索",
+      "rooms_label": "ルーム",
+      "rooms_for_query": "「{{query}}」のルーム",
+      "no_match_found": "一致するものが見つかりませんでした",
+      "save": "保存",
+      "save_with_count": "保存 ({{count}})",
+      "deselect_all": "すべて選択解除",
+      "select_rooms": "ルームを選択",
+      "filter": "絞り込み",
+      "global": "全体"
+    },
+    "input": {
+      "label": "検索",
+      "placeholder": "キーワードを検索",
+      "clear": "クリア",
+      "enter": "検索"
+    },
+    "result": {
+      "room_tombstone": "ルームの終了。{{body}}",
+      "unknown_event_type": "<0>{{type}}</0> イベント",
+      "open": "開く"
+    },
+    "modal": {
+      "placeholder": "検索",
+      "no_match_found": "見つかりませんでした",
+      "no_rooms": "ルームがありません",
+      "no_match_found_for_query": "「{{query}}」に一致するものが見つかりませんでした。",
+      "no_rooms_description": "表示できるルームがまだありません。",
+      "hotkey_hint": "<1>#</1> でルーム、<3>@</3> でDM、<5>*</5> でスペースを検索できます。ショートカット: <7>{{modKey}} + k</7>"
+    },
+    "page": {
+      "title": "メッセージ検索",
+      "home_filter_name": "ホーム"
+    }
+  },
+  "user_profile": {
+    "creator_chip": {
+      "manage_powers_menu_item": "権限を管理"
+    },
+    "power_chip": {
+      "error_prefix": "エラー: {{name}}",
+      "manage_powers_menu_item": "権限を管理",
+      "self_demote_alert": {
+        "title": "自己降格",
+        "description": "自分自身の権限を降格しようとしています。この権限は自分では元に戻せません。よろしいですか?",
+        "demote_button": "降格する"
+      },
+      "shared_power_alert": {
+        "title": "権限の共有",
+        "description": "このユーザーを自分と同じ権限に昇格しようとしています。この操作の後、相手の権限を変更することはできません。よろしいですか?",
+        "promote_button": "昇格する"
+      }
+    },
+    "user_chips": {
+      "server_chip": {
+        "copy_server_menu_item": "サーバーをコピー",
+        "explore_community_menu_item": "コミュニティを探す",
+        "open_in_browser_menu_item": "ブラウザで開く"
+      },
+      "share_chip": {
+        "copy_user_id_menu_item": "ユーザーIDをコピー",
+        "copy_user_link_menu_item": "ユーザーリンクをコピー",
+        "label": "共有"
+      },
+      "mutual_rooms_chip": {
+        "spaces_heading": "スペース",
+        "rooms_heading": "ルーム",
+        "direct_messages_heading": "ダイレクトメッセージ",
+        "count_label_one": "共通のルーム {{count}} 件",
+        "count_label_other": "共通のルーム {{count}} 件",
+        "loading_label": "共通のルーム"
+      },
+      "ignored_user_alert": {
+        "title": "ブロック中のユーザー",
+        "description": "このユーザーからのメッセージや招待は届きません。"
+      },
+      "options_chip": {
+        "unblock_user_menu_item": "ブロックを解除",
+        "block_user_menu_item": "ユーザーをブロック"
+      }
+    },
+    "user_moderation": {
+      "reason_line": "理由: <0>{{reason}}</0>",
+      "no_reason_provided": "理由は入力されていません。",
+      "moderation_label": "モデレーション",
+      "reason_placeholder": "理由",
+      "invite_button": "招待",
+      "kick_button": "キック",
+      "ban_button": "BAN",
+      "kick_alert": {
+        "title": "キックされたユーザー",
+        "kicked_by": "キック実行者: <0>{{kickedBy}}</0>"
+      },
+      "ban_alert": {
+        "title": "BANされたユーザー",
+        "banned_by": "BAN実行者: <0>{{bannedBy}}</0>",
+        "unban_button": "BAN解除"
+      },
+      "invite_alert": {
+        "title": "招待されたユーザー",
+        "invited_by": "招待者: <0>{{invitedBy}}</0>",
+        "cancel_invite_button": "招待を取り消す"
+      }
+    },
+    "user_room_profile": {
+      "message_button": "メッセージ"
+    }
+  },
+  "emoji_board": {
+    "group_labels": {
+      "smileys_people": "スマイリーと人物",
+      "animals_nature": "動物と自然",
+      "food_drinks": "食べ物と飲み物",
+      "activity": "アクティビティ",
+      "travel_places": "旅行と場所",
+      "objects": "オブジェクト",
+      "symbols": "記号",
+      "flags": "旗"
+    },
+    "recent_group": "最近使った項目",
+    "personal_pack": "個人用パック",
+    "unknown_pack_name": "不明",
+    "unknown_pack": "不明なパック",
+    "search_results": "検索結果",
+    "no_results_found": "見つかりませんでした",
+    "emoji_aria_label": "{{label}} 絵文字",
+    "no_sticker_packs": {
+      "title": "スタンプパックがありません",
+      "description": "ユーザー、ルーム、スペースの設定からスタンプを追加してください。"
+    },
+    "search_input": {
+      "placeholder_with_reaction": "検索またはテキストリアクション ",
+      "placeholder": "検索",
+      "react_chip": "リアクション"
+    },
+    "tabs": {
+      "sticker": "スタンプ",
+      "emoji": "絵文字"
+    }
+  },
+  "call": {
+    "member_card": {
+      "collapse": "折りたたむ",
+      "remaining_count_one": "他{{count}}名",
+      "remaining_count_other": "他{{count}}名"
+    },
+    "prescreen": {
+      "no_livekit_support": "このホームサーバーは通話に対応していません。",
+      "no_webrtc_support": "このブラウザは通話に必要な WebRTC に対応していません。",
+      "empty_voice_chat": "ボイスチャットは空です — 最初に参加してみましょう!",
+      "no_permission": "参加する権限がありません。",
+      "already_in_call": "他の通話に参加中です — 参加するには現在の通話を終了してください。",
+      "participant": "参加者",
+      "join": "参加"
+    },
+    "controls": {
+      "microphone_off": "マイクをオフにする",
+      "microphone_on": "マイクをオンにする",
+      "sound_off": "音声をオフにする",
+      "sound_on": "音声をオンにする",
+      "camera_off": "カメラを停止",
+      "camera_on": "カメラを開始",
+      "screenshare_off": "画面共有を停止",
+      "screenshare_on": "画面共有を開始",
+      "chat_close": "チャットを閉じる",
+      "chat_open": "チャットを開く",
+      "grid_view": "グリッド表示",
+      "spotlight_view": "スポットライト表示",
+      "reactions": "リアクション",
+      "settings": "設定",
+      "end": "終了"
+    },
+    "status": {
+      "speaking_one": "<0>{{name1}}</0>さんが発言中です",
+      "speaking_two": "<0>{{name1}}</0>さんと<1>{{name2}}</1>さんが発言中です",
+      "speaking_three": "<0>{{name1}}</0>さん、<1>{{name2}}</1>さん、<2>{{name3}}</2>さんが発言中です",
+      "speaking_many_one": "<0>{{name1}}</0>さん、<1>{{name2}}</1>さん、<2>{{name3}}</2>さん、他<3>{{count}}名</3>が発言中です",
+      "speaking_many_other": "<0>{{name1}}</0>さん、<1>{{name2}}</1>さん、<2>{{name3}}</2>さん、他<3>{{count}}名</3>が発言中です"
+    }
+  },
+  "create_space": {
+    "modal": {
+      "title": "新規スペース"
+    },
+    "form": {
+      "knock_description": "誰でもこのスペースへの参加をリクエストできます。"
+    }
+  },
+  "add_existing": {
+    "title": "既存のものを追加",
+    "search_placeholder": "検索",
+    "no_match_found_title": "一致するものが見つかりません",
+    "no_match_found_description": "「{{query}}」に一致するものが見つかりませんでした。",
+    "no_spaces_title": "スペースがありません",
+    "no_spaces_description": "表示できるスペースがまだありません。",
+    "no_rooms_title": "ルームがありません",
+    "no_rooms_description": "表示できるルームがまだありません。",
+    "apply_error": "変更の適用に失敗しました!もう一度お試しください。",
+    "apply_ready_prompt_one": "準備ができたら適用してください。({{count}} 件選択中)",
+    "apply_ready_prompt_other": "準備ができたら適用してください。({{count}} 件選択中)",
+    "reset_button": "リセット",
+    "apply_button": "変更を適用"
+  },
+  "create_chat": {
+    "user_id_label": "ユーザー ID",
+    "invalid_user_id_error": "有効なユーザー ID を入力してください。"
+  },
+  "commands": {
+    "me": {
+      "description": "アクションメッセージを送信します"
+    },
+    "notice": {
+      "description": "通知メッセージを送信します"
+    },
+    "shrug": {
+      "description": "メッセージとして {{shrug}} を送信します"
+    },
+    "tableflip": {
+      "description": "メッセージとして {{tableflip}} を送信します"
+    },
+    "unflip": {
+      "description": "メッセージとして {{unflip}} を送信します"
+    },
+    "startdm": {
+      "description": "ユーザーとダイレクトメッセージを開始します。例: /startdm userId1"
+    },
+    "join": {
+      "description": "アドレスを指定してルームに参加します。例: /join address1 address2"
+    },
+    "leave": {
+      "description": "現在のルームを退出します。"
+    },
+    "invite": {
+      "description": "ユーザーをルームに招待します。例: /invite userId1 userId2 [-r reason]"
+    },
+    "disinvite": {
+      "description": "ユーザーのルームへの招待を取り消します。例: /disinvite userId1 userId2 [-r reason]"
+    },
+    "kick": {
+      "description": "ユーザーをルームからキックします。例: /kick userId1 userId2 servername [-r reason]"
+    },
+    "ban": {
+      "description": "ユーザーをルームからBANします。例: /ban userId1 userId2 servername [-r reason]"
+    },
+    "unban": {
+      "description": "ユーザーのBANを解除します。例: /unban userId1 userId2"
+    },
+    "ignore": {
+      "description": "ユーザーを無視します。例: /ignore userId1 userId2"
+    },
+    "unignore": {
+      "description": "ユーザーの無視を解除します。例: /unignore userId1 userId2"
+    },
+    "myroomnick": {
+      "description": "現在のルームでのニックネームを変更します。"
+    },
+    "myroomavatar": {
+      "description": "現在のルームでのプロフィール画像を変更します。例 /myroomavatar mxc://xyzabc"
+    },
+    "converttodm": {
+      "description": "ルームをダイレクトメッセージに変換します"
+    },
+    "converttoroom": {
+      "description": "ダイレクトメッセージをルームに変換します"
+    },
+    "delete": {
+      "description": "ユーザーのメッセージを削除します。例: /delete userId1 servername -past 1d|2h|5m|30s [-t m.room.message] [-r spam]"
+    },
+    "acl": {
+      "description": "サーバーアクセス制御リストを管理します。例 /acl [-a servername1] [-d servername2] [-ra servername1] [-rd servername2]"
+    }
+  },
+  "app": {
+    "heating_up": "起動中です",
+    "clear_cache_and_reload": "キャッシュを削除して再読み込み",
+    "failed_to_load": "読み込みに失敗しました。{{message}}",
+    "failed_to_start": "起動に失敗しました。{{message}}",
+    "retry_button": "再試行",
+    "continue_button": "続ける",
+    "sync_status": {
+      "connecting": "接続中...",
+      "reconnecting": "接続が切れました。再接続中...",
+      "connection_lost": "接続が切れました。"
+    },
+    "spec_versions": {
+      "connecting": "サーバーに接続しています",
+      "connect_error": "ホームサーバーに接続できません。ホームサーバーまたはインターネット接続に問題がある可能性があります。"
+    },
+    "notifications": {
+      "invitation_title": "招待",
+      "invitation_body_one": "{{count}} 件の新しい招待リクエストがあります。",
+      "invitation_body_other": "{{count}} 件の新しい招待リクエストがあります。",
+      "message_body": "{{username}} さんから新しい通知が届きました",
+      "unknown_room": "不明"
+    },
+    "config_config": {
+      "load_error": "クライアント設定ファイルの読み込みに失敗しました。"
+    },
+    "feature_check": {
+      "missing_title": "ブラウザの機能が不足しています",
+      "indexeddb_description": "IndexedDB のサポートが見つかりません。このアプリケーションはセッションデータをローカルに保存するために IndexedDB を必要とします。お使いのブラウザが IndexedDB に対応し、有効になっていることをご確認ください。",
+      "indexeddb_link": "IndexedDB とは？"
+    }
   }
 }

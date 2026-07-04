@@ -1,6 +1,7 @@
 import { useAtomValue } from 'jotai';
 import React, { ReactNode, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { RoomEvent, RoomEventHandlerMap } from 'matrix-js-sdk';
 import { roomToUnreadAtom, unreadEqual, unreadInfoToUnread } from '../../state/room/roomToUnread';
 import LogoSVG from '../../../../public/res/svg/cinny.svg';
@@ -77,6 +78,7 @@ function FaviconUpdater() {
 }
 
 function InviteNotifications() {
+  const { t } = useTranslation();
   const audioRef = useRef<HTMLAudioElement>(null);
   const invites = useAtomValue(allInvitesAtom);
   const perviousInviteLen = usePreviousValue(invites.length, 0);
@@ -88,10 +90,10 @@ function InviteNotifications() {
 
   const notify = useCallback(
     (count: number) => {
-      const noti = new window.Notification('Invitation', {
+      const noti = new window.Notification(t('app.notifications.invitation_title'), {
         icon: LogoSVG,
         badge: LogoSVG,
-        body: `You have ${count} new invitation request.`,
+        body: t('app.notifications.invitation_body', { count }),
         silent: true,
       });
 
@@ -100,7 +102,7 @@ function InviteNotifications() {
         noti.close();
       };
     },
-    [navigate]
+    [navigate, t]
   );
 
   const playSound = useCallback(() => {
@@ -129,6 +131,7 @@ function InviteNotifications() {
 }
 
 function MessageNotifications() {
+  const { t } = useTranslation();
   const audioRef = useRef<HTMLAudioElement>(null);
   const notifRef = useRef<Notification>();
   const unreadCacheRef = useRef<Map<string, UnreadInfo>>(new Map());
@@ -156,7 +159,7 @@ function MessageNotifications() {
       const noti = new window.Notification(roomName, {
         icon: roomAvatar,
         badge: roomAvatar,
-        body: `New inbox notification from ${username}`,
+        body: t('app.notifications.message_body', { username }),
         silent: true,
       });
 
@@ -169,7 +172,7 @@ function MessageNotifications() {
       notifRef.current?.close();
       notifRef.current = noti;
     },
-    [navigate]
+    [navigate, t]
   );
 
   const playSound = useCallback(() => {
@@ -216,7 +219,7 @@ function MessageNotifications() {
         const avatarMxc =
           room.getAvatarFallbackMember()?.getMxcAvatarUrl() ?? room.getMxcAvatarUrl();
         notify({
-          roomName: room.name ?? 'Unknown',
+          roomName: room.name ?? t('app.notifications.unknown_room'),
           roomAvatar: avatarMxc
             ? mxcUrlToHttp(mx, avatarMxc, useAuthentication, 96, 96, 'crop') ?? undefined
             : undefined,
@@ -243,6 +246,7 @@ function MessageNotifications() {
     notify,
     selectedRoomId,
     useAuthentication,
+    t,
   ]);
 
   return (

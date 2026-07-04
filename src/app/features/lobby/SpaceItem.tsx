@@ -1,4 +1,5 @@
 import React, { MouseEventHandler, ReactNode, useCallback, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Avatar,
@@ -60,6 +61,7 @@ type InaccessibleSpaceProfileProps = {
   suggested?: boolean;
 };
 function InaccessibleSpaceProfile({ roomId, suggested }: InaccessibleSpaceProfileProps) {
+  const { t } = useTranslation();
   return (
     <Chip
       as="span"
@@ -81,15 +83,15 @@ function InaccessibleSpaceProfile({ roomId, suggested }: InaccessibleSpaceProfil
     >
       <Box alignItems="Center" gap="200">
         <Text size="H4" truncate>
-          Unknown
+          {t('lobby.common.unknown')}
         </Text>
 
         <Badge variant="Secondary" fill="Soft" radii="Pill" outlined>
-          <Text size="L400">Inaccessible</Text>
+          <Text size="L400">{t('lobby.common.inaccessible')}</Text>
         </Badge>
         {suggested && (
           <Badge variant="Success" fill="Soft" radii="Pill" outlined>
-            <Text size="L400">Suggested</Text>
+            <Text size="L400">{t('lobby.common.suggested')}</Text>
           </Badge>
         )}
       </Box>
@@ -111,6 +113,7 @@ function UnjoinedSpaceProfile({
   avatarUrl,
   suggested,
 }: UnjoinedSpaceProfileProps) {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
 
   const [joinState, join] = useAsyncCallback<Room, MatrixError, []>(
@@ -145,11 +148,11 @@ function UnjoinedSpaceProfile({
     >
       <Box alignItems="Center" gap="200">
         <Text size="H4" truncate>
-          {name || 'Unknown'}
+          {name || t('lobby.common.unknown')}
         </Text>
         {suggested && (
           <Badge variant="Success" fill="Soft" radii="Pill" outlined>
-            <Text size="L400">Suggested</Text>
+            <Text size="L400">{t('lobby.common.suggested')}</Text>
           </Badge>
         )}
         {joinState.status === AsyncStatus.Error && (
@@ -182,6 +185,7 @@ function SpaceProfile({
   categoryId,
   handleClose,
 }: SpaceProfileProps) {
+  const { t } = useTranslation();
   return (
     <Chip
       data-category-id={categoryId}
@@ -211,7 +215,7 @@ function SpaceProfile({
         </Text>
         {suggested && (
           <Badge variant="Success" fill="Soft" radii="Pill" outlined>
-            <Text size="L400">Suggested</Text>
+            <Text size="L400">{t('lobby.common.suggested')}</Text>
           </Badge>
         )}
       </Box>
@@ -225,6 +229,7 @@ type RootSpaceProfileProps = {
   handleClose?: MouseEventHandler<HTMLButtonElement>;
 };
 function RootSpaceProfile({ closed, categoryId, handleClose }: RootSpaceProfileProps) {
+  const { t } = useTranslation();
   return (
     <Chip
       data-category-id={categoryId}
@@ -236,7 +241,7 @@ function RootSpaceProfile({ closed, categoryId, handleClose }: RootSpaceProfileP
     >
       <Box alignItems="Center" gap="200">
         <Text size="H4" truncate>
-          Rooms
+          {t('lobby.space.root_rooms_label')}
         </Text>
       </Box>
     </Chip>

@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { Box, Button, Icon, Icons, Spinner, Text } from 'folds';
+import { useTranslation } from 'react-i18next';
 import { SequenceCard } from '../../components/sequence-card';
 import * as css from './styles.css';
 import { ChatButton, ControlDivider, MicrophoneButton, SoundButton } from './Controls';
@@ -11,6 +12,7 @@ type PrescreenControlsProps = {
   canJoin?: boolean;
 };
 export function PrescreenControls({ canJoin }: PrescreenControlsProps) {
+  const { t } = useTranslation();
   const room = useRoom();
   const callEmbed = useCallEmbed();
   const callJoined = useCallJoined(callEmbed);
@@ -62,7 +64,7 @@ export function PrescreenControls({ canJoin }: PrescreenControlsProps) {
             )
           }
         >
-          <Text size="B400">Join</Text>
+          <Text size="B400">{t('call.prescreen.join')}</Text>
         </Button>
       </Box>
     </SequenceCard>

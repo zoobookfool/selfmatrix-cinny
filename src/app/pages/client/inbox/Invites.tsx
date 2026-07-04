@@ -18,6 +18,7 @@ import {
   config,
 } from 'folds';
 import { useAtomValue } from 'jotai';
+import { Trans, useTranslation } from 'react-i18next';
 import { RoomTopicEventContent } from 'matrix-js-sdk/lib/types';
 import FocusTrap from 'focus-trap-react';
 import { MatrixClient, MatrixError, Room } from 'matrix-js-sdk';
@@ -160,6 +161,7 @@ function InviteCard({
   onNavigate,
   hideAvatar,
 }: InviteCardProps) {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const branding = useBranding();
   const userId = mx.getSafeUserId();
@@ -202,14 +204,14 @@ function InviteCard({
           {invite.isEncrypted && (
             <Box shrink="No" alignItems="Center" justifyContent="Center">
               <Badge variant="Success" fill="Solid" size="400" radii="300">
-                <Text size="L400">Encrypted</Text>
+                <Text size="L400">{t('inbox.invites.encrypted')}</Text>
               </Badge>
             </Box>
           )}
           {invite.isDirect && (
             <Box shrink="No" alignItems="Center" justifyContent="Center">
               <Badge variant="Primary" fill="Solid" size="400" radii="300">
-                <Text size="L400">Direct Message</Text>
+                <Text size="L400">{t('inbox.invites.direct_message')}</Text>
               </Badge>
             </Box>
           )}
@@ -292,7 +294,7 @@ function InviteCard({
               disabled={joining || leaving}
               before={leaving ? <Spinner variant="Secondary" size="100" /> : undefined}
             >
-              <Text size="B300">Decline</Text>
+              <Text size="B300">{t('inbox.invites.decline')}</Text>
             </Button>
             <Button
               onClick={join}
@@ -304,7 +306,7 @@ function InviteCard({
               disabled={joining || leaving}
               before={joining ? <Spinner variant="Success" fill="Soft" size="100" /> : undefined}
             >
-              <Text size="B300">Accept</Text>
+              <Text size="B300">{t('inbox.invites.accept')}</Text>
             </Button>
           </Box>
         </Box>
@@ -313,7 +315,9 @@ function InviteCard({
         <Box gap="200" alignItems="Baseline">
           <Box grow="Yes">
             <Text size="T200" priority="300">
-              From: <b>{invite.senderId}</b>
+              <Trans i18nKey="inbox.invites.from_label" values={{ senderId: invite.senderId }}>
+                From: <b>{invite.senderId}</b>
+              </Trans>
             </Text>
           </Box>
           {typeof invite.inviteTs === 'number' && invite.inviteTs !== 0 && (
@@ -330,7 +334,7 @@ function InviteCard({
         </Box>
         {invite.reason && (
           <Text size="T200" priority="300">
-            Reason: {invite.reason}
+            {t('inbox.invites.reason_label', { reason: invite.reason })}
           </Text>
         )}
       </Box>
@@ -357,6 +361,7 @@ function InviteFilters({
   unknownInvites,
   spamInvites,
 }: InviteFiltersProps) {
+  const { t } = useTranslation();
   const isKnown = filter === InviteFilter.Known;
   const isUnknown = filter === InviteFilter.Unknown;
   const isSpam = filter === InviteFilter.Spam;
@@ -377,7 +382,7 @@ function InviteFilters({
           )
         }
       >
-        <Text size="T200">Primary</Text>
+        <Text size="T200">{t('inbox.invites.filter_primary')}</Text>
       </Chip>
       <Chip
         variant={isUnknown ? 'Warning' : 'Surface'}
@@ -393,7 +398,7 @@ function InviteFilters({
           )
         }
       >
-        <Text size="T200">Public</Text>
+        <Text size="T200">{t('inbox.invites.filter_public')}</Text>
       </Chip>
       <Chip
         variant={isSpam ? 'Critical' : 'Surface'}
@@ -409,7 +414,7 @@ function InviteFilters({
           )
         }
       >
-        <Text size="T200">Spam</Text>
+        <Text size="T200">{t('inbox.invites.filter_spam')}</Text>
       </Chip>
     </Box>
   );
@@ -429,9 +434,10 @@ function KnownInvites({
   hour24Clock,
   dateFormatString,
 }: KnownInvitesProps) {
+  const { t } = useTranslation();
   return (
     <Box direction="Column" gap="200">
-      <Text size="H4">Primary</Text>
+      <Text size="H4">{t('inbox.invites.filter_primary')}</Text>
       {invites.length > 0 ? (
         <Box direction="Column" gap="100">
           {invites.map((invite) => (
@@ -451,8 +457,8 @@ function KnownInvites({
           <PageHeroSection>
             <PageHero
               icon={<Icon size="600" src={Icons.Mail} />}
-              title="No Invites"
-              subTitle="When someone you share a room with sends you an invite, it’ll show up here."
+              title={t('inbox.invites.no_invites_title')}
+              subTitle={t('inbox.invites.known_empty_subtitle')}
             />
           </PageHeroSection>
         </PageHeroEmpty>
@@ -475,6 +481,7 @@ function UnknownInvites({
   hour24Clock,
   dateFormatString,
 }: UnknownInvitesProps) {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
 
   const [declineAllStatus, declineAll] = useAsyncCallback(
@@ -490,7 +497,7 @@ function UnknownInvites({
   return (
     <Box direction="Column" gap="200">
       <Box gap="200" justifyContent="SpaceBetween" alignItems="Center">
-        <Text size="H4">Public</Text>
+        <Text size="H4">{t('inbox.invites.filter_public')}</Text>
         <Box>
           {invites.length > 0 && (
             <Chip
@@ -500,7 +507,7 @@ function UnknownInvites({
               disabled={declining}
               radii="Pill"
             >
-              <Text size="T200">Decline All</Text>
+              <Text size="T200">{t('inbox.invites.decline_all')}</Text>
             </Chip>
           )}
         </Box>
@@ -524,8 +531,8 @@ function UnknownInvites({
           <PageHeroSection>
             <PageHero
               icon={<Icon size="600" src={Icons.Info} />}
-              title="No Invites"
-              subTitle="Invites from people outside your rooms will appear here."
+              title={t('inbox.invites.no_invites_title')}
+              subTitle={t('inbox.invites.unknown_empty_subtitle')}
             />
           </PageHeroSection>
         </PageHeroEmpty>
@@ -548,6 +555,7 @@ function SpamInvites({
   hour24Clock,
   dateFormatString,
 }: SpamInvitesProps) {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const [showInvites, setShowInvites] = useState(false);
 
@@ -587,7 +595,7 @@ function SpamInvites({
 
   return (
     <Box direction="Column" gap="200">
-      <Text size="H4">Spam</Text>
+      <Text size="H4">{t('inbox.invites.filter_spam')}</Text>
       {invites.length > 0 ? (
         <Box direction="Column" gap="100">
           <SequenceCard
@@ -599,8 +607,8 @@ function SpamInvites({
             <PageHeroSection>
               <PageHero
                 icon={<Icon size="600" src={Icons.Warning} />}
-                title={`${invites.length} Spam Invites`}
-                subTitle="Some of the following invites may contain harmful content or have been sent by banned users."
+                title={t('inbox.invites.spam_count_title', { count: invites.length })}
+                subTitle={t('inbox.invites.spam_subtitle')}
               >
                 <Box direction="Row" gap="200" justifyContent="Center" wrap="Wrap">
                   <Button
@@ -613,7 +621,7 @@ function SpamInvites({
                     disabled={loading}
                   >
                     <Text size="B300" truncate>
-                      Decline All
+                      {t('inbox.invites.decline_all')}
                     </Text>
                   </Button>
                   {reportRoomSupported && reportAllStatus.status !== AsyncStatus.Success && (
@@ -627,7 +635,7 @@ function SpamInvites({
                       disabled={loading}
                     >
                       <Text size="B300" truncate>
-                        Report All
+                        {t('inbox.invites.report_all')}
                       </Text>
                     </Button>
                   )}
@@ -642,7 +650,7 @@ function SpamInvites({
                       before={blocking && <Spinner size="100" variant="Secondary" fill="Solid" />}
                     >
                       <Text size="B300" truncate>
-                        Block All
+                        {t('inbox.invites.block_all')}
                       </Text>
                     </Button>
                   )}
@@ -660,7 +668,9 @@ function SpamInvites({
                   }
                   onClick={() => setShowInvites(!showInvites)}
                 >
-                  <Text size="B300">{showInvites ? 'Hide All' : 'View All'}</Text>
+                  <Text size="B300">
+                    {showInvites ? t('inbox.invites.hide_all') : t('inbox.invites.view_all')}
+                  </Text>
                 </Button>
               </PageHero>
             </PageHeroSection>
@@ -683,8 +693,8 @@ function SpamInvites({
           <PageHeroSection>
             <PageHero
               icon={<Icon size="600" src={Icons.Warning} />}
-              title="No Spam Invites"
-              subTitle="Invites detected as spam appear here."
+              title={t('inbox.invites.no_spam_invites_title')}
+              subTitle={t('inbox.invites.no_spam_invites_subtitle')}
             />
           </PageHeroSection>
         </PageHeroEmpty>
@@ -694,6 +704,7 @@ function SpamInvites({
 }
 
 export function Invites() {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const useAuthentication = useMediaAuthentication();
   const { navigateRoom, navigateSpace } = useRoomNavigate();
@@ -765,7 +776,7 @@ export function Invites() {
           <Box alignItems="Center" gap="200">
             {screenSize !== ScreenSize.Mobile && <Icon size="400" src={Icons.Mail} />}
             <Text size="H3" truncate>
-              Invites
+              {t('inbox.invites.page_title')}
             </Text>
           </Box>
           <Box grow="Yes" basis="No" />
@@ -778,7 +789,7 @@ export function Invites() {
               <Box ref={containerRef} direction="Column" gap="600">
                 <Box direction="Column" gap="100">
                   <span data-spacing-node />
-                  <Text size="L400">Filter</Text>
+                  <Text size="L400">{t('inbox.filter_label')}</Text>
                   <InviteFilters
                     filter={filter}
                     onFilter={setFilter}

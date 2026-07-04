@@ -1,5 +1,6 @@
 import React, { RefObject, useRef } from 'react';
 import { Badge, Box, color, Header, Scroll, Text, toRem } from 'folds';
+import { useTranslation } from 'react-i18next';
 import { useCallEmbed, useCallJoined, useCallEmbedPlacementSync } from '../../hooks/useCallEmbed';
 import { ContainerColor } from '../../styles/ContainerColor.css';
 import { PrescreenControls } from './PrescreenControls';
@@ -17,17 +18,19 @@ import { useLivekitSupport } from '../../hooks/useLivekitSupport';
 import { webRTCSupported } from '../../utils/rtc';
 
 function LivekitServerMissingMessage() {
+  const { t } = useTranslation();
   return (
     <Text style={{ margin: 'auto', color: color.Critical.Main }} size="L400" align="Center">
-      Your homeserver does not support calling.
+      {t('call.prescreen.no_livekit_support')}
     </Text>
   );
 }
 
 function WebRTCMissingError() {
+  const { t } = useTranslation();
   return (
     <Text style={{ margin: 'auto', color: color.Critical.Main }} size="L400" align="Center">
-      Your browser does not support WebRTC, which is required for calling.
+      {t('call.prescreen.no_webrtc_support')}
     </Text>
   );
 }
@@ -41,6 +44,8 @@ function JoinMessage({
   livekitSupported?: boolean;
   rtcSupported?: boolean;
 }) {
+  const { t } = useTranslation();
+
   if (rtcSupported === false) {
     return <WebRTCMissingError />;
   }
@@ -53,28 +58,31 @@ function JoinMessage({
 
   return (
     <Text style={{ margin: 'auto' }} size="L400" align="Center">
-      Voice chat’s empty — Be the first to hop in!
+      {t('call.prescreen.empty_voice_chat')}
     </Text>
   );
 }
 
 function NoPermissionMessage() {
+  const { t } = useTranslation();
   return (
     <Text style={{ margin: 'auto' }} size="L400" align="Center">
-      You don&#39;t have permission to join!
+      {t('call.prescreen.no_permission')}
     </Text>
   );
 }
 
 function AlreadyInCallMessage() {
+  const { t } = useTranslation();
   return (
     <Text style={{ margin: 'auto', color: color.Warning.Main }} size="L400" align="Center">
-      Already in another call — End the current call to join!
+      {t('call.prescreen.already_in_call')}
     </Text>
   );
 }
 
 function CallPrescreen() {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const room = useRoom();
   const livekitSupported = useLivekitSupport();
@@ -105,11 +113,11 @@ function CallPrescreen() {
           {hasParticipant && (
             <Header size="300">
               <Box grow="Yes" alignItems="Center">
-                <Text size="L400">Participant</Text>
+                <Text size="L400">{t('call.prescreen.participant')}</Text>
               </Box>
               <Badge variant="Critical" fill="Solid" size="400">
                 <Text as="span" size="L400" truncate>
-                  {callMembers.length} Live
+                  {t('shell.nav.live_count', { count: callMembers.length })}
                 </Text>
               </Badge>
             </Header>

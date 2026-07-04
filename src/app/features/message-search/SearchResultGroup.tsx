@@ -4,6 +4,7 @@ import { IEventWithRoomId, JoinRule, RelationType, Room } from 'matrix-js-sdk';
 import { HTMLReactParserOptions } from 'html-react-parser';
 import { Avatar, Box, Chip, Header, Icon, Icons, Text, config } from 'folds';
 import { Opts as LinkifyOpts } from 'linkifyjs';
+import { Trans, useTranslation } from 'react-i18next';
 import { useMatrixClient } from '../../hooks/useMatrixClient';
 import {
   factoryRenderLinkifyWithMention,
@@ -74,6 +75,7 @@ export function SearchResultGroup({
   hour24Clock,
   dateFormatString,
 }: SearchResultGroupProps) {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const useAuthentication = useMediaAuthentication();
   const highlightRegex = useMemo(() => makeHighlightRegex(highlights), [highlights]);
@@ -165,7 +167,7 @@ export function SearchResultGroup({
         return (
           <Box grow="Yes" direction="Column">
             <Text size="T400" priority="300">
-              Room Tombstone. {content.body}
+              {t('search.result.room_tombstone', { body: content.body })}
             </Text>
           </Box>
         );
@@ -179,8 +181,10 @@ export function SearchResultGroup({
       return (
         <Box grow="Yes" direction="Column">
           <Text size="T400" priority="300">
-            <code className={customHtmlCss.Code}>{event.type}</code>
-            {' event'}
+            <Trans i18nKey="search.result.unknown_event_type" values={{ type: event.type }}>
+              <code className={customHtmlCss.Code}>{'{{type}}'}</code>
+              {' event'}
+            </Trans>
           </Text>
         </Box>
       );
@@ -303,7 +307,7 @@ export function SearchResultGroup({
                       variant="Secondary"
                       radii="400"
                     >
-                      <Text size="T200">Open</Text>
+                      <Text size="T200">{t('search.result.open')}</Text>
                     </Chip>
                   </Box>
                 </Box>

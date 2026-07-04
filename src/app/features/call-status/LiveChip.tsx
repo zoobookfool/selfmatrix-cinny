@@ -18,6 +18,7 @@ import {
 import { CallMembership } from 'matrix-js-sdk/lib/matrixrtc/CallMembership';
 import FocusTrap from 'focus-trap-react';
 import { Room } from 'matrix-js-sdk';
+import { useTranslation } from 'react-i18next';
 import * as css from './styles.css';
 import { stopPropagation } from '../../utils/keyboard';
 import { getMemberAvatarMxc, getMemberDisplayName } from '../../utils/room';
@@ -34,6 +35,7 @@ type LiveChipProps = {
   count: number;
 };
 export function LiveChip({ count, room, members }: LiveChipProps) {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const useAuthentication = useMediaAuthentication();
   const openUserProfile = useOpenUserRoomProfile();
@@ -129,7 +131,7 @@ export function LiveChip({ count, room, members }: LiveChipProps) {
         onClick={handleOpenMenu}
       >
         <Text className={css.LiveChipText} as="span" size="L400" truncate>
-          {count} Live
+          {t('shell.nav.live_count', { count })}
         </Text>
       </Chip>
     </PopOut>

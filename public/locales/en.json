@@ -1058,5 +1058,445 @@
       "cancel_button": "Cancel",
       "edit_button": "Edit"
     }
+  },
+  "lobby": {
+    "scroll_to_top": "Scroll to Top",
+    "reordering": "Reordering",
+    "common": {
+      "unknown": "Unknown",
+      "suggested": "Suggested",
+      "inaccessible": "Inaccessible"
+    },
+    "menu": {
+      "unset_suggested": "Unset Suggested",
+      "set_suggested": "Set Suggested",
+      "remove": "Remove",
+      "invite": "Invite",
+      "settings": "Settings",
+      "unpin_from_sidebar": "Unpin from Sidebar",
+      "pin_to_sidebar": "Pin to Sidebar",
+      "leave": "Leave"
+    },
+    "room": {
+      "join": "Join",
+      "members_count_one": "{{formattedCount}} Member",
+      "members_count_other": "{{formattedCount}} Members",
+      "open_room": "Open Room"
+    },
+    "space_hierarchy": {
+      "no_rooms_title": "No Rooms",
+      "no_rooms_body": "This space does not contains rooms yet."
+    },
+    "space": {
+      "root_rooms_label": "Rooms"
+    },
+    "header": {
+      "invite": "Invite",
+      "leave_space": "Leave Space",
+      "members_tooltip": "Members",
+      "more_options_tooltip": "More Options"
+    }
+  },
+  "inbox": {
+    "filter_label": "Filter",
+    "nav": {
+      "title": "Inbox",
+      "notifications": "Notifications",
+      "invites": "Invites"
+    },
+    "notifications": {
+      "title": "Notification Messages",
+      "mark_as_read": "Mark as Read",
+      "open": "Open",
+      "all_notifications": "All Notifications",
+      "highlighted": "Highlighted",
+      "scroll_to_top": "Scroll to Top",
+      "empty_title": "No Notifications",
+      "empty_subtitle": "You don't have any new notifications to display yet.",
+      "room_tombstone": "Room Tombstone. {{body}}",
+      "unknown_event_suffix": "event"
+    },
+    "invites": {
+      "page_title": "Invites",
+      "encrypted": "Encrypted",
+      "direct_message": "Direct Message",
+      "decline": "Decline",
+      "accept": "Accept",
+      "from_label": "From: <1>{{senderId}}</1>",
+      "reason_label": "Reason: {{reason}}",
+      "filter_primary": "Primary",
+      "filter_public": "Public",
+      "filter_spam": "Spam",
+      "no_invites_title": "No Invites",
+      "known_empty_subtitle": "When someone you share a room with sends you an invite, it'll show up here.",
+      "unknown_empty_subtitle": "Invites from people outside your rooms will appear here.",
+      "decline_all": "Decline All",
+      "report_all": "Report All",
+      "block_all": "Block All",
+      "hide_all": "Hide All",
+      "view_all": "View All",
+      "spam_count_title_one": "{{count}} Spam Invite",
+      "spam_count_title_other": "{{count}} Spam Invites",
+      "spam_subtitle": "Some of the following invites may contain harmful content or have been sent by banned users.",
+      "no_spam_invites_title": "No Spam Invites",
+      "no_spam_invites_subtitle": "Invites detected as spam appear here."
+    }
+  },
+  "explore": {
+    "title": "Explore Community",
+    "featured_nav_label": "Featured",
+    "servers_nav_category": "Servers",
+    "add_server": {
+      "button": "Add Server",
+      "title": "Add Server",
+      "description": "Add server name to explore public communities.",
+      "server_name_label": "Server Name",
+      "load_error": "Failed to load public rooms. Please try again.",
+      "view_button": "View"
+    },
+    "featured": {
+      "title": "Featured by Client",
+      "sub_title": "Find and explore public rooms and spaces featured by client provider.",
+      "spaces_heading": "Featured Spaces",
+      "rooms_heading": "Featured Rooms",
+      "empty": "No rooms or spaces featured by client provider."
+    },
+    "server": {
+      "filter_all": "All",
+      "filter_spaces": "Spaces",
+      "filter_rooms": "Rooms",
+      "search_label": "Search",
+      "search_placeholder": "Search for keyword",
+      "search_clear_button": "Clear",
+      "search_enter_button": "Enter",
+      "protocols_menu_label": "Protocols",
+      "limit_presets_label": "Presets",
+      "limit_custom_label": "Custom Limit",
+      "limit_input_aria_label": "Per Page Item Limit",
+      "limit_change_button": "Change Limit",
+      "limit_button_label": "Page Limit: {{limit}}",
+      "search_header_title": "Search",
+      "search_results_heading": "Results for \"{{term}}\"",
+      "popular_communities_heading": "Popular Communities",
+      "previous_page_button": "Previous Page",
+      "next_page_button": "Next Page",
+      "no_communities_found": "No communities found!"
+    }
+  },
+  "search": {
+    "message_search": {
+      "scroll_to_top": "Scroll to Top",
+      "hero_title": "Search Messages",
+      "hero_subtitle": "Find helpful messages in your community by searching with related keywords.",
+      "no_results": "No results found for \"{{term}}\"",
+      "results_for": "Results for \"{{term}}\""
+    },
+    "filters": {
+      "sort_by": "Sort by",
+      "sort_recent": "Recent",
+      "sort_relevance": "Relevance",
+      "search_label": "Search",
+      "rooms_label": "Rooms",
+      "rooms_for_query": "Rooms for \"{{query}}\"",
+      "no_match_found": "No match found!",
+      "save": "Save",
+      "save_with_count": "Save ({{count}})",
+      "deselect_all": "Deselect All",
+      "select_rooms": "Select Rooms",
+      "filter": "Filter",
+      "global": "Global"
+    },
+    "input": {
+      "label": "Search",
+      "placeholder": "Search for keyword",
+      "clear": "Clear",
+      "enter": "Enter"
+    },
+    "result": {
+      "room_tombstone": "Room Tombstone. {{body}}",
+      "unknown_event_type": "<0>{{type}}</0> event",
+      "open": "Open"
+    },
+    "modal": {
+      "placeholder": "Search",
+      "no_match_found": "No Match Found",
+      "no_rooms": "No Rooms",
+      "no_match_found_for_query": "No match found for \"{{query}}\".",
+      "no_rooms_description": "You do not have any Rooms to display yet.",
+      "hotkey_hint": "Type <1>#</1> for rooms, <3>@</3> for DMs and <5>*</5> for spaces. Hotkey: <7>{{modKey}} + k</7>"
+    },
+    "page": {
+      "title": "Message Search",
+      "home_filter_name": "Home"
+    }
+  },
+  "user_profile": {
+    "creator_chip": {
+      "manage_powers_menu_item": "Manage Powers"
+    },
+    "power_chip": {
+      "error_prefix": "Error: {{name}}",
+      "manage_powers_menu_item": "Manage Powers",
+      "self_demote_alert": {
+        "title": "Self Demotion",
+        "description": "You are about to demote yourself! You will not be able to regain this power yourself. Are you sure?",
+        "demote_button": "Demote"
+      },
+      "shared_power_alert": {
+        "title": "Shared Power",
+        "description": "You are promoting the user to have the same power as yourself! You will not be able to change their power afterward. Are you sure?",
+        "promote_button": "Promote"
+      }
+    },
+    "user_chips": {
+      "server_chip": {
+        "copy_server_menu_item": "Copy Server",
+        "explore_community_menu_item": "Explore Community",
+        "open_in_browser_menu_item": "Open in Browser"
+      },
+      "share_chip": {
+        "copy_user_id_menu_item": "Copy User ID",
+        "copy_user_link_menu_item": "Copy User Link",
+        "label": "Share"
+      },
+      "mutual_rooms_chip": {
+        "spaces_heading": "Spaces",
+        "rooms_heading": "Rooms",
+        "direct_messages_heading": "Direct Messages",
+        "count_label_one": "{{count}} Mutual Room",
+        "count_label_other": "{{count}} Mutual Rooms",
+        "loading_label": "Mutual Rooms"
+      },
+      "ignored_user_alert": {
+        "title": "Blocked User",
+        "description": "You do not receive any messages or invites from this user."
+      },
+      "options_chip": {
+        "unblock_user_menu_item": "Unblock User",
+        "block_user_menu_item": "Block User"
+      }
+    },
+    "user_moderation": {
+      "reason_line": "Reason: <0>{{reason}}</0>",
+      "no_reason_provided": "No Reason Provided.",
+      "moderation_label": "Moderation",
+      "reason_placeholder": "Reason",
+      "invite_button": "Invite",
+      "kick_button": "Kick",
+      "ban_button": "Ban",
+      "kick_alert": {
+        "title": "Kicked User",
+        "kicked_by": "Kicked by: <0>{{kickedBy}}</0>"
+      },
+      "ban_alert": {
+        "title": "Banned User",
+        "banned_by": "Banned by: <0>{{bannedBy}}</0>",
+        "unban_button": "Unban"
+      },
+      "invite_alert": {
+        "title": "Invited User",
+        "invited_by": "Invited by: <0>{{invitedBy}}</0>",
+        "cancel_invite_button": "Cancel Invite"
+      }
+    },
+    "user_room_profile": {
+      "message_button": "Message"
+    }
+  },
+  "emoji_board": {
+    "group_labels": {
+      "smileys_people": "Smileys & People",
+      "animals_nature": "Animals & Nature",
+      "food_drinks": "Food & Drinks",
+      "activity": "Activity",
+      "travel_places": "Travel & Places",
+      "objects": "Objects",
+      "symbols": "Symbols",
+      "flags": "Flags"
+    },
+    "recent_group": "Recent",
+    "personal_pack": "Personal Pack",
+    "unknown_pack_name": "Unknown",
+    "unknown_pack": "Unknown Pack",
+    "search_results": "Search Results",
+    "no_results_found": "No Results found",
+    "emoji_aria_label": "{{label}} emoji",
+    "no_sticker_packs": {
+      "title": "No Sticker Packs!",
+      "description": "Add stickers from user, room or space settings."
+    },
+    "search_input": {
+      "placeholder_with_reaction": "Search or Text Reaction ",
+      "placeholder": "Search",
+      "react_chip": "React"
+    },
+    "tabs": {
+      "sticker": "Sticker",
+      "emoji": "Emoji"
+    }
+  },
+  "call": {
+    "member_card": {
+      "collapse": "Collapse",
+      "remaining_count_one": "+{{count}} Other",
+      "remaining_count_other": "+{{count}} Others"
+    },
+    "prescreen": {
+      "no_livekit_support": "Your homeserver does not support calling.",
+      "no_webrtc_support": "Your browser does not support WebRTC, which is required for calling.",
+      "empty_voice_chat": "Voice chat’s empty — Be the first to hop in!",
+      "no_permission": "You don't have permission to join!",
+      "already_in_call": "Already in another call — End the current call to join!",
+      "participant": "Participant",
+      "join": "Join"
+    },
+    "controls": {
+      "microphone_off": "Turn Off Microphone",
+      "microphone_on": "Turn On Microphone",
+      "sound_off": "Turn Off Sound",
+      "sound_on": "Turn On Sound",
+      "camera_off": "Stop Camera",
+      "camera_on": "Start Camera",
+      "screenshare_off": "Stop Screenshare",
+      "screenshare_on": "Start Screenshare",
+      "chat_close": "Close Chat",
+      "chat_open": "Open Chat",
+      "grid_view": "Grid View",
+      "spotlight_view": "Spotlight View",
+      "reactions": "Reactions",
+      "settings": "Settings",
+      "end": "End"
+    },
+    "status": {
+      "speaking_one": "<0>{{name1}}</0> is speaking...",
+      "speaking_two": "<0>{{name1}}</0> and <1>{{name2}}</1> are speaking...",
+      "speaking_three": "<0>{{name1}}</0>, <1>{{name2}}</1> and <2>{{name3}}</2> are speaking...",
+      "speaking_many_one": "<0>{{name1}}</0>, <1>{{name2}}</1>, <2>{{name3}}</2> and <3>{{count}} other</3> are speaking...",
+      "speaking_many_other": "<0>{{name1}}</0>, <1>{{name2}}</1>, <2>{{name3}}</2> and <3>{{count}} others</3> are speaking..."
+    }
+  },
+  "create_space": {
+    "modal": {
+      "title": "New Space"
+    },
+    "form": {
+      "knock_description": "Anyone can send request to join this space."
+    }
+  },
+  "add_existing": {
+    "title": "Add Existing",
+    "search_placeholder": "Search",
+    "no_match_found_title": "No Match Found",
+    "no_match_found_description": "No match found for \"{{query}}\".",
+    "no_spaces_title": "No Spaces",
+    "no_spaces_description": "You do not have any Spaces to display yet.",
+    "no_rooms_title": "No Rooms",
+    "no_rooms_description": "You do not have any Rooms to display yet.",
+    "apply_error": "Failed to apply changes! Please try again.",
+    "apply_ready_prompt_one": "Apply when ready. ({{count}} Selected)",
+    "apply_ready_prompt_other": "Apply when ready. ({{count}} Selected)",
+    "reset_button": "Reset",
+    "apply_button": "Apply Changes"
+  },
+  "create_chat": {
+    "user_id_label": "User ID",
+    "invalid_user_id_error": "Please enter a valid User ID."
+  },
+  "commands": {
+    "me": {
+      "description": "Send action message"
+    },
+    "notice": {
+      "description": "Send notice message"
+    },
+    "shrug": {
+      "description": "Send {{shrug}} as message"
+    },
+    "tableflip": {
+      "description": "Send {{tableflip}} as message"
+    },
+    "unflip": {
+      "description": "Send {{unflip}} as message"
+    },
+    "startdm": {
+      "description": "Start direct message with user. Example: /startdm userId1"
+    },
+    "join": {
+      "description": "Join room with address. Example: /join address1 address2"
+    },
+    "leave": {
+      "description": "Leave current room."
+    },
+    "invite": {
+      "description": "Invite user to room. Example: /invite userId1 userId2 [-r reason]"
+    },
+    "disinvite": {
+      "description": "Disinvite user to room. Example: /disinvite userId1 userId2 [-r reason]"
+    },
+    "kick": {
+      "description": "Kick user from room. Example: /kick userId1 userId2 servername [-r reason]"
+    },
+    "ban": {
+      "description": "Ban user from room. Example: /ban userId1 userId2 servername [-r reason]"
+    },
+    "unban": {
+      "description": "Unban user from room. Example: /unban userId1 userId2"
+    },
+    "ignore": {
+      "description": "Ignore user. Example: /ignore userId1 userId2"
+    },
+    "unignore": {
+      "description": "Unignore user. Example: /unignore userId1 userId2"
+    },
+    "myroomnick": {
+      "description": "Change nick in current room."
+    },
+    "myroomavatar": {
+      "description": "Change profile picture in current room. Example /myroomavatar mxc://xyzabc"
+    },
+    "converttodm": {
+      "description": "Convert room to direct message"
+    },
+    "converttoroom": {
+      "description": "Convert direct message to room"
+    },
+    "delete": {
+      "description": "Delete messages from users. Example: /delete userId1 servername -past 1d|2h|5m|30s [-t m.room.message] [-r spam]"
+    },
+    "acl": {
+      "description": "Manage server access control list. Example /acl [-a servername1] [-d servername2] [-ra servername1] [-rd servername2]"
+    }
+  },
+  "app": {
+    "heating_up": "Heating up",
+    "clear_cache_and_reload": "Clear Cache and Reload",
+    "failed_to_load": "Failed to load. {{message}}",
+    "failed_to_start": "Failed to start. {{message}}",
+    "retry_button": "Retry",
+    "continue_button": "Continue",
+    "sync_status": {
+      "connecting": "Connecting...",
+      "reconnecting": "Connection Lost! Reconnecting...",
+      "connection_lost": "Connection Lost!"
+    },
+    "spec_versions": {
+      "connecting": "Connecting to server",
+      "connect_error": "Unable to connect to the homeserver. The homeserver or your internet connection may be down."
+    },
+    "notifications": {
+      "invitation_title": "Invitation",
+      "invitation_body_one": "You have {{count}} new invitation request.",
+      "invitation_body_other": "You have {{count}} new invitation requests.",
+      "message_body": "New inbox notification from {{username}}",
+      "unknown_room": "Unknown"
+    },
+    "config_config": {
+      "load_error": "Failed to load client configuration file."
+    },
+    "feature_check": {
+      "missing_title": "Missing Browser Feature",
+      "indexeddb_description": "No IndexedDB support found. This application requires IndexedDB to store session data locally. Please make sure your browser support IndexedDB and have it enabled.",
+      "indexeddb_link": "What is IndexedDB?"
+    }
   }
 }

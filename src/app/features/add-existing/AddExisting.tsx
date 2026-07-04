@@ -30,6 +30,7 @@ import React, {
 import { useAtomValue } from 'jotai';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { Room } from 'matrix-js-sdk';
+import { useTranslation } from 'react-i18next';
 import { stopPropagation } from '../../utils/keyboard';
 import { useDirects, useRooms, useSpaces } from '../../state/hooks/roomList';
 import { useMatrixClient } from '../../hooks/useMatrixClient';
@@ -71,6 +72,7 @@ type AddExistingModalProps = {
   requestClose: () => void;
 };
 export function AddExistingModal({ parentId, space, requestClose }: AddExistingModalProps) {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const useAuthentication = useMediaAuthentication();
   const alive = useAlive();
@@ -198,7 +200,7 @@ export function AddExistingModal({ parentId, space, requestClose }: AddExistingM
                 }}
               >
                 <Box grow="Yes">
-                  <Text size="H4">Add Existing</Text>
+                  <Text size="H4">{t('add_existing.title')}</Text>
                 </Box>
                 <Box shrink="No">
                   <IconButton size="300" radii="300" onClick={requestClose}>
@@ -220,7 +222,7 @@ export function AddExistingModal({ parentId, space, requestClose }: AddExistingM
                       <Input
                         onChange={handleSearchChange}
                         before={<Icon size="200" src={Icons.Search} />}
-                        placeholder="Search"
+                        placeholder={t('add_existing.search_placeholder')}
                         size="400"
                         variant="Background"
                         outlined
@@ -236,12 +238,24 @@ export function AddExistingModal({ parentId, space, requestClose }: AddExistingM
                         gap="100"
                       >
                         <Text size="H6" align="Center">
-                          {searchResult ? 'No Match Found' : `No ${space ? 'Spaces' : 'Rooms'}`}
+                          {searchResult
+                            ? t('add_existing.no_match_found_title')
+                            : t(
+                                space
+                                  ? 'add_existing.no_spaces_title'
+                                  : 'add_existing.no_rooms_title'
+                              )}
                         </Text>
                         <Text size="T200" align="Center">
                           {searchResult
-                            ? `No match found for "${searchResult.query}".`
-                            : `You do not have any ${space ? 'Spaces' : 'Rooms'} to display yet.`}
+                            ? t('add_existing.no_match_found_description', {
+                                query: searchResult.query,
+                              })
+                            : t(
+                                space
+                                  ? 'add_existing.no_spaces_description'
+                                  : 'add_existing.no_rooms_description'
+                              )}
                         </Text>
                       </Box>
                     )}
@@ -330,11 +344,15 @@ export function AddExistingModal({ parentId, space, requestClose }: AddExistingM
                           <Box grow="Yes" direction="Column">
                             {applyState.status === AsyncStatus.Error ? (
                               <Text size="T200">
-                                <b>Failed to apply changes! Please try again.</b>
+                                <b>{t('add_existing.apply_error')}</b>
                               </Text>
                             ) : (
                               <Text size="T200">
-                                <b>Apply when ready. ({selected.length} Selected)</b>
+                                <b>
+                                  {t('add_existing.apply_ready_prompt', {
+                                    count: selected.length,
+                                  })}
+                                </b>
                               </Text>
                             )}
                           </Box>
@@ -347,7 +365,7 @@ export function AddExistingModal({ parentId, space, requestClose }: AddExistingM
                               disabled={applyingChanges}
                               onClick={resetChanges}
                             >
-                              <Text size="B300">Reset</Text>
+                              <Text size="B300">{t('add_existing.reset_button')}</Text>
                             </Button>
                             <Button
                               size="300"
@@ -361,7 +379,7 @@ export function AddExistingModal({ parentId, space, requestClose }: AddExistingM
                               }
                               onClick={handleApplyChanges}
                             >
-                              <Text size="B300">Apply Changes</Text>
+                              <Text size="B300">{t('add_existing.apply_button')}</Text>
                             </Button>
                           </Box>
                         </Box>

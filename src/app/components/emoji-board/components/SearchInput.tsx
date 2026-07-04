@@ -1,5 +1,6 @@
 import React, { ChangeEventHandler, useRef } from 'react';
 import { Input, Chip, Icon, Icons, Text } from 'folds';
+import { useTranslation } from 'react-i18next';
 import { mobileOrTablet } from '../../../utils/user-agent';
 
 type SearchInputProps = {
@@ -15,6 +16,7 @@ export function SearchInput({
   onTextCustomEmojiSelect,
 }: SearchInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const { t } = useTranslation();
 
   const handleReact = () => {
     const textEmoji = inputRef.current?.value.trim();
@@ -27,7 +29,11 @@ export function SearchInput({
       ref={inputRef}
       variant="SurfaceVariant"
       size="400"
-      placeholder={allowTextCustomEmoji ? 'Search or Text Reaction ' : 'Search'}
+      placeholder={
+        allowTextCustomEmoji
+          ? t('emoji_board.search_input.placeholder_with_reaction')
+          : t('emoji_board.search_input.placeholder')
+      }
       maxLength={50}
       after={
         allowTextCustomEmoji && query ? (
@@ -38,7 +44,7 @@ export function SearchInput({
             outlined
             onClick={handleReact}
           >
-            <Text size="L400">React</Text>
+            <Text size="L400">{t('emoji_board.search_input.react_chip')}</Text>
           </Chip>
         ) : (
           <Icon src={Icons.Search} size="50" />

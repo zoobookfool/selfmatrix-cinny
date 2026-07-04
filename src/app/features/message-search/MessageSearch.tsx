@@ -5,6 +5,7 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
 import { SearchOrderBy } from 'matrix-js-sdk';
+import { useTranslation } from 'react-i18next';
 import { PageHero, PageHeroEmpty, PageHeroSection } from '../../components/page';
 import { useMatrixClient } from '../../hooks/useMatrixClient';
 import { _SearchPathSearchParams } from '../../pages/paths';
@@ -50,6 +51,7 @@ export function MessageSearch({
   senders,
   scrollRef,
 }: MessageSearchProps) {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const mDirects = useAtomValue(mDirectAtom);
   const allRooms = useRooms(mx, allRoomsAtom, mDirects);
@@ -198,7 +200,7 @@ export function MessageSearch({
           radii="Pill"
           outlined
           size="300"
-          aria-label="Scroll to Top"
+          aria-label={t('search.message_search.scroll_to_top')}
         >
           <Icon src={Icons.ChevronTop} size="300" />
         </IconButton>
@@ -229,8 +231,8 @@ export function MessageSearch({
           <PageHeroSection>
             <PageHero
               icon={<Icon size="600" src={Icons.Message} />}
-              title="Search Messages"
-              subTitle="Find helpful messages in your community by searching with related keywords."
+              title={t('search.message_search.hero_title')}
+              subTitle={t('search.message_search.hero_subtitle')}
             />
           </PageHeroSection>
         </PageHeroEmpty>
@@ -245,7 +247,7 @@ export function MessageSearch({
         >
           <Icon size="200" src={Icons.Info} />
           <Text>
-            No results found for <b>{`"${msgSearchParams.term}"`}</b>
+            {t('search.message_search.no_results', { term: msgSearchParams.term })}
           </Text>
         </Box>
       )}
@@ -262,7 +264,9 @@ export function MessageSearch({
       {vItems.length > 0 && (
         <Box direction="Column" gap="300">
           <Box direction="Column" gap="200">
-            <Text size="H5">{`Results for "${msgSearchParams.term}"`}</Text>
+            <Text size="H5">
+              {t('search.message_search.results_for', { term: msgSearchParams.term })}
+            </Text>
             <Line size="300" variant="Surface" />
           </Box>
           <div

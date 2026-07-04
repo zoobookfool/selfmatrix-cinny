@@ -1,5 +1,6 @@
 import { Chip, config, Icon, Icons, Menu, MenuItem, PopOut, RectCords, Text } from 'folds';
 import React, { MouseEventHandler, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import FocusTrap from 'focus-trap-react';
 import { isKeyHotkey } from 'is-hotkey';
 import { useRoomCreatorsTag } from '../../hooks/useRoomCreatorsTag';
@@ -16,6 +17,7 @@ import { SpaceSettingsPage } from '../../state/spaceSettings';
 import { RoomSettingsPage } from '../../state/roomSettings';
 
 export function CreatorChip() {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const useAuthentication = useMediaAuthentication();
   const room = useRoom();
@@ -70,7 +72,7 @@ export function CreatorChip() {
                   close();
                 }}
               >
-                <Text size="B300">Manage Powers</Text>
+                <Text size="B300">{t('user_profile.creator_chip.manage_powers_menu_item')}</Text>
               </MenuItem>
             </div>
           </Menu>

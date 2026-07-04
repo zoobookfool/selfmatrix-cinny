@@ -15,6 +15,7 @@ import {
   toRem,
 } from 'folds';
 import FocusTrap from 'focus-trap-react';
+import { useTranslation } from 'react-i18next';
 import { SequenceCard } from '../../components/sequence-card';
 import * as css from './styles.css';
 import {
@@ -33,6 +34,7 @@ type CallControlsProps = {
   callEmbed: CallEmbed;
 };
 export function CallControls({ callEmbed }: CallControlsProps) {
+  const { t } = useTranslation();
   const controlRef = useRef<HTMLDivElement>(null);
   const [compact, setCompact] = useState(document.body.clientWidth < 500);
 
@@ -137,7 +139,9 @@ export function CallControls({ callEmbed }: CallControlsProps) {
                         onClick={handleSpotlightClick}
                       >
                         <Text size="B300" truncate>
-                          {spotlight ? 'Grid View' : 'Spotlight View'}
+                          {spotlight
+                            ? t('call.controls.grid_view')
+                            : t('call.controls.spotlight_view')}
                         </Text>
                       </MenuItem>
                       <MenuItem
@@ -147,7 +151,7 @@ export function CallControls({ callEmbed }: CallControlsProps) {
                         onClick={handleReactionsClick}
                       >
                         <Text size="B300" truncate>
-                          Reactions
+                          {t('call.controls.reactions')}
                         </Text>
                       </MenuItem>
                       <MenuItem
@@ -157,7 +161,7 @@ export function CallControls({ callEmbed }: CallControlsProps) {
                         onClick={handleSettingsClick}
                       >
                         <Text size="B300" truncate>
-                          Settings
+                          {t('call.controls.settings')}
                         </Text>
                       </MenuItem>
                     </Box>
@@ -193,7 +197,7 @@ export function CallControls({ callEmbed }: CallControlsProps) {
               }
               disabled={exiting}
             >
-              <Text size="B400">End</Text>
+              <Text size="B400">{t('call.controls.end')}</Text>
             </Button>
           </Box>
         </Box>

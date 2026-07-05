@@ -495,7 +495,8 @@
         "light": "Light",
         "silver": "Silver",
         "dark": "Dark",
-        "butter": "Butter"
+        "butter": "Butter",
+        "selfmatrix": "SelfMatrix Dark"
       },
       "appearance": {
         "title": "Appearance",

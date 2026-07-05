@@ -13,6 +13,7 @@ import { notificationPermission, setFavicon } from '../../utils/dom';
 import { useSetting } from '../../state/hooks/settings';
 import { settingsAtom } from '../../state/settings';
 import { allInvitesAtom } from '../../state/room-list/inviteList';
+import { mDirectAtom } from '../../state/mDirectList';
 import { usePreviousValue } from '../../hooks/usePreviousValue';
 import { useMatrixClient } from '../../hooks/useMatrixClient';
 import { getInboxInvitesPath, getInboxNotificationsPath } from '../pathUtils';
@@ -139,6 +140,7 @@ function MessageNotifications() {
   const useAuthentication = useMediaAuthentication();
   const [showNotifications] = useSetting(settingsAtom, 'showNotifications');
   const [notificationSound] = useSetting(settingsAtom, 'isNotificationSounds');
+  const mDirects = useAtomValue(mDirectAtom);
 
   const navigate = useNavigate();
   const notificationSelected = useInboxNotificationsSelected();
@@ -215,6 +217,12 @@ function MessageNotifications() {
         return;
       }
 
+      // SelfMatrix: Discord-style noise control — plain room messages only move
+      // the unread badge; toast + sound stay reserved for mentions/keywords
+      // (highlight) and DMs.
+      const mentioned = unreadInfo.highlight > (cachedUnreadInfo?.highlight ?? 0);
+      if (!mentioned && !mDirects.has(room.roomId)) return;
+
       if (showNotifications && notificationPermission('granted')) {
         const avatarMxc =
           room.getAvatarFallbackMember()?.getMxcAvatarUrl() ?? room.getMxcAvatarUrl();
@@ -247,6 +255,7 @@ function MessageNotifications() {
     selectedRoomId,
     useAuthentication,
     t,
+    mDirects,
   ]);
 
   return (

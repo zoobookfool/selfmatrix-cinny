@@ -236,3 +236,88 @@ export const butterTheme = createTheme(color, {
     OnContainer: '#F2EED3',
   },
 });
+
+export const selfmatrixTheme = createTheme(color, {
+  ...darkThemeData,
+  Background: {
+    Container: '#313338',
+    ContainerHover: '#3A3C42',
+    ContainerActive: '#404249',
+    ContainerLine: '#4A4C52',
+    OnContainer: '#F2F3F5',
+  },
+
+  Surface: {
+    Container: '#2B2D31',
+    ContainerHover: '#35373C',
+    ContainerActive: '#3F4147',
+    ContainerLine: '#4A4C52',
+    OnContainer: '#F2F3F5',
+  },
+
+  SurfaceVariant: {
+    Container: '#1E1F22',
+    ContainerHover: '#2B2D31',
+    ContainerActive: '#35373C',
+    ContainerLine: '#404249',
+    OnContainer: '#F2F3F5',
+  },
+
+  Primary: {
+    Main: '#5865F2',
+    MainHover: '#4752C4',
+    MainActive: '#3C45A5',
+    MainLine: '#333A8C',
+    OnMain: '#FFFFFF',
+    Container: '#3C4270',
+    ContainerHover: '#454C82',
+    ContainerActive: '#4E5693',
+    ContainerLine: '#565FA3',
+    OnContainer: '#E0E3FF',
+  },
+
+  Secondary: {
+    Main: '#FFFFFF',
+    MainHover: '#E5E5E5',
+    MainActive: '#D9D9D9',
+    MainLine: '#CCCCCC',
+    OnMain: '#1E1F22',
+    Container: '#404249',
+    ContainerHover: '#4A4C52',
+    ContainerActive: '#55575E',
+    ContainerLine: '#5F6169',
+    OnContainer: '#F2F3F5',
+  },
+
+  Success: {
+    Main: '#23A55A',
+    MainHover: '#1E9550',
+    MainActive: '#1A8547',
+    MainLine: '#17753E',
+    OnMain: '#08170F',
+    Container: '#1B4332',
+    ContainerHover: '#1F4D39',
+    ContainerActive: '#235640',
+    ContainerLine: '#276047',
+    OnContainer: '#CFF3DF',
+  },
+
+  Critical: {
+    Main: '#DA373C',
+    MainHover: '#C42D31',
+    MainActive: '#AE2529',
+    MainLine: '#981E21',
+    OnMain: '#FFFFFF',
+    Container: '#5C2223',
+    ContainerHover: '#682627',
+    ContainerActive: '#742A2B',
+    ContainerLine: '#802E2F',
+    OnContainer: '#F8D2D3',
+  },
+
+  Other: {
+    FocusRing: 'rgba(88, 101, 242, 0.6)',
+    Shadow: 'rgba(0, 0, 0, 1)',
+    Overlay: 'rgba(0, 0, 0, 0.8)',
+  },
+});

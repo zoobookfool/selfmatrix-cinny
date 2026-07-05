@@ -87,9 +87,20 @@ const defaultSettings: Settings = {
   language: 'system',
 };
 
+// SelfMatrix: the Discord-style dark theme is the default only for first runs
+// (no stored settings). Changing defaultSettings instead would also flip the
+// darkThemeId fallback for existing users on "system theme" (undefined keys
+// are dropped by JSON.stringify, so they always re-resolve from defaults).
+const initialSettings: Settings = {
+  ...defaultSettings,
+  themeId: 'selfmatrix-dark-theme',
+  useSystemTheme: false,
+  darkThemeId: 'selfmatrix-dark-theme',
+};
+
 export const getSettings = () => {
   const settings = localStorage.getItem(STORAGE_KEY);
-  if (settings === null) return defaultSettings;
+  if (settings === null) return initialSettings;
   return {
     ...defaultSettings,
     ...(JSON.parse(settings) as Settings),

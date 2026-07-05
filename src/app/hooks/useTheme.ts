@@ -2,7 +2,7 @@ import { lightTheme } from 'folds';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { onDarkFontWeight, onLightFontWeight } from '../../config.css';
-import { butterTheme, darkTheme, silverTheme } from '../../colors.css';
+import { butterTheme, darkTheme, selfmatrixTheme, silverTheme } from '../../colors.css';
 import { settingsAtom } from '../state/settings';
 import { useSetting } from '../state/hooks/settings';
 
@@ -38,9 +38,17 @@ export const ButterTheme: Theme = {
   kind: ThemeKind.Dark,
   classNames: ['butter-theme', butterTheme, onDarkFontWeight, 'prism-dark'],
 };
+export const SelfMatrixTheme: Theme = {
+  id: 'selfmatrix-dark-theme',
+  kind: ThemeKind.Dark,
+  classNames: ['selfmatrix-dark-theme', selfmatrixTheme, onDarkFontWeight, 'prism-dark'],
+};
 
 export const useThemes = (): Theme[] => {
-  const themes: Theme[] = useMemo(() => [LightTheme, SilverTheme, DarkTheme, ButterTheme], []);
+  const themes: Theme[] = useMemo(
+    () => [LightTheme, SilverTheme, DarkTheme, ButterTheme, SelfMatrixTheme],
+    []
+  );
 
   return themes;
 };
@@ -54,6 +62,7 @@ export const useThemeNames = (): Record<string, string> => {
       [SilverTheme.id]: t('settings.general.theme_names.silver'),
       [DarkTheme.id]: t('settings.general.theme_names.dark'),
       [ButterTheme.id]: t('settings.general.theme_names.butter'),
+      [SelfMatrixTheme.id]: t('settings.general.theme_names.selfmatrix'),
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [t, i18n.language]

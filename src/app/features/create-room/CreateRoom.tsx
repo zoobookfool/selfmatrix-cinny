@@ -93,7 +93,8 @@ export function CreateRoomForm({
   const { additionalCreators, addAdditionalCreator, removeAdditionalCreator } =
     useAdditionalCreators();
   const [federation, setFederation] = useState(true);
-  const [encryption, setEncryption] = useState(false);
+  // SelfMatrix: E2EE は標準運用 (公開ルームは送信時に強制 OFF される)
+  const [encryption, setEncryption] = useState(true);
   const [knock, setKnock] = useState(false);
   const [advance, setAdvance] = useState(false);
 

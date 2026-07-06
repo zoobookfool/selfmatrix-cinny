@@ -1570,6 +1570,10 @@
       "spotlight_view": "スポットライト表示",
       "reactions": "リアクション",
       "settings": "設定",
+      "stream_settings": "配信の設定",
+      "quality": "画質",
+      "fps": "FPS",
+      "start_share": "共有を開始",
       "end": "終了"
     },
     "status": {

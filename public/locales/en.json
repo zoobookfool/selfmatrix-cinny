@@ -1570,6 +1570,10 @@
       "spotlight_view": "Spotlight View",
       "reactions": "Reactions",
       "settings": "Settings",
+      "stream_settings": "Stream settings",
+      "quality": "Quality",
+      "fps": "Frame rate",
+      "start_share": "Start sharing",
       "end": "End"
     },
     "status": {

@@ -1,15 +1,26 @@
-import { createContext, RefObject, useCallback, useContext, useEffect, useState } from 'react';
+import {
+  createContext,
+  RefObject,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { MatrixClient, Room } from 'matrix-js-sdk';
-import { useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import {
   CallEmbed,
+  CallPopout,
   ElementCallThemeKind,
   ElementWidgetActions,
+  openCallPopoutWindow,
   useClientWidgetApiEvent,
 } from '../plugins/call';
 import { useMatrixClient } from './useMatrixClient';
 import { ThemeKind, useTheme } from './useTheme';
 import { callEmbedAtom } from '../state/callEmbed';
+import { mDirectAtom } from '../state/mDirectList';
 import { useResizeObserver } from './useResizeObserver';
 import { CallControlState } from '../plugins/call/CallControlState';
 import { useCallMembersChange, useCallSession } from './useCall';
@@ -75,6 +86,123 @@ export const useCallStart = (dm = false) => {
   );
 
   return startCall;
+};
+
+// 通話中の embed を別ウィンドウへ移す。
+// iframe の DOM 移動はリロードを伴い widget-api の transport も張り替え不能なため、
+// 「現在の通話から離脱 → ポップアップ内の新規 iframe で再 join」という短時間の再接続方式をとる。
+export const useCallPopout = () => {
+  const mx = useMatrixClient();
+  const theme = useTheme();
+  const directs = useAtomValue(mDirectAtom);
+  const setCallEmbed = useSetAtom(callEmbedAtom);
+  const popoutInFlightRef = useRef(false);
+
+  const popoutCall = useCallback(
+    async (embed: CallEmbed) => {
+      // SelfMatrix fix (敵対的レビュー FIX-1): 既にポップアウト済み、または
+      // ポップアウト処理が進行中の場合は再入しない。popoutCall の二重実行は
+      // window.open が同名 target で既存ウィンドウを返すことと相まって、
+      // 複数の CallPopout が同一 popup を共有する原因になる。
+      if (embed instanceof CallPopout || popoutInFlightRef.current) {
+        return;
+      }
+      popoutInFlightRef.current = true;
+
+      try {
+        // ポップアップはクリックの同期スタック内で開かないとブロックされる
+        const popup = openCallPopoutWindow();
+        if (!popup) {
+          throw new Error('popout-blocked');
+        }
+
+        const { room } = embed;
+        const controlState = embed.control.getState();
+        const dm = directs.has(room.roomId);
+
+        // LiveKit は同一 identity の二重参加で既存セッションを切断するため、
+        // 離脱完了 (widget からの Close) を待ってから再 join する
+        await new Promise<void>((resolve) => {
+          const cleanup: Array<() => void> = [];
+          const finish = () => {
+            cleanup.forEach((dispose) => dispose());
+            cleanup.length = 0;
+            resolve();
+          };
+          cleanup.push(embed.listenAction(ElementWidgetActions.Close, finish));
+          cleanup.push(embed.listenAction(ElementWidgetActions.HangupCall, finish));
+          const timeout = window.setTimeout(finish, 5000);
+          cleanup.push(() => window.clearTimeout(timeout));
+          embed.hangup();
+        });
+        setCallEmbed(undefined);
+
+        const rtcSession = mx.matrixRTC.getRoomSession(room);
+        const ongoing = rtcSession.memberships.length > 0;
+        const intent = CallEmbed.getIntent(dm, ongoing, controlState.video);
+        const themeKind: ElementCallThemeKind = theme.kind === ThemeKind.Dark ? 'dark' : 'light';
+        const widget = CallEmbed.getWidget(mx, room, intent, themeKind);
+
+        const popout = new CallPopout(mx, room, widget, popup, controlState);
+        setCallEmbed(popout);
+      } finally {
+        popoutInFlightRef.current = false;
+      }
+    },
+    [mx, theme, directs, setCallEmbed]
+  );
+
+  return popoutCall;
+};
+
+// popoutCall の逆。ポップアウト先から離脱 → ポップアップを閉じる → メインの container で
+// 通常の CallEmbed を再生成する。
+export const useCallPopin = () => {
+  const mx = useMatrixClient();
+  const theme = useTheme();
+  const directs = useAtomValue(mDirectAtom);
+  const setCallEmbed = useSetAtom(callEmbedAtom);
+  const callEmbedRef = useCallEmbedRef();
+
+  const popinCall = useCallback(
+    async (embed: CallEmbed) => {
+      const container = callEmbedRef.current;
+      if (!container) {
+        throw new Error('Failed to pop in call, No embed container element found!');
+      }
+
+      const { room } = embed;
+      const controlState = embed.control.getState();
+      const dm = directs.has(room.roomId);
+
+      await new Promise<void>((resolve) => {
+        const cleanup: Array<() => void> = [];
+        const finish = () => {
+          cleanup.forEach((dispose) => dispose());
+          cleanup.length = 0;
+          resolve();
+        };
+        cleanup.push(embed.listenAction(ElementWidgetActions.Close, finish));
+        cleanup.push(embed.listenAction(ElementWidgetActions.HangupCall, finish));
+        const timeout = window.setTimeout(finish, 5000);
+        cleanup.push(() => window.clearTimeout(timeout));
+        embed.hangup();
+      });
+      setCallEmbed(undefined);
+
+      const rtcSession = mx.matrixRTC.getRoomSession(room);
+      const ongoing = rtcSession.memberships.length > 0;
+      const intent = CallEmbed.getIntent(dm, ongoing, controlState.video);
+      const themeKind: ElementCallThemeKind = theme.kind === ThemeKind.Dark ? 'dark' : 'light';
+      const widget = CallEmbed.getWidget(mx, room, intent, themeKind);
+
+      const callEmbed = new CallEmbed(mx, room, widget, container, controlState);
+      setCallEmbed(callEmbed);
+    },
+    [mx, theme, directs, setCallEmbed, callEmbedRef]
+  );
+
+  return popinCall;
 };
 
 export const useCallJoined = (embed?: CallEmbed): boolean => {

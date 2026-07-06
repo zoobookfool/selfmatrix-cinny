@@ -1,7 +1,24 @@
-import React, { RefObject, useRef } from 'react';
-import { Badge, Box, color, Header, Scroll, Text, toRem } from 'folds';
+import React, { RefObject, useCallback, useRef } from 'react';
+import {
+  Box,
+  Badge,
+  Button,
+  color,
+  Header,
+  Icon,
+  Icons,
+  Scroll,
+  Spinner,
+  Text,
+  toRem,
+} from 'folds';
 import { useTranslation } from 'react-i18next';
-import { useCallEmbed, useCallJoined, useCallEmbedPlacementSync } from '../../hooks/useCallEmbed';
+import {
+  useCallEmbed,
+  useCallJoined,
+  useCallEmbedPlacementSync,
+  useCallPopin,
+} from '../../hooks/useCallEmbed';
 import { ContainerColor } from '../../styles/ContainerColor.css';
 import { PrescreenControls } from './PrescreenControls';
 import { usePowerLevelsContext } from '../../hooks/usePowerLevels';
@@ -16,6 +33,8 @@ import * as css from './styles.css';
 import { CallControls } from './CallControls';
 import { useLivekitSupport } from '../../hooks/useLivekitSupport';
 import { webRTCSupported } from '../../utils/rtc';
+import { CallPopout } from '../../plugins/call';
+import { AsyncStatus, useAsyncCallback } from '../../hooks/useAsyncCallback';
 
 function LivekitServerMissingMessage() {
   const { t } = useTranslation();
@@ -143,17 +162,106 @@ function CallPrescreen() {
   );
 }
 
+type PoppedOutBannerProps = {
+  callEmbed: CallPopout;
+};
+function PoppedOutBanner({ callEmbed }: PoppedOutBannerProps) {
+  const { t } = useTranslation();
+
+  const popinCall = useCallPopin();
+  const [popinState, popin] = useAsyncCallback(
+    useCallback(() => popinCall(callEmbed), [popinCall, callEmbed])
+  );
+  const popining = popinState.status === AsyncStatus.Loading;
+  const popinFailed = popinState.status === AsyncStatus.Error;
+
+  const [hangupState, hangup] = useAsyncCallback(
+    useCallback(() => callEmbed.hangup(), [callEmbed])
+  );
+  const exiting =
+    hangupState.status === AsyncStatus.Loading || hangupState.status === AsyncStatus.Success;
+
+  return (
+    <Box className={css.CallViewContent} direction="Column" gap="300" alignItems="Center">
+      <Box direction="Column" gap="100" alignItems="Center" style={{ maxWidth: toRem(382) }}>
+        <Text size="H5" align="Center">
+          {t('call.popped_out.title')}
+        </Text>
+        {popinFailed && (
+          <Text style={{ color: color.Critical.Main }} size="T200" align="Center">
+            {t('call.popped_out.return_failed')}
+          </Text>
+        )}
+      </Box>
+      <Box gap="300">
+        <Button
+          variant="Primary"
+          fill="Solid"
+          radii="400"
+          size="400"
+          data-testid="call_popin"
+          onClick={popin}
+          disabled={popining || exiting}
+          before={
+            popining ? (
+              <Spinner variant="Primary" fill="Solid" size="200" />
+            ) : (
+              <Icon size="200" src={Icons.ArrowLeft} />
+            )
+          }
+        >
+          <Text size="B400">{t('call.popped_out.return')}</Text>
+        </Button>
+        <Button
+          variant="Critical"
+          fill="Soft"
+          radii="400"
+          size="400"
+          onClick={hangup}
+          disabled={exiting || popining}
+          before={
+            exiting ? (
+              <Spinner variant="Critical" fill="Soft" size="200" />
+            ) : (
+              <Icon src={Icons.PhoneDown} size="200" filled />
+            )
+          }
+        >
+          <Text size="B400">{t('call.controls.end')}</Text>
+        </Button>
+      </Box>
+    </Box>
+  );
+}
+
 type CallJoinedProps = {
   containerRef: RefObject<HTMLDivElement>;
   joined: boolean;
 };
 function CallJoined({ joined, containerRef }: CallJoinedProps) {
   const callEmbed = useCallEmbed();
+  const poppedOut = callEmbed instanceof CallPopout && joined;
 
+  // SelfMatrix fix (敵対的レビュー FIX-2): ポップアウト中でも container の
+  // <Box ref={containerRef}> は常時同じ場所に1つだけマウントしたままにする
+  // (以前はポップアウト時にこの Box ごとアンマウントしていたため、pop-in 後に
+  // 生成される新しい DOM ノードに useCallEmbedPlacementSync の
+  // ResizeObserver が付き直らず、リサイズ追従が止まっていた)。ノードを不変に
+  // することで observer は生き続け、「popout→popin→ウィンドウリサイズで
+  // embed が追従する」が保証される。ポップアウト中は callVisible=false
+  // (CallEmbedProvider 側) で embed 自体は非表示になるので、container 側は
+  // 高さ 0 にして視覚的に隠し、代わりに PoppedOutBanner を表示する。
   return (
     <Box grow="Yes" direction="Column">
-      <Box grow="Yes" ref={containerRef} />
-      {callEmbed && joined && <CallControls callEmbed={callEmbed} />}
+      {poppedOut && <PoppedOutBanner callEmbed={callEmbed} />}
+      <Box
+        grow={poppedOut ? 'No' : 'Yes'}
+        direction="Column"
+        style={poppedOut ? { height: 0, minHeight: 0, overflow: 'hidden' } : undefined}
+      >
+        <Box grow="Yes" ref={containerRef} />
+      </Box>
+      {!poppedOut && callEmbed && joined && <CallControls callEmbed={callEmbed} />}
     </Box>
   );
 }

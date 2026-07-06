@@ -6,6 +6,7 @@ export enum AccountDataEvent {
   CinnySpaces = 'in.cinny.spaces',
 
   ShellLayout = 'in.selfmatrix.shell_layout',
+  FirstRunSetup = 'in.selfmatrix.first_run_setup',
 
   ElementRecentEmoji = 'io.element.recent_emoji',
 
@@ -21,6 +22,16 @@ export enum AccountDataEvent {
 }
 
 export type MDirectContent = Record<string, string[]>;
+
+/**
+ * SelfMatrix: marks that the user has seen (and either applied or skipped)
+ * the first-run layout setup dialog (UI 合意 v1.4 ④). Account data, so it
+ * follows the account across devices — the dialog must not reappear on a
+ * second device once dismissed on the first.
+ */
+export type FirstRunSetupContent = {
+  completedAt: number;
+};
 
 export type SecretStorageDefaultKeyContent = {
   key: string;

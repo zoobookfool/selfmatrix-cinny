@@ -557,6 +557,22 @@
     "open_settings_button": "Open Settings",
     "later_button": "Later"
   },
+  "first_run_setup": {
+    "title": "Welcome to SelfMatrix",
+    "description": "Choose where the server list, channel list, and call mini-tiles are docked. You can change this anytime later in Settings.",
+    "change_later_hint": "You can change this anytime later in Settings.",
+    "server_list_position": {
+      "title": "Server list position"
+    },
+    "channel_list_position": {
+      "title": "Channel list position"
+    },
+    "mini_tile_position": {
+      "title": "Call mini-tile position"
+    },
+    "apply_button": "Start with this layout",
+    "skip_button": "Skip"
+  },
   "device_verification": {
     "title": "Device Verification",
     "close_button": "Close",
@@ -1568,13 +1584,16 @@
       "chat_open": "Open Chat",
       "grid_view": "Grid View",
       "spotlight_view": "Spotlight View",
+      "emphasis_on": "Turn On Emphasis Selection",
+      "emphasis_off": "Turn Off Emphasis Selection",
       "reactions": "Reactions",
       "settings": "Settings",
       "stream_settings": "Stream settings",
       "quality": "Quality",
       "fps": "Frame rate",
       "start_share": "Start sharing",
-      "end": "End"
+      "end": "End",
+      "popout": "Pop out call"
     },
     "status": {
       "speaking_one": "<0>{{name1}}</0> is speaking...",
@@ -1582,6 +1601,13 @@
       "speaking_three": "<0>{{name1}}</0>, <1>{{name2}}</1> and <2>{{name3}}</2> are speaking...",
       "speaking_many_one": "<0>{{name1}}</0>, <1>{{name2}}</1>, <2>{{name3}}</2> and <3>{{count}} other</3> are speaking...",
       "speaking_many_other": "<0>{{name1}}</0>, <1>{{name2}}</1>, <2>{{name3}}</2> and <3>{{count}} others</3> are speaking..."
+    },
+    "popped_out": {
+      "title": "Call is ongoing in a separate window",
+      "return": "Return to this window",
+      "return_failed": "Failed to return the call to this window. Please try again.",
+      "blocked": "Couldn't open the popout window — check your browser's popup blocker.",
+      "connecting": "Connecting…"
     }
   },
   "create_space": {

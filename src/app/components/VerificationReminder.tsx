@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import FocusTrap from 'focus-trap-react';
+import { useAtomValue } from 'jotai';
 import {
   Overlay,
   OverlayBackdrop,
@@ -21,6 +22,7 @@ import {
 import { stopPropagation } from '../utils/keyboard';
 import { Modal500 } from './Modal500';
 import { Settings, SettingsPages } from '../features/settings';
+import { firstRunSetupBlockingAtom } from '../state/firstRunSetupGate';
 
 const SNOOZE_STORAGE_KEY = 'selfmatrix_verification_reminder_snooze';
 const SNOOZE_DURATION_MS = 7 * 24 * 60 * 60 * 1000;
@@ -60,9 +62,13 @@ export function VerificationReminder() {
   const [dismissed, setDismissed] = useState(false);
   const [settings, setSettings] = useState(false);
 
+  // SelfMatrix: serialize against FirstRunSetup (UI 合意 v1.4 ④) — never show
+  // both dialogs at once ("モーダル連発禁止").
+  const firstRunSetupBlocking = useAtomValue(firstRunSetupBlockingAtom);
+
   const needsSetup = !crossSigningActive;
   const needsVerification = verificationStatus === VerificationStatus.Unverified;
-  const shouldRemind = needsSetup || needsVerification;
+  const shouldRemind = !firstRunSetupBlocking && (needsSetup || needsVerification);
 
   useEffect(() => {
     if (!shouldRemind && dismissed) {

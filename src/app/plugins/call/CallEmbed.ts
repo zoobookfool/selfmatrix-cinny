@@ -136,8 +136,8 @@ export class CallEmbed {
     return widget;
   }
 
-  static getIframe(url: string): HTMLIFrameElement {
-    const iframe = document.createElement('iframe');
+  static getIframe(url: string, doc: Document = document): HTMLIFrameElement {
+    const iframe = doc.createElement('iframe');
 
     iframe.title = 'Call Embed';
     iframe.sandbox =
@@ -157,10 +157,12 @@ export class CallEmbed {
     room: Room,
     widget: Widget,
     container: HTMLElement,
-    initialControlState?: CallControlState
+    initialControlState?: CallControlState,
+    doc: Document = document
   ) {
     const iframe = CallEmbed.getIframe(
-      widget.getCompleteUrl({ currentUserId: mx.getSafeUserId() })
+      widget.getCompleteUrl({ currentUserId: mx.getSafeUserId() }),
+      doc
     );
     container.append(iframe);
 

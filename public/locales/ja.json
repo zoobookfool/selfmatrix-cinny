@@ -557,6 +557,22 @@
     "open_settings_button": "設定を開く",
     "later_button": "後で"
   },
+  "first_run_setup": {
+    "title": "SelfMatrix へようこそ",
+    "description": "サーバー一覧・チャンネル一覧・通話のミニタイルの位置を選べます。あとから設定画面でいつでも変更できます。",
+    "change_later_hint": "あとから設定画面でいつでも変更できます。",
+    "server_list_position": {
+      "title": "サーバー一覧の位置"
+    },
+    "channel_list_position": {
+      "title": "チャンネル一覧の位置"
+    },
+    "mini_tile_position": {
+      "title": "通話ミニタイルの位置"
+    },
+    "apply_button": "この配置ではじめる",
+    "skip_button": "スキップ"
+  },
   "device_verification": {
     "title": "デバイス認証",
     "close_button": "閉じる",
@@ -1568,13 +1584,16 @@
       "chat_open": "チャットを開く",
       "grid_view": "グリッド表示",
       "spotlight_view": "スポットライト表示",
+      "emphasis_on": "強調選択をオンにする",
+      "emphasis_off": "強調選択をオフにする",
       "reactions": "リアクション",
       "settings": "設定",
       "stream_settings": "配信の設定",
       "quality": "画質",
       "fps": "FPS",
       "start_share": "共有を開始",
-      "end": "終了"
+      "end": "終了",
+      "popout": "通話を別ウィンドウで開く"
     },
     "status": {
       "speaking_one": "<0>{{name1}}</0>さんが発言中です",
@@ -1582,6 +1601,13 @@
       "speaking_three": "<0>{{name1}}</0>さん、<1>{{name2}}</1>さん、<2>{{name3}}</2>さんが発言中です",
       "speaking_many_one": "<0>{{name1}}</0>さん、<1>{{name2}}</1>さん、<2>{{name3}}</2>さん、他<3>{{count}}名</3>が発言中です",
       "speaking_many_other": "<0>{{name1}}</0>さん、<1>{{name2}}</1>さん、<2>{{name3}}</2>さん、他<3>{{count}}名</3>が発言中です"
+    },
+    "popped_out": {
+      "title": "通話は別ウィンドウで進行中です",
+      "return": "このウィンドウに戻す",
+      "return_failed": "通話をこのウィンドウに戻せませんでした。もう一度お試しください。",
+      "blocked": "ポップアップウィンドウを開けませんでした — ブラウザのポップアップブロックをご確認ください。",
+      "connecting": "接続中…"
     }
   },
   "create_space": {

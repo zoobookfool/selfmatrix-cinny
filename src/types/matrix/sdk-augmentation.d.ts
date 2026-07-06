@@ -2,6 +2,7 @@ import { PackContent, EmoteRoomsContent } from '../../app/plugins/custom-emoji/t
 import { InCinnySpacesContent } from '../../app/hooks/useSidebarItems';
 import { IRecentEmojiContent } from '../../app/plugins/recent-emoji';
 import { ShellLayoutContent } from '../../app/state/shellLayout';
+import { FirstRunSetupContent } from './accountData';
 
 declare module 'matrix-js-sdk' {
   interface StateEvents {
@@ -14,5 +15,6 @@ declare module 'matrix-js-sdk' {
     'in.cinny.spaces': InCinnySpacesContent;
     'io.element.recent_emoji': IRecentEmojiContent;
     'in.selfmatrix.shell_layout': ShellLayoutContent;
+    'in.selfmatrix.first_run_setup': FirstRunSetupContent;
   }
 }

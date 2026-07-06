@@ -2,6 +2,7 @@ import React, { MouseEventHandler, useCallback, useRef, useState } from 'react';
 import {
   Box,
   Button,
+  color,
   config,
   Icon,
   IconButton,
@@ -12,6 +13,8 @@ import {
   RectCords,
   Spinner,
   Text,
+  Tooltip,
+  TooltipProvider,
   toRem,
 } from 'folds';
 import FocusTrap from 'focus-trap-react';
@@ -26,6 +29,7 @@ import {
   SoundButton,
 } from './Controls';
 import { CallEmbed, useCallControlState } from '../../plugins/call';
+import { useCallPopout } from '../../hooks/useCallEmbed';
 import { useResizeObserver } from '../../hooks/useResizeObserver';
 import { stopPropagation } from '../../utils/keyboard';
 import { AsyncStatus, useAsyncCallback } from '../../hooks/useAsyncCallback';
@@ -48,7 +52,9 @@ export function CallControls({ callEmbed }: CallControlsProps) {
   );
 
   // SelfMatrix: 配信特化のためカメラ UI は表示しない (機能は EC 側に温存)
-  const { microphone, sound, screenshare, spotlight } = useCallControlState(callEmbed.control);
+  const { microphone, sound, screenshare, spotlight, emphasis } = useCallControlState(
+    callEmbed.control
+  );
 
   const [cords, setCords] = useState<RectCords>();
 
@@ -58,6 +64,11 @@ export function CallControls({ callEmbed }: CallControlsProps) {
 
   const handleSpotlightClick = () => {
     callEmbed.control.toggleSpotlight();
+    setCords(undefined);
+  };
+
+  const handleEmphasisClick = () => {
+    callEmbed.control.toggleEmphasis();
     setCords(undefined);
   };
 
@@ -82,13 +93,27 @@ export function CallControls({ callEmbed }: CallControlsProps) {
   const exiting =
     hangupState.status === AsyncStatus.Loading || hangupState.status === AsyncStatus.Success;
 
+  const popoutCall = useCallPopout();
+  const [popoutState, popout] = useAsyncCallback(
+    useCallback(() => popoutCall(callEmbed), [popoutCall, callEmbed])
+  );
+  const popouting = popoutState.status === AsyncStatus.Loading;
+  const popoutBlocked = popoutState.status === AsyncStatus.Error;
+
   return (
     <Box
       ref={controlRef}
       className={css.CallControlContainer}
+      direction="Column"
+      gap="200"
       justifyContent="Center"
       alignItems="Center"
     >
+      {popoutBlocked && (
+        <Text style={{ color: color.Critical.Main }} size="T200" align="Center">
+          {t('call.popped_out.blocked')}
+        </Text>
+      )}
       <SequenceCard
         className={css.ControlCard}
         variant="SurfaceVariant"
@@ -115,6 +140,36 @@ export function CallControls({ callEmbed }: CallControlsProps) {
         <Box alignItems="Center" gap="Inherit" grow="Yes" direction={compact ? 'Column' : 'Row'}>
           <Box shrink="No" alignItems="Inherit" justifyContent="Inherit" gap="200">
             <ChatButton />
+            <TooltipProvider
+              position="Top"
+              delay={500}
+              tooltip={
+                <Tooltip>
+                  <Text size="T200">{t('call.controls.popout')}</Text>
+                </Tooltip>
+              }
+            >
+              {(anchorRef) => (
+                <IconButton
+                  ref={anchorRef}
+                  data-testid="call_popout"
+                  variant="Surface"
+                  fill="Soft"
+                  radii="400"
+                  size="400"
+                  onClick={popout}
+                  outlined
+                  disabled={popouting}
+                  aria-label={t('call.controls.popout')}
+                >
+                  {popouting ? (
+                    <Spinner variant="Secondary" fill="Soft" size="200" />
+                  ) : (
+                    <Icon size="400" src={Icons.External} />
+                  )}
+                </IconButton>
+              )}
+            </TooltipProvider>
             <PopOut
               anchor={cords}
               position="Top"
@@ -144,6 +199,22 @@ export function CallControls({ callEmbed }: CallControlsProps) {
                             : t('call.controls.spotlight_view')}
                         </Text>
                       </MenuItem>
+                      {!spotlight && (
+                        <MenuItem
+                          size="300"
+                          variant="Surface"
+                          radii="300"
+                          data-testid="call_emphasis_toggle"
+                          aria-pressed={emphasis}
+                          onClick={handleEmphasisClick}
+                        >
+                          <Text size="B300" truncate>
+                            {emphasis
+                              ? t('call.controls.emphasis_off')
+                              : t('call.controls.emphasis_on')}
+                          </Text>
+                        </MenuItem>
+                      )}
                       <MenuItem
                         size="300"
                         variant="Surface"
@@ -177,6 +248,7 @@ export function CallControls({ callEmbed }: CallControlsProps) {
                 onClick={handleOpenMenu}
                 outlined
                 aria-pressed={!!cords}
+                data-testid="call_menu"
               >
                 <Icon size="400" src={Icons.VerticalDots} />
               </IconButton>

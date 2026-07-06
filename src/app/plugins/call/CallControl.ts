@@ -71,6 +71,17 @@ export class CallControl extends EventEmitter implements CallControlState {
     return gridButton ?? undefined;
   }
 
+  // SelfMatrix: 強調選択トグル (UI 合意 v1.4 ①②)。グリッドモード時のみ EC 側
+  // の DOM に存在する ([data-testid="emphasis_toggle"] の input checkbox)。
+  // スポットライトモードでは要素自体が無いため querySelector は null を返す。
+  private get emphasisButton(): HTMLInputElement | undefined {
+    const emphasisButton = this.document?.querySelector(
+      '[data-testid="emphasis_toggle"]'
+    ) as HTMLInputElement | null;
+
+    return emphasisButton ?? undefined;
+  }
+
   constructor(state: CallControlState, call: ClientWidgetApi, iframe: HTMLIFrameElement) {
     super();
 
@@ -106,6 +117,10 @@ export class CallControl extends EventEmitter implements CallControlState {
     return this.state.spotlight;
   }
 
+  public get emphasis(): boolean {
+    return this.state.emphasis;
+  }
+
   public async applyState() {
     await this.setMediaState({
       audio_enabled: this.microphone,
@@ -124,7 +139,7 @@ export class CallControl extends EventEmitter implements CallControlState {
     });
     this.onBodyMutation();
   }
-  
+
   private onBodyMutation() {
     if (!this.document) return;
 
@@ -155,8 +170,38 @@ export class CallControl extends EventEmitter implements CallControlState {
         attributes: true,
       });
     }
+    // checked は attribute ではないため属性監視では変化を拾えないが、要素の
+    // 出現/消失 (grid/spotlight 切り替え) はここで再評価される (onControlMutation 経由)。
+    const emphasisBtn = this.emphasisButton;
+    if (emphasisBtn) {
+      this.controlMutationObserver.observe(emphasisBtn, {
+        attributes: true,
+      });
+    }
 
     this.onControlMutation();
+  }
+
+  /**
+   * SelfMatrix: 強調選択トグルの `checked` は DOM の attribute ではなく
+   * プロパティなので、既存の attributes MutationObserver では変化を検知
+   * できない。そのため toggleEmphasis() で click した直後に明示的にこれを
+   * 呼んで状態を再読込する。要素が無い場合 (スポットライトモード) は
+   * emphasis=false とする no-op。
+   */
+  private refreshEmphasisState(): void {
+    const emphasis = this.emphasisButton?.checked ?? false;
+    if (emphasis === this.state.emphasis) return;
+
+    this.state = new CallControlState(
+      this.microphone,
+      this.video,
+      this.sound,
+      this.screenshare,
+      this.spotlight,
+      emphasis
+    );
+    this.emitStateUpdate();
   }
 
   public applySound() {
@@ -165,7 +210,7 @@ export class CallControl extends EventEmitter implements CallControlState {
 
   private async setMediaState(state: ElementMediaStatePayload) {
     const data = await this.call.transport.send(ElementWidgetActions.DeviceMute, state);
-    return new Promise<typeof data>(resolve => {
+    return new Promise<typeof data>((resolve) => {
       if (this.mediaStatePromiseResolver) {
         this.mediaStatePromiseResolver();
       }
@@ -192,7 +237,8 @@ export class CallControl extends EventEmitter implements CallControlState {
       data.video_enabled ?? this.video,
       this.sound,
       this.screenshare,
-      this.spotlight
+      this.spotlight,
+      this.emphasis
     );
 
     this.state = state;
@@ -211,13 +257,17 @@ export class CallControl extends EventEmitter implements CallControlState {
   private onControlMutation() {
     const screenshare: boolean = this.screenshareButton?.getAttribute('data-kind') === 'primary';
     const spotlight: boolean = this.spotlightButton?.checked ?? false;
+    // スポットライトモードに切り替わると emphasisButton が DOM から消えるため、
+    // その場合は emphasis も false に戻す。
+    const emphasis: boolean = spotlight ? false : this.emphasisButton?.checked ?? this.emphasis;
 
     this.state = new CallControlState(
       this.microphone,
       this.video,
       this.sound,
       screenshare,
-      spotlight
+      spotlight,
+      emphasis
     );
     this.emitStateUpdate();
   }
@@ -248,7 +298,8 @@ export class CallControl extends EventEmitter implements CallControlState {
       this.video,
       sound,
       this.screenshare,
-      this.spotlight
+      this.spotlight,
+      this.emphasis
     );
     this.state = state;
     this.emitStateUpdate();
@@ -268,6 +319,19 @@ export class CallControl extends EventEmitter implements CallControlState {
       return;
     }
     this.spotlightButton?.click();
+  }
+
+  /**
+   * SelfMatrix: 強調選択トグル (UI 合意 v1.4 ①②)。要素が無い場合
+   * (スポットライトモード) は no-op。checked は attribute でなく DOM
+   * プロパティなので MutationObserver の attributes 監視では拾えないため、
+   * click 直後に明示的に refreshEmphasisState() で状態を再読込する。
+   */
+  public toggleEmphasis() {
+    const button = this.emphasisButton;
+    if (!button) return;
+    button.click();
+    this.refreshEmphasisState();
   }
 
   public toggleReactions() {

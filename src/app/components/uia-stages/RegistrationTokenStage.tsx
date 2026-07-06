@@ -1,7 +1,31 @@
 import React, { useEffect, useCallback, FormEventHandler } from 'react';
 import { Dialog, Text, Box, Button, config, Input } from 'folds';
 import { AuthType } from 'matrix-js-sdk';
+import { useTranslation } from 'react-i18next';
 import { StageComponentProps } from './types';
+import { ErrorCode } from '../../cs-errorcode';
+
+/**
+ * SelfMatrix: M3 fix — map the raw UIA errcode to a user-facing i18n key
+ * instead of showing the server's bare errcode as the dialog title. Synapse's
+ * RegistrationTokenAuthChecker returns M_UNAUTHORIZED for any invalid,
+ * exhausted, or expired token (it does not distinguish between those cases
+ * in the errcode), so we cannot offer a more specific message than
+ * "invalid_or_unknown" without parsing free-text `error`. Rate limiting
+ * during retries surfaces as M_LIMIT_EXCEEDED. Anything else falls back to a
+ * generic message rather than leaking the raw errcode to the user.
+ */
+export const getRegistrationTokenErrorKey = (
+  errorCode?: string
+): 'invalid_or_unknown' | 'rate_limited' | 'unknown' => {
+  if (errorCode === ErrorCode.M_UNAUTHORIZED || errorCode === ErrorCode.M_FORBIDDEN) {
+    return 'invalid_or_unknown';
+  }
+  if (errorCode === ErrorCode.M_LIMIT_EXCEEDED) {
+    return 'rate_limited';
+  }
+  return 'unknown';
+};
 
 function RegistrationTokenErrorDialog({
   title,
@@ -16,13 +40,14 @@ function RegistrationTokenErrorDialog({
   onRetry: (token: string) => void;
   onCancel: () => void;
 }) {
+  const { t } = useTranslation();
   const handleFormSubmit: FormEventHandler<HTMLFormElement> = (evt) => {
     evt.preventDefault();
     const { retryTokenInput } = evt.target as HTMLFormElement & {
       retryTokenInput: HTMLInputElement;
     };
-    const t = retryTokenInput.value;
-    onRetry(t);
+    const tokenValue = retryTokenInput.value;
+    onRetry(tokenValue);
   };
 
   return (
@@ -38,7 +63,7 @@ function RegistrationTokenErrorDialog({
           <Text size="H4">{title}</Text>
           <Text>{message}</Text>
           <Text as="label" size="L400" style={{ paddingTop: config.space.S400 }}>
-            Registration Token
+            {t('auth.register.registration_token_label')}
           </Text>
           <Input
             name="retryTokenInput"
@@ -51,12 +76,12 @@ function RegistrationTokenErrorDialog({
         </Box>
         <Button variant="Critical" type="submit">
           <Text as="span" size="B400">
-            Retry
+            {t('auth.register.token_stage.retry_button')}
           </Text>
         </Button>
         <Button variant="Critical" fill="None" outlined type="button" onClick={onCancel}>
           <Text as="span" size="B400">
-            Cancel
+            {t('auth.register.token_stage.cancel_button')}
           </Text>
         </Button>
       </Box>
@@ -72,13 +97,14 @@ export function RegistrationTokenStageDialog({
 }: StageComponentProps & {
   token?: string;
 }) {
-  const { errorCode, error, session } = stageData;
+  const { t } = useTranslation();
+  const { errorCode, session } = stageData;
 
   const handleSubmit = useCallback(
-    (t: string) => {
+    (tokenValue: string) => {
       submitAuthDict({
         type: AuthType.RegistrationToken,
-        token: t,
+        token: tokenValue,
         session,
       });
     },
@@ -90,11 +116,12 @@ export function RegistrationTokenStageDialog({
   }, [handleSubmit, token, errorCode]);
 
   if (errorCode) {
+    const errorKey = getRegistrationTokenErrorKey(errorCode);
     return (
       <RegistrationTokenErrorDialog
         defaultToken={token}
-        title={errorCode}
-        message={error ?? 'Invalid registration token provided.'}
+        title={t('auth.register.token_stage.retry_title')}
+        message={t(`auth.register.token_stage.errors.${errorKey}`)}
         onRetry={handleSubmit}
         onCancel={onCancel}
       />
@@ -105,8 +132,8 @@ export function RegistrationTokenStageDialog({
     return (
       <RegistrationTokenErrorDialog
         defaultToken={token}
-        title="Registration Token"
-        message="Please submit registration token provided by you homeserver admin."
+        title={t('auth.register.token_stage.prompt_title')}
+        message={t('auth.register.token_stage.prompt_message')}
         onRetry={handleSubmit}
         onCancel={onCancel}
       />

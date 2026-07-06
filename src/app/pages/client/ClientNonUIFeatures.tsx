@@ -3,6 +3,7 @@ import React, { ReactNode, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { RoomEvent, RoomEventHandlerMap } from 'matrix-js-sdk';
+import { ReceiptContent, ReceiptType } from 'matrix-js-sdk/lib/@types/read_receipts';
 import { roomToUnreadAtom, unreadEqual, unreadInfoToUnread } from '../../state/room/roomToUnread';
 import LogoSVG from '../../../../public/res/svg/cinny.svg';
 import LogoUnreadSVG from '../../../../public/res/svg/cinny-unread.svg';
@@ -23,6 +24,7 @@ import {
   getUnreadInfo,
   isNotificationEvent,
 } from '../../utils/room';
+import { shouldNotifyForMessage } from '../../utils/notifications';
 import { NotificationType, UnreadInfo } from '../../../types/matrix/room';
 import { getMxIdLocalPart, mxcUrlToHttp } from '../../utils/matrix';
 import { useSelectedRoom } from '../../hooks/router/useSelectedRoom';
@@ -141,6 +143,25 @@ function MessageNotifications() {
   const [showNotifications] = useSetting(settingsAtom, 'showNotifications');
   const [notificationSound] = useSetting(settingsAtom, 'isNotificationSounds');
   const mDirects = useAtomValue(mDirectAtom);
+  const roomToUnread = useAtomValue(roomToUnreadAtom);
+
+  // SelfMatrix: prefill/keep unreadCacheRef in sync with roomToUnreadAtom
+  // (which itself is reset from server-known unread counts on sync/receipt).
+  // Without this, a fresh mount starts with an empty cache, so the first
+  // plain message in a room that already has unread highlights reads as
+  // "highlight increased from 0" and wrongly notifies (B2 false-positive).
+  // NOTE: this relies on ClientNonUIFeatures being mounted as a descendant of
+  // ClientBindAtoms — the atom must be bound (and thus populated before live
+  // timeline events arrive) for the prefill to see real values.
+  useEffect(() => {
+    roomToUnread.forEach((unread, roomId) => {
+      unreadCacheRef.current.set(roomId, {
+        roomId,
+        highlight: unread.highlight,
+        total: unread.total,
+      });
+    });
+  }, [roomToUnread]);
 
   const navigate = useNavigate();
   const notificationSelected = useInboxNotificationsSelected();
@@ -183,6 +204,32 @@ function MessageNotifications() {
   }, []);
 
   useEffect(() => {
+    // SelfMatrix: a read receipt for our own user (possibly sent from another
+    // device) means the server-side highlight/total for this room just reset.
+    // Refresh the cache immediately instead of waiting for the next timeline
+    // event, otherwise a stale cached highlight count would suppress a
+    // genuine new mention that arrives right after catching up elsewhere
+    // (B2 false-negative).
+    const handleReceipt: RoomEventHandlerMap[RoomEvent.Receipt] = (mEvent, room) => {
+      const myUserId = mx.getUserId();
+      if (!myUserId) return;
+      const content = mEvent.getContent<ReceiptContent>();
+      const isMyReceipt = Object.keys(content).some((eventId) =>
+        (Object.keys(content[eventId]) as ReceiptType[]).some(
+          (receiptType) => content[eventId][receiptType][myUserId]
+        )
+      );
+      if (isMyReceipt) {
+        unreadCacheRef.current.set(room.roomId, getUnreadInfo(room));
+      }
+    };
+    mx.on(RoomEvent.Receipt, handleReceipt);
+    return () => {
+      mx.removeListener(RoomEvent.Receipt, handleReceipt);
+    };
+  }, [mx]);
+
+  useEffect(() => {
     const handleTimelineEvent: RoomEventHandlerMap[RoomEvent.Timeline] = (
       mEvent,
       room,
@@ -192,15 +239,13 @@ function MessageNotifications() {
     ) => {
       if (mx.getSyncState() !== 'SYNCING') return;
       if (document.hasFocus() && (selectedRoomId === room?.roomId || notificationSelected)) return;
-      if (
-        !room ||
-        !data.liveEvent ||
-        room.isSpaceRoom() ||
-        !isNotificationEvent(mEvent) ||
-        getNotificationType(mx, room.roomId) === NotificationType.Mute
-      ) {
+      if (!room || !data.liveEvent || room.isSpaceRoom() || !isNotificationEvent(mEvent)) {
         return;
       }
+      const notificationType = getNotificationType(mx, room.roomId);
+      // Mute is an unconditional early return — never notify regardless of
+      // per-room AllMessages/highlight state.
+      if (notificationType === NotificationType.Mute) return;
 
       const sender = mEvent.getSender();
       const eventId = mEvent.getId();
@@ -209,7 +254,6 @@ function MessageNotifications() {
       const cachedUnreadInfo = unreadCacheRef.current.get(room.roomId);
       unreadCacheRef.current.set(room.roomId, unreadInfo);
 
-      if (unreadInfo.total === 0) return;
       if (
         cachedUnreadInfo &&
         unreadEqual(unreadInfoToUnread(cachedUnreadInfo), unreadInfoToUnread(unreadInfo))
@@ -219,9 +263,18 @@ function MessageNotifications() {
 
       // SelfMatrix: Discord-style noise control — plain room messages only move
       // the unread badge; toast + sound stay reserved for mentions/keywords
-      // (highlight) and DMs.
-      const mentioned = unreadInfo.highlight > (cachedUnreadInfo?.highlight ?? 0);
-      if (!mentioned && !mDirects.has(room.roomId)) return;
+      // (highlight), DMs, and rooms the user explicitly set to "All Messages"
+      // (B1: per-room AllMessages must bypass the mention/DM gate entirely).
+      if (
+        !shouldNotifyForMessage({
+          notificationType,
+          isDirect: mDirects.has(room.roomId),
+          unreadInfo,
+          cachedUnreadInfo,
+        })
+      ) {
+        return;
+      }
 
       if (showNotifications && notificationPermission('granted')) {
         const avatarMxc =

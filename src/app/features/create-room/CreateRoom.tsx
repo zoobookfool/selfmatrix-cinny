@@ -239,49 +239,44 @@ export function CreateRoomForm({
             />
           </SequenceCard>
         )}
-        {access !== CreateRoomAccess.Public && (
-          <>
-            <SequenceCard
-              style={{ padding: config.space.S300 }}
-              variant="SurfaceVariant"
-              direction="Column"
-              gap="500"
-            >
-              <SettingTile
-                title={t('create_room.form.encryption_title')}
-                description={t('create_room.form.encryption_description')}
-                after={
-                  <Switch
-                    variant="Primary"
-                    value={encryption}
-                    onChange={setEncryption}
-                    disabled={disabled}
-                  />
-                }
+        <SequenceCard
+          style={{ padding: config.space.S300 }}
+          variant="SurfaceVariant"
+          direction="Column"
+          gap="500"
+        >
+          <SettingTile
+            title={t('create_room.form.encryption_title')}
+            description={
+              access === CreateRoomAccess.Public
+                ? t('create_room.form.encryption_unavailable_public')
+                : t('create_room.form.encryption_description')
+            }
+            after={
+              <Switch
+                variant="Primary"
+                value={access === CreateRoomAccess.Public ? false : encryption}
+                onChange={setEncryption}
+                disabled={disabled || access === CreateRoomAccess.Public}
               />
-            </SequenceCard>
-            {advance && (allowKnock || allowKnockRestricted) && (
-              <SequenceCard
-                style={{ padding: config.space.S300 }}
-                variant="SurfaceVariant"
-                direction="Column"
-                gap="500"
-              >
-                <SettingTile
-                  title={t('create_room.form.knock_title')}
-                  description={t('create_room.form.knock_description')}
-                  after={
-                    <Switch
-                      variant="Primary"
-                      value={knock}
-                      onChange={setKnock}
-                      disabled={disabled}
-                    />
-                  }
-                />
-              </SequenceCard>
-            )}
-          </>
+            }
+          />
+        </SequenceCard>
+        {access !== CreateRoomAccess.Public && advance && (allowKnock || allowKnockRestricted) && (
+          <SequenceCard
+            style={{ padding: config.space.S300 }}
+            variant="SurfaceVariant"
+            direction="Column"
+            gap="500"
+          >
+            <SettingTile
+              title={t('create_room.form.knock_title')}
+              description={t('create_room.form.knock_description')}
+              after={
+                <Switch variant="Primary" value={knock} onChange={setKnock} disabled={disabled} />
+              }
+            />
+          </SequenceCard>
         )}
 
         <SequenceCard
@@ -321,9 +316,7 @@ export function CreateRoomForm({
               {error instanceof MatrixError && error.name === ErrorCode.M_LIMIT_EXCEEDED
                 ? t('create_room.form.rate_limited_error', {
                     count: Number(
-                      millisecondsToMinutes(
-                        (error.data.retry_after_ms as number | undefined) ?? 0
-                      )
+                      millisecondsToMinutes((error.data.retry_after_ms as number | undefined) ?? 0)
                     ),
                     minutes: millisecondsToMinutes(
                       (error.data.retry_after_ms as number | undefined) ?? 0

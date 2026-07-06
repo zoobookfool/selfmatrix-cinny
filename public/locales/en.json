@@ -152,6 +152,18 @@
         "forbidden": "Failed to register. The homeserver does not permit registration.",
         "invalid_request": "Failed to register. Invalid request.",
         "unknown": "Failed to register. Unknown Reason."
+      },
+      "token_stage": {
+        "prompt_title": "Registration Token",
+        "prompt_message": "Please submit the registration token provided by your homeserver admin.",
+        "retry_title": "Registration Token",
+        "retry_button": "Retry",
+        "cancel_button": "Cancel",
+        "errors": {
+          "invalid_or_unknown": "This registration token is invalid, expired, or has already reached its usage limit. Please check the token or ask for a new one.",
+          "rate_limited": "Too many attempts. Please wait a moment before trying again.",
+          "unknown": "Failed to verify the registration token. Please try again."
+        }
       }
     },
     "reset_password": {
@@ -181,6 +193,7 @@
       "advanced_options": "Advanced Options",
       "encryption_title": "End-to-End Encryption",
       "encryption_description": "Once this feature is enabled, it can't be disabled after the room is created.",
+      "encryption_unavailable_public": "Public rooms can't be encrypted. Choose Private or Restricted access to enable encryption.",
       "knock_title": "Knock to Join",
       "knock_description": "Anyone can send request to join this room.",
       "federation_title": "Allow Federation",

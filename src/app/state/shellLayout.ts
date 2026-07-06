@@ -66,17 +66,19 @@ export const useBindShellLayoutAtom = (mx: MatrixClient, shellLayout: typeof she
   }, [mx, setShellLayout]);
 };
 
+/**
+ * SelfMatrix: B3 fix — the base for the merge must be the caller's current
+ * in-memory shellLayoutAtom value, not mx.getAccountData(). setAccountData()
+ * only resolves after the server PUT's /sync echo arrives, so
+ * mx.getAccountData() stays stale for a round trip; merging two quick patches
+ * (e.g. sidebar position then nav position) against that stale base drops
+ * whichever patch was applied first. Pure function (no MatrixClient) so it
+ * can be unit tested directly.
+ */
 export const makeShellLayoutContent = (
-  mx: MatrixClient,
+  currentShellLayout: ShellLayoutContent,
   patch: ShellLayoutContent
-): ShellLayoutContent => {
-  const currentShellLayout =
-    getAccountData(mx, AccountDataEvent.ShellLayout)?.getContent<ShellLayoutContent>() ?? {};
-
-  const newShellLayoutContent: ShellLayoutContent = {
-    ...currentShellLayout,
-    ...patch,
-  };
-
-  return newShellLayoutContent;
-};
+): ShellLayoutContent => ({
+  ...currentShellLayout,
+  ...patch,
+});

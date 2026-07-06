@@ -342,9 +342,7 @@ function SelectLanguage() {
         after={<Icon size="300" src={Icons.ChevronBottom} />}
         onClick={handleMenu}
       >
-        <Text size="T300">
-          {languageItems.find((i) => i.value === language)?.name ?? language}
-        </Text>
+        <Text size="T300">{languageItems.find((i) => i.value === language)?.name ?? language}</Text>
       </Button>
       <PopOut
         anchor={menuCords}
@@ -546,14 +544,20 @@ function Layout() {
   const sidebarPosition = getSidebarPosition(shellLayout);
   const navPosition = getNavPosition(shellLayout);
 
+  // SelfMatrix: B3 fix — merge against the current shellLayoutAtom value
+  // (already up to date locally via the optimistic setShellLayout below),
+  // not mx.getAccountData(), which lags behind until the /sync echo of the
+  // previous setAccountData() call arrives. Otherwise rapid successive
+  // changes (sidebar then nav position) each merge against the same stale
+  // base and the earlier change is lost.
   const handleSidebarPositionChange = (position: ShellDockPosition) => {
-    const content = makeShellLayoutContent(mx, { sidebarPosition: position });
+    const content = makeShellLayoutContent(shellLayout, { sidebarPosition: position });
     setShellLayout({ type: 'UPDATE', content });
     mx.setAccountData(AccountDataEvent.ShellLayout, content);
   };
 
   const handleNavPositionChange = (position: ShellDockPosition) => {
-    const content = makeShellLayoutContent(mx, { navPosition: position });
+    const content = makeShellLayoutContent(shellLayout, { navPosition: position });
     setShellLayout({ type: 'UPDATE', content });
     mx.setAccountData(AccountDataEvent.ShellLayout, content);
   };

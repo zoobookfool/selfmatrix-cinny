@@ -152,6 +152,18 @@
         "forbidden": "登録に失敗しました。このホームサーバーでは登録が許可されていません。",
         "invalid_request": "登録に失敗しました。不正なリクエストです。",
         "unknown": "登録に失敗しました。原因不明のエラーです。"
+      },
+      "token_stage": {
+        "prompt_title": "登録トークン",
+        "prompt_message": "ホームサーバー管理者から提供された登録トークンを入力してください。",
+        "retry_title": "登録トークン",
+        "retry_button": "再試行",
+        "cancel_button": "キャンセル",
+        "errors": {
+          "invalid_or_unknown": "この登録トークンは無効・期限切れ、または使用回数の上限に達しています。トークンを確認するか、新しいトークンを発行してもらってください。",
+          "rate_limited": "試行回数が多すぎます。しばらく待ってから再度お試しください。",
+          "unknown": "登録トークンの確認に失敗しました。もう一度お試しください。"
+        }
       }
     },
     "reset_password": {
@@ -181,6 +193,7 @@
       "advanced_options": "詳細オプション",
       "encryption_title": "エンドツーエンド暗号化",
       "encryption_description": "この機能を有効にすると、ルーム作成後に無効化することはできません。",
+      "encryption_unavailable_public": "公開ルームは暗号化できません。暗号化するには「プライベート」または「制限付き」のアクセスを選択してください。",
       "knock_title": "ノックして参加",
       "knock_description": "誰でもこのルームへの参加をリクエストできます。",
       "federation_title": "フェデレーションを許可",

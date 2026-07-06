@@ -3,6 +3,7 @@ import { Editor } from 'slate';
 import { Avatar, Icon, Icons, MenuItem, Text } from 'folds';
 import { JoinRule, MatrixClient } from 'matrix-js-sdk';
 import { useAtomValue } from 'jotai';
+import { useTranslation } from 'react-i18next';
 
 import { createMentionElement, moveCursor, replaceWithElement } from '../utils';
 import { getDirectRoomAvatarUrl } from '../../../utils/room';
@@ -76,6 +77,7 @@ export function RoomMentionAutocomplete({
   query,
   requestClose,
 }: RoomMentionAutocompleteProps) {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const mDirects = useAtomValue(mDirectAtom);
 
@@ -133,7 +135,10 @@ export function RoomMentionAutocomplete({
   });
 
   return (
-    <AutocompleteMenu headerContent={<Text size="L400">Rooms</Text>} requestClose={requestClose}>
+    <AutocompleteMenu
+      headerContent={<Text size="L400">{t('room.editor.autocomplete.rooms_heading')}</Text>}
+      requestClose={requestClose}
+    >
       {autoCompleteRoomIds.length === 0 ? (
         <UnknownRoomMentionItem query={query} handleAutocomplete={handleAutocomplete} />
       ) : (

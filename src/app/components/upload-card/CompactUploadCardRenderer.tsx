@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Chip, Icon, IconButton, Icons, Text, color } from 'folds';
+import { Trans, useTranslation } from 'react-i18next';
 import { UploadCard, UploadCardError, CompactUploadCardProgress } from './UploadCard';
 import { TUploadAtom, UploadStatus, UploadSuccess, useBindUploadAtom } from '../../state/upload';
 import { useMatrixClient } from '../../hooks/useMatrixClient';
@@ -19,6 +20,7 @@ export function CompactUploadCardRenderer({
   onRemove,
   onComplete,
 }: CompactUploadCardRendererProps) {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const mediaConfig = useMediaConfig();
   const allowSize = mediaConfig['m.upload.size'] || Infinity;
@@ -59,7 +61,7 @@ export function CompactUploadCardRenderer({
               radii="Pill"
               outlined
             >
-              <Text size="B300">Retry</Text>
+              <Text size="B300">{t('upload_card.retry')}</Text>
             </Chip>
           )}
           <IconButton
@@ -97,9 +99,16 @@ export function CompactUploadCardRenderer({
           {upload.status === UploadStatus.Idle && fileSizeExceeded && (
             <UploadCardError>
               <Text size="T200">
-                The file size exceeds the limit. Maximum allowed size is{' '}
-                <b>{bytesToSize(allowSize)}</b>, but the uploaded file is{' '}
-                <b>{bytesToSize(file.size)}</b>.
+                <Trans
+                  i18nKey="upload_card.file_size_exceeded"
+                  values={{
+                    maxSize: bytesToSize(allowSize),
+                    fileSize: bytesToSize(file.size),
+                  }}
+                >
+                  <b>{bytesToSize(allowSize)}</b>
+                  <b>{bytesToSize(file.size)}</b>
+                </Trans>
               </Text>
             </UploadCardError>
           )}

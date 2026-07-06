@@ -17,6 +17,7 @@ import {
 import FileSaver from 'file-saver';
 import { EncryptedAttachmentInfo } from 'browser-encrypt-attachment';
 import FocusTrap from 'focus-trap-react';
+import { useTranslation } from 'react-i18next';
 import { IFileInfo } from '../../../../types/matrix/common';
 import { AsyncStatus, useAsyncCallback } from '../../../hooks/useAsyncCallback';
 import { useMatrixClient } from '../../../hooks/useMatrixClient';
@@ -37,11 +38,11 @@ import {
 import { useMediaAuthentication } from '../../../hooks/useMediaAuthentication';
 import { ModalWide } from '../../../styles/Modal.css';
 
-const renderErrorButton = (retry: () => void, text: string) => (
+const renderErrorButton = (retry: () => void, text: string, tooltipText: string) => (
   <TooltipProvider
     tooltip={
       <Tooltip variant="Critical">
-        <Text>Failed to load file!</Text>
+        <Text>{tooltipText}</Text>
       </Tooltip>
     }
     position="Top"
@@ -80,6 +81,7 @@ type ReadTextFileProps = {
   renderViewer: (props: RenderTextViewerProps) => ReactNode;
 };
 export function ReadTextFile({ body, mimeType, url, encInfo, renderViewer }: ReadTextFileProps) {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const useAuthentication = useMediaAuthentication();
   const [textViewer, setTextViewer] = useState(false);
@@ -130,7 +132,11 @@ export function ReadTextFile({ body, mimeType, url, encInfo, renderViewer }: Rea
         </Overlay>
       )}
       {textState.status === AsyncStatus.Error ? (
-        renderErrorButton(loadText, 'Open File')
+        renderErrorButton(
+          loadText,
+          t('message.file_content.open_file'),
+          t('message.file_content.failed_to_load')
+        )
       ) : (
         <Button
           variant="Secondary"
@@ -150,7 +156,7 @@ export function ReadTextFile({ body, mimeType, url, encInfo, renderViewer }: Rea
           }
         >
           <Text size="B400" truncate>
-            Open File
+            {t('message.file_content.open_file')}
           </Text>
         </Button>
       )}
@@ -171,6 +177,7 @@ export type ReadPdfFileProps = {
   renderViewer: (props: RenderPdfViewerProps) => ReactNode;
 };
 export function ReadPdfFile({ body, mimeType, url, encInfo, renderViewer }: ReadPdfFileProps) {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const useAuthentication = useMediaAuthentication();
   const [pdfViewer, setPdfViewer] = useState(false);
@@ -216,7 +223,11 @@ export function ReadPdfFile({ body, mimeType, url, encInfo, renderViewer }: Read
         </Overlay>
       )}
       {pdfState.status === AsyncStatus.Error ? (
-        renderErrorButton(loadPdf, 'Open PDF')
+        renderErrorButton(
+          loadPdf,
+          t('message.file_content.open_pdf'),
+          t('message.file_content.failed_to_load')
+        )
       ) : (
         <Button
           variant="Secondary"
@@ -234,7 +245,7 @@ export function ReadPdfFile({ body, mimeType, url, encInfo, renderViewer }: Read
           }
         >
           <Text size="B400" truncate>
-            Open PDF
+            {t('message.file_content.open_pdf')}
           </Text>
         </Button>
       )}
@@ -250,6 +261,7 @@ export type DownloadFileProps = {
   encInfo?: EncryptedAttachmentInfo;
 };
 export function DownloadFile({ body, mimeType, url, info, encInfo }: DownloadFileProps) {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const useAuthentication = useMediaAuthentication();
 
@@ -268,7 +280,11 @@ export function DownloadFile({ body, mimeType, url, info, encInfo }: DownloadFil
   );
 
   return downloadState.status === AsyncStatus.Error ? (
-    renderErrorButton(download, `Retry Download (${bytesToSize(info.size ?? 0)})`)
+    renderErrorButton(
+      download,
+      t('message.file_content.retry_download', { size: bytesToSize(info.size ?? 0) }),
+      t('message.file_content.failed_to_load')
+    )
   ) : (
     <Button
       variant="Secondary"
@@ -289,7 +305,9 @@ export function DownloadFile({ body, mimeType, url, info, encInfo }: DownloadFil
         )
       }
     >
-      <Text size="B400" truncate>{`Download (${bytesToSize(info.size ?? 0)})`}</Text>
+      <Text size="B400" truncate>
+        {t('message.file_content.download', { size: bytesToSize(info.size ?? 0) })}
+      </Text>
     </Button>
   );
 }

@@ -16,6 +16,7 @@ import {
 import FileSaver from 'file-saver';
 import to from 'await-to-js';
 import { AuthDict, IAuthData, MatrixError, UIAuthCallback } from 'matrix-js-sdk';
+import { Trans, useTranslation } from 'react-i18next';
 import { PasswordInput } from './password-input';
 import { ContainerColor } from '../styles/ContainerColor.css';
 import { copyToClipboard } from '../utils/dom';
@@ -71,6 +72,7 @@ type SetupVerificationProps = {
   onComplete: (recoveryKey: string) => void;
 };
 function SetupVerification({ onComplete }: SetupVerificationProps) {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const alive = useAlive();
 
@@ -182,11 +184,13 @@ function SetupVerification({ onComplete }: SetupVerificationProps) {
   return (
     <Box as="form" onSubmit={handleSubmit} direction="Column" gap="400">
       <Text size="T300">
-        Generate a <b>Recovery Key</b> for verifying identity if you do not have access to other
-        devices. Additionally, setup a passphrase as a memorable alternative.
+        <Trans i18nKey="device_verification_setup.generate_key_description" t={t}>
+          Generate a <b>Recovery Key</b> for verifying identity if you do not have access to other
+          devices. Additionally, setup a passphrase as a memorable alternative.
+        </Trans>
       </Text>
       <Box direction="Column" gap="100">
-        <Text size="L400">Passphrase (Optional)</Text>
+        <Text size="L400">{t('device_verification_setup.passphrase_optional_label')}</Text>
         <PasswordInput name="passphraseInput" size="400" readOnly={loading} />
       </Box>
       <Button
@@ -194,20 +198,22 @@ function SetupVerification({ onComplete }: SetupVerificationProps) {
         disabled={loading}
         before={loading && <Spinner size="200" variant="Primary" fill="Solid" />}
       >
-        <Text size="B400">Continue</Text>
+        <Text size="B400">{t('device_verification_setup.continue_button')}</Text>
       </Button>
       {setupState.status === AsyncStatus.Error && (
         <Text size="T200" style={{ color: color.Critical.Main }}>
-          <b>{setupState.error ? setupState.error.message : 'Unexpected Error!'}</b>
+          <b>
+            {setupState.error
+              ? setupState.error.message
+              : t('device_verification_setup.unexpected_error_fallback')}
+          </b>
         </Text>
       )}
       {nextAuthData !== null && uiaAction && (
         <ActionUIAFlowsLoader
           authData={nextAuthData ?? uiaAction.authData}
           unsupported={() => (
-            <Text size="T200">
-              Authentication steps to perform this action are not supported by client.
-            </Text>
+            <Text size="T200">{t('device_verification_setup.uia_unsupported_message')}</Text>
           )}
         >
           {(ongoingFlow) => (
@@ -228,6 +234,7 @@ type RecoveryKeyDisplayProps = {
   recoveryKey: string;
 };
 function RecoveryKeyDisplay({ recoveryKey }: RecoveryKeyDisplayProps) {
+  const { t } = useTranslation();
   const [show, setShow] = useState(false);
 
   const handleCopy = () => {
@@ -245,12 +252,9 @@ function RecoveryKeyDisplay({ recoveryKey }: RecoveryKeyDisplayProps) {
 
   return (
     <Box direction="Column" gap="400">
-      <Text size="T300">
-        Store the Recovery Key in a safe place for future use, as you will need it to verify your
-        identity if you do not have access to other devices.
-      </Text>
+      <Text size="T300">{t('device_verification_setup.store_key_description')}</Text>
       <Box direction="Column" gap="100">
-        <Text size="L400">Recovery Key</Text>
+        <Text size="L400">{t('device_verification_setup.recovery_key_label')}</Text>
         <Box
           className={ContainerColor({ variant: 'SurfaceVariant' })}
           style={{
@@ -265,16 +269,20 @@ function RecoveryKeyDisplay({ recoveryKey }: RecoveryKeyDisplayProps) {
             {safeToDisplayKey}
           </Text>
           <Chip onClick={() => setShow(!show)} variant="Secondary" radii="Pill">
-            <Text size="B300">{show ? 'Hide' : 'Show'}</Text>
+            <Text size="B300">
+              {show
+                ? t('device_verification_setup.hide_button')
+                : t('device_verification_setup.show_button')}
+            </Text>
           </Chip>
         </Box>
       </Box>
       <Box direction="Column" gap="200">
         <Button onClick={handleCopy}>
-          <Text size="B400">Copy</Text>
+          <Text size="B400">{t('device_verification_setup.copy_button')}</Text>
         </Button>
         <Button onClick={handleDownload} fill="Soft">
-          <Text size="B400">Download</Text>
+          <Text size="B400">{t('device_verification_setup.download_button')}</Text>
         </Button>
       </Box>
     </Box>
@@ -286,6 +294,7 @@ type DeviceVerificationSetupProps = {
 };
 export const DeviceVerificationSetup = forwardRef<HTMLDivElement, DeviceVerificationSetupProps>(
   ({ onCancel }, ref) => {
+    const { t } = useTranslation();
     const [recoveryKey, setRecoveryKey] = useState<string>();
 
     return (
@@ -299,7 +308,7 @@ export const DeviceVerificationSetup = forwardRef<HTMLDivElement, DeviceVerifica
           size="500"
         >
           <Box grow="Yes">
-            <Text size="H4">Setup Device Verification</Text>
+            <Text size="H4">{t('device_verification_setup.setup_title')}</Text>
           </Box>
           <IconButton size="300" radii="300" onClick={onCancel}>
             <Icon src={Icons.Cross} />
@@ -321,6 +330,7 @@ type DeviceVerificationResetProps = {
 };
 export const DeviceVerificationReset = forwardRef<HTMLDivElement, DeviceVerificationResetProps>(
   ({ onCancel }, ref) => {
+    const { t } = useTranslation();
     const [reset, setReset] = useState(false);
 
     return (
@@ -334,7 +344,7 @@ export const DeviceVerificationReset = forwardRef<HTMLDivElement, DeviceVerifica
           size="500"
         >
           <Box grow="Yes">
-            <Text size="H4">Reset Device Verification</Text>
+            <Text size="H4">{t('device_verification_setup.reset_title')}</Text>
           </Box>
           <IconButton size="300" radii="300" onClick={onCancel}>
             <Icon src={Icons.Cross} />
@@ -356,16 +366,18 @@ export const DeviceVerificationReset = forwardRef<HTMLDivElement, DeviceVerifica
           <Box style={{ padding: config.space.S400 }} direction="Column" gap="400">
             <Box direction="Column" gap="200">
               <Text size="H1">✋🧑‍🚒🤚</Text>
-              <Text size="T300">Resetting device verification is permanent.</Text>
+              <Text size="T300">{t('device_verification_setup.reset_permanent_message')}</Text>
               <Text size="T300">
-                Anyone you have verified with will see security alerts and your encryption backup
-                will be lost. You almost certainly do not want to do this, unless you have lost{' '}
-                <b>Recovery Key</b> or <b>Recovery Passphrase</b> and every device you can verify
-                from.
+                <Trans i18nKey="device_verification_setup.reset_warning_message" t={t}>
+                  Anyone you have verified with will see security alerts and your encryption
+                  backup will be lost. You almost certainly do not want to do this, unless you
+                  have lost <b>Recovery Key</b> or <b>Recovery Passphrase</b> and every device you
+                  can verify from.
+                </Trans>
               </Text>
             </Box>
             <Button variant="Critical" onClick={() => setReset(true)}>
-              <Text size="B400">Reset</Text>
+              <Text size="B400">{t('device_verification_setup.reset_button')}</Text>
             </Button>
           </Box>
         )}

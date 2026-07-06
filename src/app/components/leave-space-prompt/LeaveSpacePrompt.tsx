@@ -17,6 +17,7 @@ import {
   Spinner,
 } from 'folds';
 import { MatrixError } from 'matrix-js-sdk';
+import { useTranslation } from 'react-i18next';
 import { useMatrixClient } from '../../hooks/useMatrixClient';
 import { AsyncStatus, useAsyncCallback } from '../../hooks/useAsyncCallback';
 import { stopPropagation } from '../../utils/keyboard';
@@ -28,6 +29,7 @@ type LeaveSpacePromptProps = {
   onCancel: () => void;
 };
 export function LeaveSpacePrompt({ roomId, onDone, onCancel }: LeaveSpacePromptProps) {
+  const { t } = useTranslation();
   const mx = useMatrixClient();
   const branding = useBranding();
 
@@ -79,7 +81,7 @@ export function LeaveSpacePrompt({ roomId, onDone, onCancel }: LeaveSpacePromptP
                 <Text priority="400">{branding.space.leavePrompt}</Text>
                 {leaveState.status === AsyncStatus.Error && (
                   <Text style={{ color: color.Critical.Main }} size="T300">
-                    Failed to leave space! {leaveState.error.message}
+                    {t('leave_space_prompt.leave_error', { message: leaveState.error.message })}
                   </Text>
                 )}
               </Box>
@@ -98,7 +100,9 @@ export function LeaveSpacePrompt({ roomId, onDone, onCancel }: LeaveSpacePromptP
                 }
               >
                 <Text size="B400">
-                  {leaveState.status === AsyncStatus.Loading ? 'Leaving...' : 'Leave'}
+                  {leaveState.status === AsyncStatus.Loading
+                    ? t('leave_space_prompt.leaving_button')
+                    : t('leave_space_prompt.leave_button')}
                 </Text>
               </Button>
             </Box>

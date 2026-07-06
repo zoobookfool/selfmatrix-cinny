@@ -183,6 +183,44 @@
       }
     }
   },
+  "uia_stages": {
+    "email": {
+      "email_label": "Email",
+      "send_button": "Send Verification Email",
+      "cancel_button": "Cancel",
+      "sending_message": "Sending verification email...",
+      "error_fallback_title": "Verify Email",
+      "error_fallback_message": "Failed to send verification Email request.",
+      "sent_title": "Verification Request Sent",
+      "sent_message": "Please check your email \"{{email}}\" and validate before continuing further.",
+      "continue_button": "Continue",
+      "provide_email_title": "Provide Email",
+      "provide_email_message": "Please provide email to send verification request."
+    },
+    "password": {
+      "title": "Account Password",
+      "description": "To perform this action you need to authenticate yourself by entering you account password.",
+      "password_label": "Password",
+      "invalid_password_error": "Invalid Password!",
+      "continue_button": "Continue"
+    },
+    "recaptcha": {
+      "invalid_data_title": "Invalid Data",
+      "invalid_data_message": "No valid data found to proceed with ReCAPTCHA.",
+      "cancel_button": "Cancel",
+      "prompt": "Please check the box below to proceed."
+    },
+    "sso": {
+      "title": "SSO Login",
+      "description": "To perform this action you need to authenticate yourself by SSO login.",
+      "continue_button": "Continue",
+      "continue_with_sso_button": "Continue with SSO"
+    },
+    "overlay": {
+      "step_label": "Step {{currentStep}}/{{stepCount}}",
+      "exit_tooltip": "Exit"
+    }
+  },
   "create_room": {
     "form": {
       "type_label": "Type",
@@ -352,7 +390,12 @@
     "editor": {
       "placeholder": "Edit message...",
       "save": "Save",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "autocomplete": {
+        "rooms_heading": "Rooms",
+        "mentions_heading": "Mentions",
+        "emojis_heading": "Emojis"
+      }
     },
     "header": {
       "mark_as_read": "Mark as Read",
@@ -463,6 +506,32 @@
       "banned": "Banned"
     }
   },
+  "leave_room_prompt": {
+    "leave_error": "Failed to leave room! {{message}}",
+    "leaving_button": "Leaving...",
+    "leave_button": "Leave"
+  },
+  "leave_space_prompt": {
+    "leave_error": "Failed to leave space! {{message}}",
+    "leaving_button": "Leaving...",
+    "leave_button": "Leave"
+  },
+  "room_card": {
+    "cancel_button": "Cancel",
+    "members_label": "{{memberCount}} Members",
+    "view_button": "View",
+    "joining_button": "Joining",
+    "join_button": "Join",
+    "retry_button": "Retry",
+    "join_error_title": "Join Error",
+    "join_error_fallback": "Failed to join. Unknown Error.",
+    "view_error_button": "View Error"
+  },
+  "date_picker": {
+    "day_label": "Day",
+    "month_label": "Month",
+    "year_label": "Year"
+  },
   "invite_user": {
     "title": "Invite",
     "user_id_label": "User ID",
@@ -487,6 +556,75 @@
     "verify_description": "Verify this device from another verified device, or manually with your recovery key, to read your encrypted messages.",
     "open_settings_button": "Open Settings",
     "later_button": "Later"
+  },
+  "device_verification": {
+    "title": "Device Verification",
+    "close_button": "Close",
+    "wait_accept_prompt": "Please accept the request from other device.",
+    "waiting_accept_message": "Waiting for request to be accepted...",
+    "accept_prompt": "Click accept to start the verification process.",
+    "accept_button": "Accept",
+    "wait_start_message": "Verification request has been accepted.",
+    "waiting_response_message": "Waiting for the response from other device...",
+    "compare_emoji_prompt": "Confirm the emoji below are displayed on both devices, in the same order:",
+    "match_button": "They Match",
+    "no_match_button": "Do not Match",
+    "starting_sas_message": "Starting verification using emoji comparison...",
+    "verified_message": "Your device is verified.",
+    "okay_button": "Okay",
+    "canceled_message": "Verification has been canceled.",
+    "unexpected_verifier_missing_error": "Unexpected Error! Verification is started but verifier is missing."
+  },
+  "manual_verification": {
+    "recovery_passphrase_label": "Recovery Passphrase",
+    "recovery_key_label": "Recovery Key",
+    "title": "Verify Manually",
+    "select_method_description": "Select a verification method.",
+    "provide_key_description": "Provide recovery key.",
+    "verified_message": "Device verified!"
+  },
+  "secret_storage": {
+    "invalid_passphrase_error": "Invalid recovery passphrase.",
+    "recovery_passphrase_label": "Recovery Passphrase",
+    "verify_button": "Verify",
+    "invalid_key_error": "Invalid recovery key.",
+    "recovery_key_label": "Recovery Key"
+  },
+  "backup_restore": {
+    "connected_status": "Connected",
+    "disconnected_status": "Disconnected",
+    "syncing_status": "Syncing ({{count}})",
+    "restoring_fetching_status": "Restoring: 0%",
+    "restoring_progress_status": "Restoring: {{percent}}%",
+    "trusted_decryption_key_message": "Backup has trusted decryption key.",
+    "untrusted_decryption_key_message": "Backup does not have trusted decryption key!",
+    "trusted_signature_message": "Backup has trusted by signature.",
+    "untrusted_signature_message": "Backup does not have trusted signature!",
+    "title": "Encryption Backup",
+    "details_title": "Backup Details",
+    "version_label": "Version: {{version}}",
+    "keys_label": "Keys: {{keyCount}}",
+    "unknown_value": "NIL",
+    "restore_button": "Restore Backup",
+    "no_backup_error": "No backup present on server!"
+  },
+  "device_verification_setup": {
+    "generate_key_description": "Generate a <0>Recovery Key</0> for verifying identity if you do not have access to other devices. Additionally, setup a passphrase as a memorable alternative.",
+    "passphrase_optional_label": "Passphrase (Optional)",
+    "continue_button": "Continue",
+    "unexpected_error_fallback": "Unexpected Error!",
+    "uia_unsupported_message": "Authentication steps to perform this action are not supported by client.",
+    "store_key_description": "Store the Recovery Key in a safe place for future use, as you will need it to verify your identity if you do not have access to other devices.",
+    "recovery_key_label": "Recovery Key",
+    "show_button": "Show",
+    "hide_button": "Hide",
+    "copy_button": "Copy",
+    "download_button": "Download",
+    "setup_title": "Setup Device Verification",
+    "reset_title": "Reset Device Verification",
+    "reset_permanent_message": "Resetting device verification is permanent.",
+    "reset_warning_message": "Anyone you have verified with will see security alerts and your encryption backup will be lost. You almost certainly do not want to do this, unless you have lost <0>Recovery Key</0> or <1>Recovery Passphrase</1> and every device you can verify from.",
+    "reset_button": "Reset"
   },
   "settings": {
     "tabs": {
@@ -1357,6 +1495,47 @@
       "emoji": "Emoji"
     }
   },
+  "image_pack_view": {
+    "page_title": "Emojis & Stickers",
+    "content": {
+      "apply_error": "Failed to apply changes! Please try again.",
+      "changes_saved": "Changes saved! Apply when ready.",
+      "reset_button": "Reset",
+      "apply_changes_button": "Apply Changes",
+      "pack_heading": "Pack",
+      "usage_title": "Images Usage",
+      "usage_description": "Select how the images are being used: as emojis, as stickers, or as both.",
+      "images_heading": "Images",
+      "upload_title": "Upload Images",
+      "upload_description": "Select images from your storage to upload them in pack.",
+      "select_button": "Select"
+    },
+    "image_tile": {
+      "undo_button": "Undo",
+      "edit_button": "Edit",
+      "shortcode_label": "Shortcode:",
+      "body_label": "Body:",
+      "save_button": "Save",
+      "cancel_button": "Cancel"
+    },
+    "pack_meta": {
+      "unknown_name": "Unknown",
+      "edit_button": "Edit",
+      "avatar_label": "Pack Avatar",
+      "upload_button": "Upload",
+      "reset_button": "Reset",
+      "remove_button": "Remove",
+      "name_label": "Name",
+      "attribution_label": "Attribution",
+      "save_button": "Save",
+      "cancel_button": "Cancel"
+    },
+    "usage": {
+      "both": "Both",
+      "sticker": "Sticker",
+      "emoji": "Emoji"
+    }
+  },
   "call": {
     "member_card": {
       "collapse": "Collapse",
@@ -1520,6 +1699,88 @@
       "indexeddb_description": "No IndexedDB support found. This application requires IndexedDB to store session data locally. Please make sure your browser support IndexedDB and have it enabled.",
       "indexeddb_link": "What is IndexedDB?"
     }
+  },
+  "message": {
+    "fallback": {
+      "deleted_with_reason": "This message has been deleted. {{reason}}",
+      "deleted": "This message has been deleted",
+      "unsupported": "Unsupported message",
+      "failed_to_load": "Failed to load message",
+      "unable_to_decrypt": "Unable to decrypt message",
+      "not_decrypted_yet": "This message is not decrypted yet",
+      "broken": "Broken message",
+      "empty": "Empty message",
+      "edited_suffix": "(edited)"
+    },
+    "file_content": {
+      "failed_to_load": "Failed to load file!",
+      "open_file": "Open File",
+      "open_pdf": "Open PDF",
+      "retry_download": "Retry Download ({{size}})",
+      "download": "Download ({{size}})"
+    },
+    "image_content": {
+      "view": "View",
+      "spoiler": "Spoiler",
+      "failed_to_load": "Failed to load image!",
+      "retry": "Retry"
+    },
+    "video_content": {
+      "watch": "Watch",
+      "spoiler": "Spoiler",
+      "failed_to_load": "Failed to load video!",
+      "retry": "Retry"
+    },
+    "fallback_names": {
+      "image": "Image",
+      "video": "Video",
+      "audio": "Audio",
+      "unnamed_file": "Unnamed File",
+      "file": "File",
+      "sticker": "Sticker"
+    },
+    "location": {
+      "open_location": "Open Location"
+    },
+    "reply": {
+      "thread": "Thread"
+    }
+  },
+  "viewer": {
+    "pdf_viewer": {
+      "download": "Download",
+      "failed_to_load": "Failed to load PDF",
+      "retry": "Retry",
+      "previous": "Previous",
+      "jump_to_page": "Jump To Page",
+      "next": "Next"
+    },
+    "image_viewer": {
+      "download": "Download"
+    },
+    "text_viewer": {
+      "copy_all": "Copy All"
+    }
+  },
+  "upload_board": {
+    "files": "Files",
+    "send": "Send",
+    "upload_failed": "Upload Failed",
+    "remove": "Remove",
+    "remove_all": "Remove All"
+  },
+  "upload_card": {
+    "spoiler": "Spoiler",
+    "retry": "Retry",
+    "file_size_exceeded": "The file size exceeds the limit. Maximum allowed size is <0>{{maxSize}}</0>, but the uploaded file is <1>{{fileSize}}</1>."
+  },
+  "account_data_editor": {
+    "account_data_label": "Account Data",
+    "save_button": "Save",
+    "cancel_button": "Cancel",
+    "json_content_label": "JSON Content",
+    "edit_button": "Edit",
+    "developer_tools_label": "Developer Tools"
   },
   "time": {
     "hour_minute_12": "hh:mm A",

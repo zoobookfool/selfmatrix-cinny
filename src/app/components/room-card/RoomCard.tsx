@@ -19,6 +19,7 @@ import {
 } from 'folds';
 import classNames from 'classnames';
 import FocusTrap from 'focus-trap-react';
+import { useTranslation } from 'react-i18next';
 import * as css from './style.css';
 import { RoomAvatar } from '../room-avatar';
 import { getMxIdLocalPart, mxcUrlToHttp } from '../../utils/matrix';
@@ -95,6 +96,7 @@ function ErrorDialog({
   message: string;
   children: (openError: () => void) => ReactNode;
 }) {
+  const { t } = useTranslation();
   const [viewError, setViewError] = useState(false);
   const closeError = () => setViewError(false);
   const openError = () => setViewError(true);
@@ -121,7 +123,7 @@ function ErrorDialog({
                   </Text>
                 </Box>
                 <Button size="400" variant="Secondary" fill="Soft" onClick={closeError}>
-                  <Text size="B400">Cancel</Text>
+                  <Text size="B400">{t('room_card.cancel_button')}</Text>
                 </Button>
               </Box>
             </Dialog>
@@ -162,6 +164,7 @@ export const RoomCard = as<'div', RoomCardProps>(
     },
     ref
   ) => {
+    const { t } = useTranslation();
     const mx = useMatrixClient();
     const branding = useBranding();
     const useAuthentication = useMediaAuthentication();
@@ -254,7 +257,9 @@ export const RoomCard = as<'div', RoomCardProps>(
         {typeof joinedMemberCount === 'number' && (
           <Box gap="100">
             <Icon size="50" src={Icons.User} />
-            <Text size="T200">{`${millify(joinedMemberCount)} Members`}</Text>
+            <Text size="T200">
+              {t('room_card.members_label', { memberCount: millify(joinedMemberCount) })}
+            </Text>
           </Box>
         )}
         {typeof joinedRoomId === 'string' && (
@@ -265,7 +270,7 @@ export const RoomCard = as<'div', RoomCardProps>(
             size="300"
           >
             <Text size="B300" truncate>
-              View
+              {t('room_card.view_button')}
             </Text>
           </Button>
         )}
@@ -278,7 +283,7 @@ export const RoomCard = as<'div', RoomCardProps>(
             before={joining && <Spinner size="50" variant="Secondary" fill="Soft" />}
           >
             <Text size="B300" truncate>
-              {joining ? 'Joining' : 'Join'}
+              {joining ? t('room_card.joining_button') : t('room_card.join_button')}
             </Text>
           </Button>
         )}
@@ -292,12 +297,12 @@ export const RoomCard = as<'div', RoomCardProps>(
               size="300"
             >
               <Text size="B300" truncate>
-                Retry
+                {t('room_card.retry_button')}
               </Text>
             </Button>
             <ErrorDialog
-              title="Join Error"
-              message={joinState.error.message || 'Failed to join. Unknown Error.'}
+              title={t('room_card.join_error_title')}
+              message={joinState.error.message || t('room_card.join_error_fallback')}
             >
               {(openError) => (
                 <Button
@@ -309,7 +314,7 @@ export const RoomCard = as<'div', RoomCardProps>(
                   size="300"
                 >
                   <Text size="B300" truncate>
-                    View Error
+                    {t('room_card.view_error_button')}
                   </Text>
                 </Button>
               )}

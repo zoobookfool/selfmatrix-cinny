@@ -183,6 +183,44 @@
       }
     }
   },
+  "uia_stages": {
+    "email": {
+      "email_label": "メールアドレス",
+      "send_button": "確認メールを送信",
+      "cancel_button": "キャンセル",
+      "sending_message": "確認メールを送信しています...",
+      "error_fallback_title": "メールを確認",
+      "error_fallback_message": "確認メールの送信リクエストに失敗しました。",
+      "sent_title": "確認リクエストを送信しました",
+      "sent_message": "メールアドレス「{{email}}」を確認し、続行する前に認証を完了してください。",
+      "continue_button": "続行",
+      "provide_email_title": "メールアドレスを入力",
+      "provide_email_message": "確認リクエストを送信するメールアドレスを入力してください。"
+    },
+    "password": {
+      "title": "アカウントのパスワード",
+      "description": "この操作を行うには、アカウントのパスワードを入力して本人確認を行う必要があります。",
+      "password_label": "パスワード",
+      "invalid_password_error": "パスワードが正しくありません!",
+      "continue_button": "続行"
+    },
+    "recaptcha": {
+      "invalid_data_title": "無効なデータ",
+      "invalid_data_message": "ReCAPTCHA を続行するための有効なデータが見つかりませんでした。",
+      "cancel_button": "キャンセル",
+      "prompt": "続行するには、下のチェックボックスにチェックを入れてください。"
+    },
+    "sso": {
+      "title": "SSO ログイン",
+      "description": "この操作を行うには、SSO ログインで本人確認を行う必要があります。",
+      "continue_button": "続行",
+      "continue_with_sso_button": "SSO で続行"
+    },
+    "overlay": {
+      "step_label": "ステップ {{currentStep}}/{{stepCount}}",
+      "exit_tooltip": "終了"
+    }
+  },
   "create_room": {
     "form": {
       "type_label": "種類",
@@ -352,7 +390,12 @@
     "editor": {
       "placeholder": "メッセージを編集...",
       "save": "保存",
-      "cancel": "キャンセル"
+      "cancel": "キャンセル",
+      "autocomplete": {
+        "rooms_heading": "ルーム",
+        "mentions_heading": "メンション",
+        "emojis_heading": "絵文字"
+      }
     },
     "header": {
       "mark_as_read": "既読にする",
@@ -463,6 +506,32 @@
       "banned": "BAN済み"
     }
   },
+  "leave_room_prompt": {
+    "leave_error": "ルームの退出に失敗しました!{{message}}",
+    "leaving_button": "退出中...",
+    "leave_button": "退出"
+  },
+  "leave_space_prompt": {
+    "leave_error": "スペースの退出に失敗しました!{{message}}",
+    "leaving_button": "退出中...",
+    "leave_button": "退出"
+  },
+  "room_card": {
+    "cancel_button": "キャンセル",
+    "members_label": "メンバー {{memberCount}} 人",
+    "view_button": "表示",
+    "joining_button": "参加中",
+    "join_button": "参加",
+    "retry_button": "再試行",
+    "join_error_title": "参加エラー",
+    "join_error_fallback": "参加に失敗しました。原因不明のエラーです。",
+    "view_error_button": "エラーを表示"
+  },
+  "date_picker": {
+    "day_label": "日",
+    "month_label": "月",
+    "year_label": "年"
+  },
   "invite_user": {
     "title": "招待",
     "user_id_label": "ユーザー ID",
@@ -487,6 +556,75 @@
     "verify_description": "認証済みの他のデバイスから、またはリカバリーキーで手動でこのデバイスを認証すると、暗号化メッセージを読めるようになります。",
     "open_settings_button": "設定を開く",
     "later_button": "後で"
+  },
+  "device_verification": {
+    "title": "デバイス認証",
+    "close_button": "閉じる",
+    "wait_accept_prompt": "他のデバイスからのリクエストを承認してください。",
+    "waiting_accept_message": "リクエストが承認されるのを待っています...",
+    "accept_prompt": "承認をクリックして認証プロセスを開始してください。",
+    "accept_button": "承認",
+    "wait_start_message": "認証リクエストが承認されました。",
+    "waiting_response_message": "他のデバイスからの応答を待っています...",
+    "compare_emoji_prompt": "以下の絵文字が両方のデバイスで同じ順番に表示されていることを確認してください:",
+    "match_button": "一致する",
+    "no_match_button": "一致しない",
+    "starting_sas_message": "絵文字比較による認証を開始しています...",
+    "verified_message": "このデバイスは認証されました。",
+    "okay_button": "OK",
+    "canceled_message": "認証がキャンセルされました。",
+    "unexpected_verifier_missing_error": "予期しないエラーが発生しました!認証が開始されましたが、検証機能が見つかりません。"
+  },
+  "manual_verification": {
+    "recovery_passphrase_label": "リカバリーパスフレーズ",
+    "recovery_key_label": "リカバリーキー",
+    "title": "手動で認証",
+    "select_method_description": "認証方法を選択してください。",
+    "provide_key_description": "リカバリーキーを入力してください。",
+    "verified_message": "デバイスが認証されました!"
+  },
+  "secret_storage": {
+    "invalid_passphrase_error": "リカバリーパスフレーズが正しくありません。",
+    "recovery_passphrase_label": "リカバリーパスフレーズ",
+    "verify_button": "確認",
+    "invalid_key_error": "リカバリーキーが正しくありません。",
+    "recovery_key_label": "リカバリーキー"
+  },
+  "backup_restore": {
+    "connected_status": "接続済み",
+    "disconnected_status": "未接続",
+    "syncing_status": "同期中 ({{count}})",
+    "restoring_fetching_status": "復元中: 0%",
+    "restoring_progress_status": "復元中: {{percent}}%",
+    "trusted_decryption_key_message": "バックアップは信頼された復号キーを持っています。",
+    "untrusted_decryption_key_message": "バックアップには信頼された復号キーがありません!",
+    "trusted_signature_message": "バックアップは署名により信頼されています。",
+    "untrusted_signature_message": "バックアップには信頼された署名がありません!",
+    "title": "暗号化バックアップ",
+    "details_title": "バックアップの詳細",
+    "version_label": "バージョン: {{version}}",
+    "keys_label": "キー数: {{keyCount}}",
+    "unknown_value": "不明",
+    "restore_button": "バックアップを復元",
+    "no_backup_error": "サーバーにバックアップが存在しません!"
+  },
+  "device_verification_setup": {
+    "generate_key_description": "他のデバイスにアクセスできない場合に本人確認を行うための<0>リカバリーキー</0>を生成します。さらに、覚えやすい代替手段としてパスフレーズも設定できます。",
+    "passphrase_optional_label": "パスフレーズ(任意)",
+    "continue_button": "続行",
+    "unexpected_error_fallback": "予期しないエラーが発生しました!",
+    "uia_unsupported_message": "この操作を行うための認証手順は、このクライアントではサポートされていません。",
+    "store_key_description": "リカバリーキーは、他のデバイスにアクセスできない場合に本人確認で必要になります。安全な場所に保管してください。",
+    "recovery_key_label": "リカバリーキー",
+    "show_button": "表示",
+    "hide_button": "非表示",
+    "copy_button": "コピー",
+    "download_button": "ダウンロード",
+    "setup_title": "デバイス認証のセットアップ",
+    "reset_title": "デバイス認証のリセット",
+    "reset_permanent_message": "デバイス認証のリセットは取り消せません。",
+    "reset_warning_message": "認証済みの相手にはセキュリティ警告が表示され、暗号化バックアップは失われます。<0>リカバリーキー</0>または<1>リカバリーパスフレーズ</1>と、認証できるすべてのデバイスを失った場合を除き、この操作は行わないでください。",
+    "reset_button": "リセット"
   },
   "settings": {
     "tabs": {
@@ -1357,6 +1495,47 @@
       "emoji": "絵文字"
     }
   },
+  "image_pack_view": {
+    "page_title": "絵文字とスタンプ",
+    "content": {
+      "apply_error": "変更の適用に失敗しました。もう一度お試しください。",
+      "changes_saved": "変更を保存しました。準備ができたら適用してください。",
+      "reset_button": "リセット",
+      "apply_changes_button": "変更を適用",
+      "pack_heading": "パック",
+      "usage_title": "画像の用途",
+      "usage_description": "画像を絵文字として使うか、スタンプとして使うか、両方として使うかを選択してください。",
+      "images_heading": "画像",
+      "upload_title": "画像をアップロード",
+      "upload_description": "ストレージから画像を選んでパックにアップロードします。",
+      "select_button": "選択"
+    },
+    "image_tile": {
+      "undo_button": "元に戻す",
+      "edit_button": "編集",
+      "shortcode_label": "ショートコード:",
+      "body_label": "本文:",
+      "save_button": "保存",
+      "cancel_button": "キャンセル"
+    },
+    "pack_meta": {
+      "unknown_name": "不明",
+      "edit_button": "編集",
+      "avatar_label": "パックのアバター",
+      "upload_button": "アップロード",
+      "reset_button": "リセット",
+      "remove_button": "削除",
+      "name_label": "名前",
+      "attribution_label": "帰属表示",
+      "save_button": "保存",
+      "cancel_button": "キャンセル"
+    },
+    "usage": {
+      "both": "両方",
+      "sticker": "スタンプ",
+      "emoji": "絵文字"
+    }
+  },
   "call": {
     "member_card": {
       "collapse": "折りたたむ",
@@ -1520,6 +1699,88 @@
       "indexeddb_description": "IndexedDB のサポートが見つかりません。このアプリケーションはセッションデータをローカルに保存するために IndexedDB を必要とします。お使いのブラウザが IndexedDB に対応し、有効になっていることをご確認ください。",
       "indexeddb_link": "IndexedDB とは？"
     }
+  },
+  "message": {
+    "fallback": {
+      "deleted_with_reason": "このメッセージは削除されました。{{reason}}",
+      "deleted": "このメッセージは削除されました",
+      "unsupported": "非対応のメッセージ",
+      "failed_to_load": "メッセージの読み込みに失敗しました",
+      "unable_to_decrypt": "メッセージを復号できません",
+      "not_decrypted_yet": "このメッセージはまだ復号されていません",
+      "broken": "破損したメッセージ",
+      "empty": "空のメッセージ",
+      "edited_suffix": "(編集済み)"
+    },
+    "file_content": {
+      "failed_to_load": "ファイルの読み込みに失敗しました!",
+      "open_file": "ファイルを開く",
+      "open_pdf": "PDFを開く",
+      "retry_download": "ダウンロードを再試行 ({{size}})",
+      "download": "ダウンロード ({{size}})"
+    },
+    "image_content": {
+      "view": "表示",
+      "spoiler": "ネタバレ",
+      "failed_to_load": "画像の読み込みに失敗しました!",
+      "retry": "再試行"
+    },
+    "video_content": {
+      "watch": "再生",
+      "spoiler": "ネタバレ",
+      "failed_to_load": "動画の読み込みに失敗しました!",
+      "retry": "再試行"
+    },
+    "fallback_names": {
+      "image": "画像",
+      "video": "動画",
+      "audio": "音声",
+      "unnamed_file": "無題のファイル",
+      "file": "ファイル",
+      "sticker": "スタンプ"
+    },
+    "location": {
+      "open_location": "位置情報を開く"
+    },
+    "reply": {
+      "thread": "スレッド"
+    }
+  },
+  "viewer": {
+    "pdf_viewer": {
+      "download": "ダウンロード",
+      "failed_to_load": "PDFの読み込みに失敗しました",
+      "retry": "再試行",
+      "previous": "前へ",
+      "jump_to_page": "ページに移動",
+      "next": "次へ"
+    },
+    "image_viewer": {
+      "download": "ダウンロード"
+    },
+    "text_viewer": {
+      "copy_all": "すべてコピー"
+    }
+  },
+  "upload_board": {
+    "files": "ファイル",
+    "send": "送信",
+    "upload_failed": "アップロード失敗",
+    "remove": "削除",
+    "remove_all": "すべて削除"
+  },
+  "upload_card": {
+    "spoiler": "ネタバレ",
+    "retry": "再試行",
+    "file_size_exceeded": "ファイルサイズが上限を超えています。許容される最大サイズは <0>{{maxSize}}</0> ですが、アップロードされたファイルは <1>{{fileSize}}</1> です。"
+  },
+  "account_data_editor": {
+    "account_data_label": "アカウントデータ",
+    "save_button": "保存",
+    "cancel_button": "キャンセル",
+    "json_content_label": "JSONコンテンツ",
+    "edit_button": "編集",
+    "developer_tools_label": "開発者ツール"
   },
   "time": {
     "hour_minute_12": "A hh:mm",

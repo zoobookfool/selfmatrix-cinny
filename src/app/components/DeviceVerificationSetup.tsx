@@ -82,7 +82,7 @@ function SetupVerification({ onComplete }: SetupVerificationProps) {
   const handleAction = useCallback(
     async (authDict: AuthDict) => {
       if (!uiaAction) {
-        throw new Error('Unexpected Error! UIA action is perform without data.');
+        throw new Error(t('device_verification_setup.uia_missing_data_error'));
       }
       if (alive()) {
         setNextAuthData(null);
@@ -93,7 +93,7 @@ function SetupVerification({ onComplete }: SetupVerificationProps) {
         setNextAuthData(authData);
       }
     },
-    [uiaAction, alive]
+    [uiaAction, alive, t]
   );
 
   const resetUIA = useCallback(() => {
@@ -125,25 +125,25 @@ function SetupVerification({ onComplete }: SetupVerificationProps) {
               if (alive()) {
                 setUIAAction(action);
               } else {
-                reject(new Error('Authentication failed! Failed to setup device verification.'));
+                reject(new Error(t('device_verification_setup.auth_failed_error')));
               }
               return;
             }
             reject(error);
           });
       }),
-    [alive, resetUIA]
+    [alive, resetUIA, t]
   );
 
   const [setupState, setup] = useAsyncCallback<void, Error, [string | undefined]>(
     useCallback(
       async (passphrase) => {
         const crypto = mx.getCrypto();
-        if (!crypto) throw new Error('Unexpected Error! Crypto module not found!');
+        if (!crypto) throw new Error(t('device_verification_setup.crypto_missing_error'));
 
         const recoveryKeyData = await crypto.createRecoveryKeyFromPassphrase(passphrase);
         if (!recoveryKeyData.encodedPrivateKey) {
-          throw new Error('Unexpected Error! Failed to create recovery key.');
+          throw new Error(t('device_verification_setup.create_key_failed_error'));
         }
         clearSecretStorageKeys();
 
@@ -161,7 +161,7 @@ function SetupVerification({ onComplete }: SetupVerificationProps) {
 
         onComplete(recoveryKeyData.encodedPrivateKey);
       },
-      [mx, onComplete, authUploadDeviceSigningKeys]
+      [mx, onComplete, authUploadDeviceSigningKeys, t]
     )
   );
 

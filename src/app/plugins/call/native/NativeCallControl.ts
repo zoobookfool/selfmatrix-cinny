@@ -3,7 +3,11 @@ import { ClientWidgetApi } from 'matrix-widget-api';
 import { CallControlState } from '../CallControlState';
 import { ElementMediaStateDetail, ElementMediaStatePayload, ElementWidgetActions } from '../types';
 import { CallControlEvent } from '../CallControl';
-import { NativeCallControlStatePush, SelfmatrixNativeWidgetTransport } from './nativeBridge';
+import {
+  collectNativeCallLocalStorageSnapshot,
+  NativeCallControlStatePush,
+  SelfmatrixNativeWidgetTransport,
+} from './nativeBridge';
 
 /**
  * カテゴリ B (design §2.2: screenshare/spotlight/emphasis/reactions/settings — widget
@@ -239,8 +243,26 @@ export class NativeCallControl extends EventEmitter implements CallControlState 
   }
 
   // カテゴリ B: 元実装 (CallControl.ts) は screenshareButton?.click() で DOM 直接操作。
+  //
+  // H3 (受け入れレビュー修正、major): web 版の実契約 (element-call の `LocalMember.ts`) は
+  // EC が **共有開始のたびに** `Setting.getStoredValue()` で localStorage (画質/FPS 設定、
+  // `screenShareSettings.ts`) を再読込する。native の call view は別 session partition の
+  // ため、これまでは join 時 (`openCallView()` の pending スナップショット) の 1 回きりしか
+  // 反映されず、通話中の設定変更が EC 側に伝わらなかった。EC は画面共有ボタンのクリックを
+  // 起点に設定を読み直す (web 版と同じタイミング) ため、`callControlInvoke()` で実際に
+  // クリックを発生させる **前** に最新のスナップショットを `updateCallLocalStorage()` で
+  // 送り届けておけば、web 版の契約と等価になる。
   public toggleScreenshare(): void {
     const screenshare = !this.screenshare;
+    void this.syncLocalStorageThenToggleScreenshare(screenshare);
+  }
+
+  private async syncLocalStorageThenToggleScreenshare(screenshare: boolean): Promise<void> {
+    try {
+      await this.transport.updateCallLocalStorage(collectNativeCallLocalStorageSnapshot());
+    } catch (e) {
+      console.error('Error syncing call local storage before toggling screenshare: ', e);
+    }
     this.fireAndForgetInvoke(NativeCallControlAction.ToggleScreenshare, () => {
       this.state = new CallControlState(
         this.microphone,

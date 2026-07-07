@@ -84,7 +84,22 @@ export interface SelfmatrixNativeWidgetTransport {
    * (`NativeCallEmbed` コンストラクタ) 側で保証している前提とその根拠は
    * `NativeCallEmbed.ts` のコンストラクタ冒頭コメントを参照。
    */
-  openCallView(completeWidgetUrl: string): Promise<void>;
+  /**
+   * M1 step 3c-2 (localStorage 契約の実機対応): `localStorageSnapshot` は任意。call view
+   * (WebContentsView) は mainWindow (cinny) とは別の Electron session partition で動くため、
+   * 同一オリジンでも localStorage は共有されない — web 版 (同一オリジンの iframe 埋め込み) で
+   * 成立していた「cinny が書く `matrix-setting-*` を Element Call が読む」契約
+   * (`screenShareSettings.ts`/`miniTileStripSettings.ts` と element-call の
+   * `settings/settings.ts` の対応関係) が、native ではこのままでは壊れる。
+   * `collectNativeCallLocalStorageSnapshot()` で集めたスナップショットをここで渡すと、シェル側
+   * (`native-prototype` の `call-control-preload.cjs`) が EC のバンドルが評価されるより前に
+   * call view 自身の localStorage へ書き込む。シェルはこの中身を一切解釈しない (design の
+   * 「中継するだけ」方針をここでも踏襲)。
+   */
+  openCallView(
+    completeWidgetUrl: string,
+    localStorageSnapshot?: Record<string, string>
+  ): Promise<void>;
 
   /** 通話 View を閉じる (NativeCallEmbed の dispose/hangup 時に呼ぶ)。 */
   closeCallView(): Promise<void>;
@@ -97,6 +112,23 @@ export interface SelfmatrixNativeWidgetTransport {
    * 「main は解釈しない correlationId 中継役」という設計方針を host 側にも適用)。
    */
   callControlInvoke(action: string): Promise<unknown>;
+
+  /**
+   * H3 (受け入れレビュー修正、major): 「共有開始時に再同期」する live localStorage 契約。
+   * web 版の実契約 (element-call の `LocalMember.ts`) は EC が **共有開始のたびに**
+   * `Setting.getStoredValue()` で localStorage を再読込する。`openCallView()` の
+   * `localStorageSnapshot` 引数は join 時点 (`NativeCallEmbed` コンストラクタ実行時) の
+   * 1 回きりのスナップショットに過ぎず、通話中に画質/FPS 設定 (`screenShareSettings.ts`) が
+   * 変更されても call view 側の localStorage には反映されないままだった。
+   *
+   * このメソッドは `openCallView()` の pending スナップショット経路とは完全に独立しており、
+   * 呼び出した時点のスナップショットを call view の localStorage へ即座に反映する。EC は
+   * 画面共有ボタンのクリック時に設定を読み直す (web 版と同じタイミング) ため、呼び出し元
+   * (`NativeCallControl.toggleScreenshare()`) は `callControlInvoke()` で実際にクリックを
+   * 発生させる **前** にこれを `await` し、届いていることを保証してから RPC を実行すること —
+   * こうすることで web 版の「クリック時に再読込する」契約と等価になる。
+   */
+  updateCallLocalStorage(snapshot: Record<string, string>): Promise<void>;
 
   /**
    * M1 step 3b 新設 (design §3 step 3b 実装要件 4): call view 側 preload の
@@ -128,6 +160,31 @@ declare global {
 /** ネイティブシェル (WebContentsView ベースの通話ホスト) 内で動作しているかどうか。 */
 export function hasSelfmatrixNativeBridge(): boolean {
   return typeof window !== 'undefined' && window.selfmatrixNative !== undefined;
+}
+
+/**
+ * M1 step 3c-2 (localStorage 契約の実機対応): cinny 自身の localStorage から
+ * `matrix-setting-` プレフィックスのキー (element-call の `Setting` クラス —
+ * `element-call/src/settings/settings.ts` — が使う命名規約と完全一致。cinny 側の書き込み元は
+ * `screenShareSettings.ts`/`miniTileStripSettings.ts`) だけを集めてスナップショットにする。
+ * `openCallView()` の `localStorageSnapshot` 引数にそのまま渡す用途。
+ *
+ * プレフィックスで絞る理由: cinny 自身の設定 (テーマ選択、既読マーカー等、`matrix-setting-`
+ * 以外の膨大な localStorage キー) を EC 側へ無条件に渡さないための最小化。EC が実際に読むのは
+ * `Setting` クラス経由のキーだけなので、これ以外は渡しても無意味かつ情報過多になる。
+ */
+export function collectNativeCallLocalStorageSnapshot(): Record<string, string> {
+  const snapshot: Record<string, string> = {};
+  if (typeof localStorage === 'undefined') return snapshot;
+  const PREFIX = 'matrix-setting-';
+  for (let i = 0; i < localStorage.length; i += 1) {
+    const key = localStorage.key(i);
+    if (key && key.startsWith(PREFIX)) {
+      const value = localStorage.getItem(key);
+      if (value !== null) snapshot[key] = value;
+    }
+  }
+  return snapshot;
 }
 
 /**

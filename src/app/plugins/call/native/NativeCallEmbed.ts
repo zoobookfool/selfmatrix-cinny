@@ -20,6 +20,7 @@ import { CallControlState } from '../CallControlState';
 import { NativeCallControl } from './NativeCallControl';
 import { createNativeIframeShim } from './NativeIframeShim';
 import {
+  collectNativeCallLocalStorageSnapshot,
   getOrClaimWidgetTransport,
   SelfmatrixNativeBridge,
   SelfmatrixNativeWidgetTransport,
@@ -137,8 +138,13 @@ export class NativeCallEmbed {
 
     // 既存 CallEmbed と同じく widget.getCompleteUrl() で完成 URL を作り、
     // シェルに WebContentsView のロードを依頼する (design §2.3)。
+    // M1 step 3c-2 (localStorage 契約の実機対応): call view は別 session partition のため
+    // localStorage が共有されない (nativeBridge.ts の openCallView()/
+    // collectNativeCallLocalStorageSnapshot() コメント参照)。EC 起動前にシェルが書き込めるよう、
+    // 現在の matrix-setting-* スナップショットを一緒に渡す。
     const completeUrl = widget.getCompleteUrl({ currentUserId: mx.getSafeUserId() });
-    transport.openCallView(completeUrl).catch((e) => {
+    const localStorageSnapshot = collectNativeCallLocalStorageSnapshot();
+    transport.openCallView(completeUrl, localStorageSnapshot).catch((e) => {
       console.error('Error opening native call view: ', e);
     });
 

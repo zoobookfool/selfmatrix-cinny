@@ -25,6 +25,11 @@ import { useResizeObserver } from './useResizeObserver';
 import { CallControlState } from '../plugins/call/CallControlState';
 import { useCallMembersChange, useCallSession } from './useCall';
 import { CallPreferences } from '../state/callPreferences';
+import { NativeCallEmbed } from '../plugins/call/native/NativeCallEmbed';
+import {
+  getSelfmatrixNativeBridge,
+  hasSelfmatrixNativeBridge,
+} from '../plugins/call/native/nativeBridge';
 
 const CallEmbedContext = createContext<CallEmbed | undefined>(undefined);
 
@@ -60,6 +65,19 @@ export const createCallEmbed = (
   const intent = CallEmbed.getIntent(dm, ongoing, false);
   const widget = CallEmbed.getWidget(mx, room, intent, themeKind);
   const controlState = pref && new CallControlState(pref.microphone, false, pref.sound);
+
+  // SelfMatrix M1 step 3a: ネイティブシェル (window.selfmatrixNative) 検出時は
+  // WebContentsView 経由の NativeCallEmbed を使う。NativeCallEmbed は設計上
+  // (design/native-widget-transport.md §2.3) CallEmbed を継承しない別クラスだが、
+  // hooks/Provider が使う公開 API (call/room/roomId/joined/control/setTheme/hangup/
+  // listenAction/listenEvent/dispose) を同一シグネチャで提供するため、ここでのみ
+  // 型を合わせて返す。呼び出し元 (createCallEmbed の他の利用箇所、useCallPopout/
+  // useCallPopin 等) は一切変更していない。
+  const nativeBridge = getSelfmatrixNativeBridge();
+  if (nativeBridge) {
+    const nativeEmbed = new NativeCallEmbed(mx, room, widget, nativeBridge, controlState);
+    return nativeEmbed as unknown as CallEmbed;
+  }
 
   const embed = new CallEmbed(mx, room, widget, container, controlState);
 
@@ -100,6 +118,13 @@ export const useCallPopout = () => {
 
   const popoutCall = useCallback(
     async (embed: CallEmbed) => {
+      // SelfMatrix M1 step 3a レビュー FIX-A: ネイティブ版の窓移動は M3 で
+      // WebContentsView 再親子付けに置き換わる (design §2.3)。それまで native では
+      // popout を提供しない。
+      if (hasSelfmatrixNativeBridge()) {
+        return;
+      }
+
       // SelfMatrix fix (敵対的レビュー FIX-1): 既にポップアウト済み、または
       // ポップアウト処理が進行中の場合は再入しない。popoutCall の二重実行は
       // window.open が同名 target で既存ウィンドウを返すことと相まって、
@@ -166,6 +191,13 @@ export const useCallPopin = () => {
 
   const popinCall = useCallback(
     async (embed: CallEmbed) => {
+      // SelfMatrix M1 step 3a レビュー FIX-A: native では popin で web CallEmbed を
+      // 構築しない防御ガード。popout 自体を native では提供しない (useCallPopout の
+      // ガード参照) ため通常ここに到達しないはずだが、防御的に同様のガードを置く。
+      if (hasSelfmatrixNativeBridge()) {
+        return;
+      }
+
       const container = callEmbedRef.current;
       if (!container) {
         throw new Error('Failed to pop in call, No embed container element found!');

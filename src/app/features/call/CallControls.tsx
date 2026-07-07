@@ -33,6 +33,7 @@ import { useCallPopout } from '../../hooks/useCallEmbed';
 import { useResizeObserver } from '../../hooks/useResizeObserver';
 import { stopPropagation } from '../../utils/keyboard';
 import { AsyncStatus, useAsyncCallback } from '../../hooks/useAsyncCallback';
+import { hasSelfmatrixNativeBridge } from '../../plugins/call/native/nativeBridge';
 
 type CallControlsProps = {
   callEmbed: CallEmbed;
@@ -95,6 +96,11 @@ export function CallControls({ callEmbed }: CallControlsProps) {
   const popouting = popoutState.status === AsyncStatus.Loading;
   const popoutBlocked = popoutState.status === AsyncStatus.Error;
 
+  // SelfMatrix M1 step 3a レビュー FIX-A: ネイティブシェルでは popout ボタン自体を
+  // 描画しない (窓移動は M3 で WebContentsView 再親子付けに置き換わる想定、
+  // useCallEmbed.ts の useCallPopout ガード参照)。web では従来どおり描画する。
+  const nativeShell = hasSelfmatrixNativeBridge();
+
   return (
     <Box
       ref={controlRef}
@@ -135,36 +141,38 @@ export function CallControls({ callEmbed }: CallControlsProps) {
         <Box alignItems="Center" gap="Inherit" grow="Yes" direction={compact ? 'Column' : 'Row'}>
           <Box shrink="No" alignItems="Inherit" justifyContent="Inherit" gap="200">
             <ChatButton />
-            <TooltipProvider
-              position="Top"
-              delay={500}
-              tooltip={
-                <Tooltip>
-                  <Text size="T200">{t('call.controls.popout')}</Text>
-                </Tooltip>
-              }
-            >
-              {(anchorRef) => (
-                <IconButton
-                  ref={anchorRef}
-                  data-testid="call_popout"
-                  variant="Surface"
-                  fill="Soft"
-                  radii="400"
-                  size="400"
-                  onClick={popout}
-                  outlined
-                  disabled={popouting}
-                  aria-label={t('call.controls.popout')}
-                >
-                  {popouting ? (
-                    <Spinner variant="Secondary" fill="Soft" size="200" />
-                  ) : (
-                    <Icon size="400" src={Icons.External} />
-                  )}
-                </IconButton>
-              )}
-            </TooltipProvider>
+            {!nativeShell && (
+              <TooltipProvider
+                position="Top"
+                delay={500}
+                tooltip={
+                  <Tooltip>
+                    <Text size="T200">{t('call.controls.popout')}</Text>
+                  </Tooltip>
+                }
+              >
+                {(anchorRef) => (
+                  <IconButton
+                    ref={anchorRef}
+                    data-testid="call_popout"
+                    variant="Surface"
+                    fill="Soft"
+                    radii="400"
+                    size="400"
+                    onClick={popout}
+                    outlined
+                    disabled={popouting}
+                    aria-label={t('call.controls.popout')}
+                  >
+                    {popouting ? (
+                      <Spinner variant="Secondary" fill="Soft" size="200" />
+                    ) : (
+                      <Icon size="400" src={Icons.External} />
+                    )}
+                  </IconButton>
+                )}
+              </TooltipProvider>
+            )}
             <TooltipProvider
               position="Top"
               delay={500}

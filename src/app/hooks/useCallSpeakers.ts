@@ -25,7 +25,10 @@ export const useCallSpeakers = (callEmbed: CallEmbed): Set<string> => {
           if (mutation.type !== 'attributes') return;
           const el = mutation.target as HTMLElement;
 
-          const style = callEmbed.iframe.contentWindow?.getComputedStyle(el, '::before');
+          // SelfMatrix M1 step 3a レビュー FIX-B: NativeCallEmbed (iframe 無し) が
+          // 将来 CallEmbed として渡された場合に TypeError にならないよう iframe 自体も
+          // optional chain する (web では iframe は常在のため挙動不変)。
+          const style = callEmbed.iframe?.contentWindow?.getComputedStyle(el, '::before');
           if (!style) return;
           const tileBackgroundImage = style.getPropertyValue('background-image');
           const speaking = tileBackgroundImage !== 'none';

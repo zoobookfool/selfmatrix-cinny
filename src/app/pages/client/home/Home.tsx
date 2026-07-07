@@ -256,7 +256,7 @@ export function Home() {
       ) : (
         <PageNavContent scrollRef={scrollRef} chipNavSupported>
           <Box direction={chipNav ? 'Row' : 'Column'} gap="300">
-            <NavCategory>
+            <NavCategory chip={chipNav}>
               <NavItem
                 variant="Background"
                 radii="400"
@@ -338,7 +338,7 @@ export function Home() {
                 </NavLink>
               </NavItem>
             </NavCategory>
-            <NavCategory>
+            <NavCategory chip={chipNav}>
               {!chipNav && (
                 <NavCategoryHeader>
                   <RoomNavCategoryButton

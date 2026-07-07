@@ -460,7 +460,7 @@ export function Space() {
               replacementRoomId={tombstoneEvent.getContent().replacement_room}
             />
           )}
-          <NavCategory>
+          <NavCategory chip={chipNav}>
             <NavItem variant="Background" radii="400" chip={chipNav} aria-selected={lobbySelected}>
               <NavLink to={getSpaceLobbyPath(getCanonicalAliasOrRoomId(mx, space.roomId))}>
                 <NavItemContent>
@@ -495,6 +495,7 @@ export function Space() {
             </NavItem>
           </NavCategory>
           <NavCategory
+            chip={chipNav}
             style={
               chipNav
                 ? { width: virtualizer.getTotalSize(), height: '100%', position: 'relative' }

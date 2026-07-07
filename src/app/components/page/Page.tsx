@@ -93,10 +93,11 @@ type ClientDrawerLayoutProps = {
 
 /**
  * Whether the current route should render its channel-list nav as a
- * horizontal chip row. The flag is still accepted by PageNav/PageNavContent
- * for incremental route adoption, and defaults to enabled for main routes.
+ * horizontal chip row. This is intentionally opt-in: nested PageNav usages
+ * (Settings, RoomSettings, SpaceSettings) must not react to the shell's
+ * channel-list docking preference.
  */
-export function useChipNavLayout(chipNavSupported = true): boolean {
+export function useChipNavLayout(chipNavSupported = false): boolean {
   const screenSize = useScreenSizeContext();
   const shellLayout = useAtomValue(shellLayoutAtom);
   const navPosition = getNavPosition(shellLayout);

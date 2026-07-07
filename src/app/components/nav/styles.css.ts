@@ -9,6 +9,15 @@ export const NavCategory = style([
   },
 ]);
 
+export const NavCategoryHorizontal = style({
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: config.space.S100,
+  flexShrink: 0,
+});
+
 export const NavCategoryHeader = style({
   gap: config.space.S100,
 });

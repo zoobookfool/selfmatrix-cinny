@@ -66,7 +66,7 @@ export function Inbox() {
 
       <PageNavContent chipNavSupported>
         <Box direction={chipNav ? 'Row' : 'Column'} gap="300">
-          <NavCategory>
+          <NavCategory chip={chipNav}>
             <NavItem
               variant="Background"
               radii="400"

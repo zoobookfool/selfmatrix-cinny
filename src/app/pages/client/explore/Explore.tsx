@@ -185,7 +185,7 @@ export function Explore() {
 
       <PageNavContent chipNavSupported>
         <Box direction={chipNav ? 'Row' : 'Column'} gap="300">
-          <NavCategory>
+          <NavCategory chip={chipNav}>
             <NavItem
               variant="Background"
               radii="400"
@@ -236,7 +236,7 @@ export function Explore() {
             )}
           </NavCategory>
           {servers.length > 0 && (
-            <NavCategory>
+            <NavCategory chip={chipNav}>
               {!chipNav && (
                 <NavCategoryHeader>
                   <Text size="O400" style={{ paddingLeft: config.space.S200 }}>

@@ -5,7 +5,12 @@ import * as css from './styles.css';
 
 type NavCategoryProps = {
   children: ReactNode;
+  chip?: boolean;
 };
-export const NavCategory = as<'div', NavCategoryProps>(({ className, ...props }, ref) => (
-  <div className={classNames(css.NavCategory, className)} {...props} ref={ref} />
+export const NavCategory = as<'div', NavCategoryProps>(({ className, chip, ...props }, ref) => (
+  <div
+    className={classNames(css.NavCategory, chip && css.NavCategoryHorizontal, className)}
+    {...props}
+    ref={ref}
+  />
 ));

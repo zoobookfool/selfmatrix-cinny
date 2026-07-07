@@ -86,49 +86,6 @@ function SoundButton({ enabled, onToggle, disabled }: SoundButtonProps) {
   );
 }
 
-type VideoButtonProps = {
-  enabled: boolean;
-  onToggle: () => Promise<unknown>;
-  disabled?: boolean;
-};
-function VideoButton({ enabled, onToggle, disabled }: VideoButtonProps) {
-  const { t } = useTranslation();
-  const [videoState, toggleVideo] = useAsyncCallback(onToggle);
-  const loading = videoState.status === AsyncStatus.Loading;
-
-  return (
-    <TooltipProvider
-      position="Top"
-      tooltip={
-        <Tooltip>
-          <Text size="T200">
-            {enabled ? t('call.controls.camera_off') : t('call.controls.camera_on')}
-          </Text>
-        </Tooltip>
-      }
-    >
-      {(anchorRef) => (
-        <IconButton
-          ref={anchorRef}
-          variant={enabled ? 'Success' : 'Surface'}
-          fill="Soft"
-          radii="300"
-          size="300"
-          onClick={toggleVideo}
-          outlined
-          disabled={disabled || loading}
-        >
-          <Icon
-            size="100"
-            src={enabled ? Icons.VideoCamera : Icons.VideoCameraMute}
-            filled={enabled}
-          />
-        </IconButton>
-      )}
-    </TooltipProvider>
-  );
-}
-
 type ScreenShareButtonProps = {
   enabled: boolean;
   onToggle: () => void;
@@ -175,11 +132,13 @@ export function CallControl({
   callJoined: boolean;
 }) {
   const { t } = useTranslation();
-  const { microphone, video, sound, screenshare } = useCallControlState(callEmbed.control);
+  const { microphone, sound, screenshare } = useCallControlState(callEmbed.control);
   const setCallEmbed = useSetAtom(callEmbedAtom);
 
-  const handleMicrophoneToggle = useCallback(() => callEmbed.control.toggleMicrophone(), [callEmbed]);
-  const handleVideoToggle = useCallback(() => callEmbed.control.toggleVideo(), [callEmbed]);
+  const handleMicrophoneToggle = useCallback(
+    () => callEmbed.control.toggleMicrophone(),
+    [callEmbed]
+  );
 
   const [hangupState, hangup] = useAsyncCallback(
     useCallback(() => callEmbed.hangup(), [callEmbed])
@@ -209,11 +168,6 @@ export function CallControl({
           disabled={!callJoined}
         />
         {!compact && <StatusDivider />}
-        <VideoButton
-          enabled={video}
-          onToggle={handleVideoToggle}
-          disabled={!callJoined}
-        />
         {!compact && (
           <ScreenShareButton
             enabled={screenshare}

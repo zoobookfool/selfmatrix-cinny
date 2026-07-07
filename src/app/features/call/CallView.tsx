@@ -134,9 +134,9 @@ function CallPrescreen() {
               <Box grow="Yes" alignItems="Center">
                 <Text size="L400">{t('call.prescreen.participant')}</Text>
               </Box>
-              <Badge variant="Critical" fill="Solid" size="400">
+              <Badge variant="Success" fill="Solid" size="400">
                 <Text as="span" size="L400" truncate>
-                  {t('shell.nav.live_count', { count: callMembers.length })}
+                  {t('shell.nav.call_count', { count: callMembers.length })}
                 </Text>
               </Badge>
             </Header>
@@ -279,7 +279,7 @@ export function CallView() {
   return (
     <Box
       className={ContainerColor({ variant: 'Surface' })}
-      style={{ minWidth: toRem(280) }}
+      style={{ minWidth: 0, minHeight: 0 }}
       grow="Yes"
     >
       {!currentJoined && <CallPrescreen />}

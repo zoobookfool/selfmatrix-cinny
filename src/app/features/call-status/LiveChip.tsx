@@ -125,13 +125,13 @@ export function LiveChip({ count, room, members }: LiveChipProps) {
       <Chip
         variant="Surface"
         fill="Soft"
-        before={<Badge variant="Critical" fill="Solid" size="200" />}
+        before={<Badge variant="Success" fill="Solid" size="200" />}
         after={<Icon size="50" src={cords ? Icons.ChevronBottom : Icons.ChevronTop} />}
         radii="Pill"
         onClick={handleOpenMenu}
       >
         <Text className={css.LiveChipText} as="span" size="L400" truncate>
-          {t('shell.nav.live_count', { count })}
+          {t('shell.nav.call_count', { count })}
         </Text>
       </Chip>
     </PopOut>

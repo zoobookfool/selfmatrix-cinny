@@ -36,7 +36,12 @@ export function PageRoot({ nav, children, reverse, stackDirection }: PageRootPro
   }
 
   return (
-    <Box grow="Yes" direction={direction} className={ContainerColor({ variant: 'Background' })}>
+    <Box
+      grow="Yes"
+      direction={direction}
+      style={{ minWidth: 0, minHeight: 0 }}
+      className={ContainerColor({ variant: 'Background' })}
+    >
       {nav}
       {screenSize !== ScreenSize.Mobile && (
         <Line
@@ -45,21 +50,14 @@ export function PageRoot({ nav, children, reverse, stackDirection }: PageRootPro
           direction={stackDirection ? 'Horizontal' : 'Vertical'}
         />
       )}
-      {children}
+      <Box grow="Yes" style={{ minWidth: 0, minHeight: 0 }}>
+        {children}
+      </Box>
     </Box>
   );
 }
 
-type MainPageRootProps = Omit<PageRootProps, 'reverse' | 'stackDirection'> & {
-  /**
-   * Whether this route's nav renders a chip-row layout when the channel list
-   * is docked top/bottom (Stage 2). Only Home and Space implement chip nav
-   * so far; other routes (Direct/Explore/Inbox) pass this as false/omit it
-   * and fall back to the classic left-docked column nav so they don't break
-   * when the user picks a top/bottom setting.
-   */
-  chipNavSupported?: boolean;
-};
+type MainPageRootProps = Omit<PageRootProps, 'reverse' | 'stackDirection'>;
 
 /**
  * PageRoot variant for the main client routes (Home/Direct/Space/Explore/
@@ -67,11 +65,11 @@ type MainPageRootProps = Omit<PageRootProps, 'reverse' | 'stackDirection'> & {
  * PageRoot accordingly. Not used by Settings/SpaceSettings/RoomSettings,
  * which render PageRoot directly and are unaffected by this setting.
  */
-export function MainPageRoot({ nav, children, chipNavSupported }: MainPageRootProps) {
+export function MainPageRoot({ nav, children }: MainPageRootProps) {
   const shellLayout = useAtomValue(shellLayoutAtom);
   const navPosition = getNavPosition(shellLayout);
 
-  if (chipNavSupported && isHorizontalDockPosition(navPosition)) {
+  if (isHorizontalDockPosition(navPosition)) {
     return (
       <PageRoot nav={nav} stackDirection={navPosition === 'bottom' ? 'ColumnReverse' : 'Column'}>
         {children}
@@ -79,8 +77,7 @@ export function MainPageRoot({ nav, children, chipNavSupported }: MainPageRootPr
     );
   }
 
-  // Routes without chip-nav support (or non-horizontal positions) keep the
-  // Stage 1 left/right row layout. top/bottom fall back to left here.
+  // Non-horizontal positions keep the Stage 1 left/right row layout.
   const reverse = navPosition === 'right';
 
   return (
@@ -96,19 +93,15 @@ type ClientDrawerLayoutProps = {
 
 /**
  * Whether the current route should render its channel-list nav as a
- * horizontal chip row (Stage 2). `chipNavSupported` must be passed by the
- * calling route (only Home and Space do so today); routes that don't pass it
- * always get the classic column nav, even when the shell's nav position is
- * top/bottom, so they don't break before their chip-nav layout exists.
- * Also false on Mobile, which keeps its own dedicated layout regardless of
- * this shell setting.
+ * horizontal chip row. The flag is still accepted by PageNav/PageNavContent
+ * for incremental route adoption, and defaults to enabled for main routes.
  */
-export function useChipNavLayout(chipNavSupported?: boolean): boolean {
+export function useChipNavLayout(chipNavSupported = true): boolean {
   const screenSize = useScreenSizeContext();
   const shellLayout = useAtomValue(shellLayoutAtom);
   const navPosition = getNavPosition(shellLayout);
   return (
-    !!chipNavSupported && screenSize !== ScreenSize.Mobile && isHorizontalDockPosition(navPosition)
+    chipNavSupported && screenSize !== ScreenSize.Mobile && isHorizontalDockPosition(navPosition)
   );
 }
 
@@ -126,6 +119,7 @@ export function PageNav({
       grow={isMobile ? 'Yes' : undefined}
       className={chipNav ? css.PageNavHorizontal : css.PageNav({ size })}
       shrink={isMobile ? 'Yes' : 'No'}
+      style={{ minWidth: 0, minHeight: 0 }}
     >
       <Box grow="Yes" direction={chipNav ? 'Row' : 'Column'}>
         {children}

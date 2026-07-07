@@ -11,9 +11,9 @@ import {
 import { UnreadBadge } from '../../../components/unread-badge';
 import { allInvitesAtom } from '../../../state/room-list/inviteList';
 import { useNavToActivePathMapper } from '../../../hooks/useNavToActivePathMapper';
-import { PageNav, PageNavContent, PageNavHeader } from '../../../components/page';
+import { PageNav, PageNavContent, PageNavHeader, useChipNavLayout } from '../../../components/page';
 
-function InvitesNavItem() {
+function InvitesNavItem({ chip }: { chip?: boolean }) {
   const { t } = useTranslation();
   const invitesSelected = useInboxInvitesSelected();
   const allInvites = useAtomValue(allInvitesAtom);
@@ -23,6 +23,7 @@ function InvitesNavItem() {
     <NavItem
       variant="Background"
       radii="400"
+      chip={chip}
       highlight={inviteCount > 0}
       aria-selected={invitesSelected}
     >
@@ -49,9 +50,10 @@ export function Inbox() {
   const { t } = useTranslation();
   useNavToActivePathMapper('inbox');
   const notificationsSelected = useInboxNotificationsSelected();
+  const chipNav = useChipNavLayout(true);
 
   return (
-    <PageNav>
+    <PageNav chipNavSupported>
       <PageNavHeader>
         <Box grow="Yes" gap="300">
           <Box grow="Yes">
@@ -62,10 +64,15 @@ export function Inbox() {
         </Box>
       </PageNavHeader>
 
-      <PageNavContent>
-        <Box direction="Column" gap="300">
+      <PageNavContent chipNavSupported>
+        <Box direction={chipNav ? 'Row' : 'Column'} gap="300">
           <NavCategory>
-            <NavItem variant="Background" radii="400" aria-selected={notificationsSelected}>
+            <NavItem
+              variant="Background"
+              radii="400"
+              chip={chipNav}
+              aria-selected={notificationsSelected}
+            >
               <NavLink to={getInboxNotificationsPath()}>
                 <NavItemContent>
                   <Box as="span" grow="Yes" alignItems="Center" gap="200">
@@ -81,7 +88,7 @@ export function Inbox() {
                 </NavItemContent>
               </NavLink>
             </NavItem>
-            <InvitesNavItem />
+            <InvitesNavItem chip={chipNav} />
           </NavCategory>
         </Box>
       </PageNavContent>

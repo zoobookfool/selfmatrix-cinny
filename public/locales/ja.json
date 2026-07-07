@@ -71,6 +71,7 @@
     "nav": {
       "notifications": "通知",
       "toggle_chat": "チャットの切り替え",
+      "call_count": "通話中 {{count}}人",
       "live_count": "{{count}} 件がライブ配信中",
       "more_options": "その他のオプション"
     }
@@ -570,8 +571,11 @@
     "mini_tile_position": {
       "title": "通話ミニタイルの位置"
     },
+    "discord_style_button": "Discord風ではじめる",
+    "custom_style_button": "カスタム配置を選ぶ",
     "apply_button": "この配置ではじめる",
-    "skip_button": "スキップ"
+    "skip_button": "スキップ",
+    "back_button": "戻る"
   },
   "device_verification": {
     "title": "デバイス認証",
@@ -1590,6 +1594,7 @@
       "settings": "設定",
       "stream_settings": "配信の設定",
       "quality": "画質",
+      "source_resolution": "ソース解像度",
       "fps": "FPS",
       "start_share": "共有を開始",
       "end": "終了",

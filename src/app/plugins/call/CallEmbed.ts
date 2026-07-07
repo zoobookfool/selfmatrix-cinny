@@ -104,6 +104,7 @@ export class CallEmbed {
       confineToRoom: 'true',
       appPrompt: 'false',
       hideVideoButton: 'true',
+      disableVideo: 'true',
       perParticipantE2EE: room.hasEncryptionStateEvent().toString(),
       // SelfMatrix: 通話 UI の言語を cinny の選択言語に合わせる (EC の locales/<lng>/app.json が使われる)
       lang: i18n.resolvedLanguage ?? 'en',

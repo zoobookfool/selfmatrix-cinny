@@ -40,7 +40,7 @@ import { roomToUnreadAtom } from '../../../state/room/roomToUnread';
 import { useCategoryHandler } from '../../../hooks/useCategoryHandler';
 import { useNavToActivePathMapper } from '../../../hooks/useNavToActivePathMapper';
 import { useDirectRooms } from './useDirectRooms';
-import { PageNav, PageNavContent, PageNavHeader } from '../../../components/page';
+import { PageNav, PageNavContent, PageNavHeader, useChipNavLayout } from '../../../components/page';
 import { useClosedNavCategoriesAtom } from '../../../state/hooks/closedNavCategories';
 import { useRoomsUnread } from '../../../state/hooks/unread';
 import { markAsRead } from '../../../utils/notifications';
@@ -187,6 +187,7 @@ export function Direct() {
   const selectedRoomId = useSelectedRoom();
   const noRoomToDisplay = directs.length === 0;
   const [closedCategories, setClosedCategories] = useAtom(useClosedNavCategoriesAtom());
+  const chipNav = useChipNavLayout(true);
 
   const sortedDirects = useMemo(() => {
     const items = Array.from(directs).sort(factoryRoomIdByActivity(mx));
@@ -199,8 +200,9 @@ export function Direct() {
   const virtualizer = useVirtualizer({
     count: sortedDirects.length,
     getScrollElement: () => scrollRef.current,
-    estimateSize: () => 38,
+    estimateSize: () => (chipNav ? 180 : 38),
     overscan: 10,
+    horizontal: chipNav,
   });
 
   const handleCategoryClick = useCategoryHandler(setClosedCategories, (categoryId) =>
@@ -208,15 +210,20 @@ export function Direct() {
   );
 
   return (
-    <PageNav>
+    <PageNav chipNavSupported>
       <DirectHeader />
       {noRoomToDisplay ? (
         <DirectEmpty />
       ) : (
-        <PageNavContent scrollRef={scrollRef}>
-          <Box direction="Column" gap="300">
+        <PageNavContent scrollRef={scrollRef} chipNavSupported>
+          <Box direction={chipNav ? 'Row' : 'Column'} gap="300">
             <NavCategory>
-              <NavItem variant="Background" radii="400" aria-selected={createDirectSelected}>
+              <NavItem
+                variant="Background"
+                radii="400"
+                chip={chipNav}
+                aria-selected={createDirectSelected}
+              >
                 <NavButton onClick={() => navigate(getDirectCreatePath())}>
                   <NavItemContent>
                     <Box as="span" grow="Yes" alignItems="Center" gap="200">
@@ -234,20 +241,23 @@ export function Direct() {
               </NavItem>
             </NavCategory>
             <NavCategory>
-              <NavCategoryHeader>
-                <RoomNavCategoryButton
-                  closed={closedCategories.has(DEFAULT_CATEGORY_ID)}
-                  data-category-id={DEFAULT_CATEGORY_ID}
-                  onClick={handleCategoryClick}
-                >
-                  {t('shell.direct.chats_category')}
-                </RoomNavCategoryButton>
-              </NavCategoryHeader>
+              {!chipNav && (
+                <NavCategoryHeader>
+                  <RoomNavCategoryButton
+                    closed={closedCategories.has(DEFAULT_CATEGORY_ID)}
+                    data-category-id={DEFAULT_CATEGORY_ID}
+                    onClick={handleCategoryClick}
+                  >
+                    {t('shell.direct.chats_category')}
+                  </RoomNavCategoryButton>
+                </NavCategoryHeader>
+              )}
               <div
-                style={{
-                  position: 'relative',
-                  height: virtualizer.getTotalSize(),
-                }}
+                style={
+                  chipNav
+                    ? { position: 'relative', width: virtualizer.getTotalSize(), height: '100%' }
+                    : { position: 'relative', height: virtualizer.getTotalSize() }
+                }
               >
                 {virtualizer.getVirtualItems().map((vItem) => {
                   const roomId = sortedDirects[vItem.index];
@@ -259,6 +269,7 @@ export function Direct() {
                     <VirtualTile
                       virtualItem={vItem}
                       key={vItem.index}
+                      horizontal={chipNav}
                       ref={virtualizer.measureElement}
                     >
                       <RoomNavItem
@@ -266,6 +277,7 @@ export function Direct() {
                         selected={selected}
                         showAvatar
                         direct
+                        chip={chipNav}
                         linkPath={getDirectRoomPath(getCanonicalAliasOrRoomId(mx, roomId))}
                         notificationMode={getRoomNotificationMode(
                           notificationPreferences,

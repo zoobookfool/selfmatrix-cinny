@@ -323,7 +323,7 @@ export function RoomNavItem({
     // Start call in second click
     if (selected) {
       evt.preventDefault();
-      startCall(room, callPref);
+      startCall(room, { ...callPref, video: false });
     }
   };
 
@@ -393,9 +393,9 @@ export function RoomNavItem({
               />
             )}
             {callMembers.length > 0 && (
-              <Badge variant="Critical" fill="Solid" size="400">
+              <Badge variant="Success" fill="Solid" size="400">
                 <Text as="span" size="L400" truncate>
-                  {t('shell.nav.live_count', { count: callMembers.length })}
+                  {t('shell.nav.call_count', { count: callMembers.length })}
                 </Text>
               </Badge>
             )}

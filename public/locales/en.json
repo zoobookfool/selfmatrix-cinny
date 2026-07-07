@@ -71,6 +71,7 @@
     "nav": {
       "notifications": "Notifications",
       "toggle_chat": "Toggle Chat",
+      "call_count": "{{count}} in call",
       "live_count": "{{count}} Live",
       "more_options": "More Options"
     }
@@ -570,8 +571,11 @@
     "mini_tile_position": {
       "title": "Call mini-tile position"
     },
+    "discord_style_button": "Start with Discord style",
+    "custom_style_button": "Choose custom layout",
     "apply_button": "Start with this layout",
-    "skip_button": "Skip"
+    "skip_button": "Skip",
+    "back_button": "Back"
   },
   "device_verification": {
     "title": "Device Verification",
@@ -1590,6 +1594,7 @@
       "settings": "Settings",
       "stream_settings": "Stream settings",
       "quality": "Quality",
+      "source_resolution": "Source resolution",
       "fps": "Frame rate",
       "start_share": "Start sharing",
       "end": "End",

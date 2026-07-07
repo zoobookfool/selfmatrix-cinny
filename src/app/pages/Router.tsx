@@ -162,7 +162,6 @@ export const createRouter = (clientConfig: ClientConfig, screenSize: ScreenSize)
           path={HOME_PATH}
           element={
             <MainPageRoot
-              chipNavSupported
               nav={
                 <MobileFriendlyPageNav path={HOME_PATH}>
                   <Home />
@@ -216,7 +215,6 @@ export const createRouter = (clientConfig: ClientConfig, screenSize: ScreenSize)
           element={
             <RouteSpaceProvider>
               <MainPageRoot
-                chipNavSupported
                 nav={
                   <MobileFriendlyPageNav path={SPACE_PATH}>
                     <Space />

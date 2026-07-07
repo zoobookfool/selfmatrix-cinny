@@ -25,9 +25,7 @@ export function PrescreenControls({ canJoin }: PrescreenControlsProps) {
 
   const disabled = inOtherCall || !canJoin;
 
-  // video/toggleVideo: 機能(発信時の初期カメラ状態)は温存するが、SelfMatrix は配信特化のため
-  // カメラ UI(VideoButton)は表示しない
-  const { microphone, video, sound, toggleMicrophone, toggleSound } = useCallPreferences();
+  const { microphone, sound, toggleMicrophone, toggleSound } = useCallPreferences();
 
   const handleMicrophoneToggle = useCallback(async () => toggleMicrophone(), [toggleMicrophone]);
 
@@ -54,7 +52,7 @@ export function PrescreenControls({ canJoin }: PrescreenControlsProps) {
         <Button
           variant={disabled ? 'Secondary' : 'Success'}
           fill={disabled ? 'Soft' : 'Solid'}
-          onClick={() => startCall(room, { microphone, video, sound })}
+          onClick={() => startCall(room, { microphone, video: false, sound })}
           disabled={disabled || joining}
           before={
             joining ? (

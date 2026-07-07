@@ -27,9 +27,11 @@ export function ClientLayout({ nav, children }: ClientLayoutProps) {
   }
 
   return (
-    <Box grow="Yes" direction={direction}>
+    <Box grow="Yes" direction={direction} style={{ minWidth: 0, minHeight: 0 }}>
       <Box shrink="No">{nav}</Box>
-      <Box grow="Yes">{children}</Box>
+      <Box grow="Yes" style={{ minWidth: 0, minHeight: 0 }}>
+        {children}
+      </Box>
     </Box>
   );
 }

@@ -158,12 +158,11 @@ export function VideoButton({ enabled, onToggle }: VideoButtonProps) {
   );
 }
 
-const SCREEN_SHARE_QUALITIES: ScreenShareQuality[] = ['480', '720', '1080', '2160'];
+const SCREEN_SHARE_QUALITIES: ScreenShareQuality[] = ['720', '1080', 'source'];
 const SCREEN_SHARE_QUALITY_LABEL: Record<ScreenShareQuality, string> = {
-  '480': '480p',
   '720': '720p',
   '1080': '1080p',
-  '2160': '4K',
+  source: '',
 };
 const SCREEN_SHARE_FPS_OPTIONS: ScreenShareFps[] = [15, 30, 60];
 
@@ -234,7 +233,9 @@ export function ScreenShareButton({ enabled, onToggle }: ScreenShareButtonProps)
                       type="button"
                     >
                       <Text truncate size="T300">
-                        {SCREEN_SHARE_QUALITY_LABEL[q]}
+                        {q === 'source'
+                          ? t('call.controls.source_resolution')
+                          : SCREEN_SHARE_QUALITY_LABEL[q]}
                       </Text>
                     </Chip>
                   ))}

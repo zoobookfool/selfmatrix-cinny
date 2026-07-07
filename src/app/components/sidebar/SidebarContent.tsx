@@ -13,17 +13,26 @@ type SidebarContentProps = {
 };
 export function SidebarContent({ scrollable, sticky }: SidebarContentProps) {
   const shellLayout = useAtomValue(shellLayoutAtom);
-  const horizontal = isHorizontalDockPosition(getSidebarPosition(shellLayout));
+  const sidebarPosition = getSidebarPosition(shellLayout);
+  const horizontal = isHorizontalDockPosition(sidebarPosition);
   const direction = horizontal ? 'Row' : 'Column';
+  const swapHorizontalEnds = sidebarPosition === 'bottom';
 
   return (
     <>
-      <Box direction={direction} grow="Yes">
+      {swapHorizontalEnds && (
+        <Box direction={direction} shrink="No">
+          {sticky}
+        </Box>
+      )}
+      <Box direction={direction} grow="Yes" style={{ minWidth: 0, minHeight: 0 }}>
         {scrollable}
       </Box>
-      <Box direction={direction} shrink="No">
-        {sticky}
-      </Box>
+      {!swapHorizontalEnds && (
+        <Box direction={direction} shrink="No">
+          {sticky}
+        </Box>
+      )}
     </>
   );
 }

@@ -70,7 +70,7 @@ type IncomingCallProps = {
   dm: boolean;
   info: IncomingCallInfo;
   onIgnore: () => void;
-  onAnswer: (room: Room, video: boolean) => void;
+  onAnswer: (room: Room) => void;
   onReject: (room: Room, eventId: string) => void;
 };
 function IncomingCall({ dm, info, onIgnore, onAnswer, onReject }: IncomingCallProps) {
@@ -181,7 +181,7 @@ function IncomingCall({ dm, info, onIgnore, onAnswer, onReject }: IncomingCallPr
                     variant="Success"
                     size="400"
                     radii="400"
-                    onClick={() => onAnswer(room, info.intent === 'video')}
+                    onClick={() => onAnswer(room)}
                     before={
                       <Icon
                         size="200"
@@ -328,8 +328,8 @@ function IncomingCallListener({ callEmbed, joined }: IncomingCallListenerProps) 
   );
 
   const handleAnswer = useCallback(
-    (room: Room, video: boolean) => {
-      startCall(room, { microphone: true, video, sound: true });
+    (room: Room) => {
+      startCall(room, { microphone: true, video: false, sound: true });
       setCallInfo(undefined);
       navigateRoom(room.roomId);
     },

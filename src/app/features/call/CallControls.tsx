@@ -72,11 +72,6 @@ export function CallControls({ callEmbed }: CallControlsProps) {
     setCords(undefined);
   };
 
-  const handleReactionsClick = () => {
-    callEmbed.control.toggleReactions();
-    setCords(undefined);
-  };
-
   const handleSettingsClick = () => {
     callEmbed.control.toggleSettings();
     setCords(undefined);
@@ -170,6 +165,68 @@ export function CallControls({ callEmbed }: CallControlsProps) {
                 </IconButton>
               )}
             </TooltipProvider>
+            <TooltipProvider
+              position="Top"
+              delay={500}
+              tooltip={
+                <Tooltip>
+                  <Text size="T200">
+                    {spotlight ? t('call.controls.grid_view') : t('call.controls.spotlight_view')}
+                  </Text>
+                </Tooltip>
+              }
+            >
+              {(anchorRef) => (
+                <IconButton
+                  ref={anchorRef}
+                  data-testid="call_layout_toggle"
+                  variant={spotlight ? 'Primary' : 'Surface'}
+                  fill="Soft"
+                  radii="400"
+                  size="400"
+                  onClick={handleSpotlightClick}
+                  outlined
+                  aria-label={
+                    spotlight ? t('call.controls.grid_view') : t('call.controls.spotlight_view')
+                  }
+                  aria-pressed={spotlight}
+                >
+                  <Icon size="400" src={Icons.Flag} filled={spotlight} />
+                </IconButton>
+              )}
+            </TooltipProvider>
+            {!spotlight && (
+              <TooltipProvider
+                position="Top"
+                delay={500}
+                tooltip={
+                  <Tooltip>
+                    <Text size="T200">
+                      {emphasis ? t('call.controls.emphasis_off') : t('call.controls.emphasis_on')}
+                    </Text>
+                  </Tooltip>
+                }
+              >
+                {(anchorRef) => (
+                  <IconButton
+                    ref={anchorRef}
+                    data-testid="call_emphasis_toggle"
+                    variant={emphasis ? 'Primary' : 'Surface'}
+                    fill="Soft"
+                    radii="400"
+                    size="400"
+                    onClick={handleEmphasisClick}
+                    outlined
+                    aria-label={
+                      emphasis ? t('call.controls.emphasis_off') : t('call.controls.emphasis_on')
+                    }
+                    aria-pressed={emphasis}
+                  >
+                    <Icon size="400" src={Icons.Pin} filled={emphasis} />
+                  </IconButton>
+                )}
+              </TooltipProvider>
+            )}
             <PopOut
               anchor={cords}
               position="Top"
@@ -187,44 +244,6 @@ export function CallControls({ callEmbed }: CallControlsProps) {
                 >
                   <Menu>
                     <Box direction="Column" style={{ padding: config.space.S100 }}>
-                      <MenuItem
-                        size="300"
-                        variant="Surface"
-                        radii="300"
-                        onClick={handleSpotlightClick}
-                      >
-                        <Text size="B300" truncate>
-                          {spotlight
-                            ? t('call.controls.grid_view')
-                            : t('call.controls.spotlight_view')}
-                        </Text>
-                      </MenuItem>
-                      {!spotlight && (
-                        <MenuItem
-                          size="300"
-                          variant="Surface"
-                          radii="300"
-                          data-testid="call_emphasis_toggle"
-                          aria-pressed={emphasis}
-                          onClick={handleEmphasisClick}
-                        >
-                          <Text size="B300" truncate>
-                            {emphasis
-                              ? t('call.controls.emphasis_off')
-                              : t('call.controls.emphasis_on')}
-                          </Text>
-                        </MenuItem>
-                      )}
-                      <MenuItem
-                        size="300"
-                        variant="Surface"
-                        radii="300"
-                        onClick={handleReactionsClick}
-                      >
-                        <Text size="B300" truncate>
-                          {t('call.controls.reactions')}
-                        </Text>
-                      </MenuItem>
                       <MenuItem
                         size="300"
                         variant="Surface"

@@ -25,6 +25,7 @@ import {
   getSidebarPosition,
   getNavPosition,
   makeShellLayoutContent,
+  DEFAULT_SHELL_LAYOUT,
   ShellDockPosition,
 } from '../state/shellLayout';
 import { firstRunSetupBlockingAtom } from '../state/firstRunSetupGate';
@@ -85,6 +86,7 @@ export function FirstRunSetup() {
 
   const [checked, setChecked] = useState(false);
   const [completed, setCompleted] = useState(false);
+  const [customizing, setCustomizing] = useState(false);
 
   const [sidebarPosition, setSidebarPosition] = useState<ShellDockPosition>(() =>
     getSidebarPosition(shellLayout)
@@ -167,9 +169,13 @@ export function FirstRunSetup() {
     markCompleted,
   ]);
 
-  const handleSkip = useCallback(() => {
+  const handleDiscordStyle = useCallback(() => {
+    const content = makeShellLayoutContent(shellLayout, DEFAULT_SHELL_LAYOUT);
+    setShellLayout({ type: 'UPDATE', content });
+    mx.setAccountData(AccountDataEvent.ShellLayout, content);
+    setMiniTileStripPosition(DEFAULT_MINI_TILE_STRIP_POSITION);
     markCompleted();
-  }, [markCompleted]);
+  }, [markCompleted, mx, setShellLayout, shellLayout]);
 
   const dockLabels = useMemo(
     () => ({
@@ -211,51 +217,78 @@ export function FirstRunSetup() {
                 {t('first_run_setup.change_later_hint')}
               </Text>
 
-              <DockPositionPicker
-                label={dockLabels.server}
-                value={sidebarPosition}
-                onChange={setSidebarPosition}
-                testIdPrefix="fr_server"
-              />
-              <DockPositionPicker
-                label={dockLabels.channel}
-                value={navPosition}
-                onChange={setNavPosition}
-                testIdPrefix="fr_channel"
-              />
-
-              <Box direction="Column" gap="100">
-                <Text size="L400" priority="300">
-                  {dockLabels.miniTile}
-                </Text>
-                <Box gap="100" wrap="Wrap">
-                  {MINI_TILE_POSITIONS.map((position) => (
-                    <Chip
-                      key={position}
-                      data-testid={`fr_minitile_${position}`}
-                      variant={miniTilePosition === position ? 'Primary' : 'SurfaceVariant'}
-                      aria-pressed={miniTilePosition === position}
-                      outlined={miniTilePosition === position}
-                      radii="300"
-                      onClick={() => setMiniTilePosition(position)}
-                      type="button"
-                    >
-                      <Text truncate size="T300">
-                        {t(`settings.general.dock_position_names.${position}`)}
-                      </Text>
-                    </Chip>
-                  ))}
+              {!customizing ? (
+                <Box direction="Column" gap="200">
+                  <Button
+                    data-testid="fr_discord_style"
+                    variant="Primary"
+                    onClick={handleDiscordStyle}
+                  >
+                    <Text size="B400">{t('first_run_setup.discord_style_button')}</Text>
+                  </Button>
+                  <Button
+                    data-testid="fr_custom_style"
+                    variant="Secondary"
+                    fill="Soft"
+                    onClick={() => setCustomizing(true)}
+                  >
+                    <Text size="B400">{t('first_run_setup.custom_style_button')}</Text>
+                  </Button>
                 </Box>
-              </Box>
+              ) : (
+                <>
+                  <DockPositionPicker
+                    label={dockLabels.server}
+                    value={sidebarPosition}
+                    onChange={setSidebarPosition}
+                    testIdPrefix="fr_server"
+                  />
+                  <DockPositionPicker
+                    label={dockLabels.channel}
+                    value={navPosition}
+                    onChange={setNavPosition}
+                    testIdPrefix="fr_channel"
+                  />
 
-              <Box direction="Column" gap="200">
-                <Button data-testid="fr_apply" variant="Primary" onClick={handleApply}>
-                  <Text size="B400">{t('first_run_setup.apply_button')}</Text>
-                </Button>
-                <Button data-testid="fr_skip" variant="Secondary" fill="Soft" onClick={handleSkip}>
-                  <Text size="B400">{t('first_run_setup.skip_button')}</Text>
-                </Button>
-              </Box>
+                  <Box direction="Column" gap="100">
+                    <Text size="L400" priority="300">
+                      {dockLabels.miniTile}
+                    </Text>
+                    <Box gap="100" wrap="Wrap">
+                      {MINI_TILE_POSITIONS.map((position) => (
+                        <Chip
+                          key={position}
+                          data-testid={`fr_minitile_${position}`}
+                          variant={miniTilePosition === position ? 'Primary' : 'SurfaceVariant'}
+                          aria-pressed={miniTilePosition === position}
+                          outlined={miniTilePosition === position}
+                          radii="300"
+                          onClick={() => setMiniTilePosition(position)}
+                          type="button"
+                        >
+                          <Text truncate size="T300">
+                            {t(`settings.general.dock_position_names.${position}`)}
+                          </Text>
+                        </Chip>
+                      ))}
+                    </Box>
+                  </Box>
+
+                  <Box direction="Column" gap="200">
+                    <Button data-testid="fr_apply" variant="Primary" onClick={handleApply}>
+                      <Text size="B400">{t('first_run_setup.apply_button')}</Text>
+                    </Button>
+                    <Button
+                      data-testid="fr_back"
+                      variant="Secondary"
+                      fill="Soft"
+                      onClick={() => setCustomizing(false)}
+                    >
+                      <Text size="B400">{t('first_run_setup.back_button')}</Text>
+                    </Button>
+                  </Box>
+                </>
+              )}
             </Box>
           </Dialog>
         </FocusTrap>

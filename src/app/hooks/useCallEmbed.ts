@@ -57,9 +57,9 @@ export const createCallEmbed = (
   const rtcSession = mx.matrixRTC.getRoomSession(room);
   const ongoing = rtcSession.memberships.length > 0;
 
-  const intent = CallEmbed.getIntent(dm, ongoing, pref?.video);
+  const intent = CallEmbed.getIntent(dm, ongoing, false);
   const widget = CallEmbed.getWidget(mx, room, intent, themeKind);
-  const controlState = pref && new CallControlState(pref.microphone, pref.video, pref.sound);
+  const controlState = pref && new CallControlState(pref.microphone, false, pref.sound);
 
   const embed = new CallEmbed(mx, room, widget, container, controlState);
 
@@ -139,7 +139,7 @@ export const useCallPopout = () => {
 
         const rtcSession = mx.matrixRTC.getRoomSession(room);
         const ongoing = rtcSession.memberships.length > 0;
-        const intent = CallEmbed.getIntent(dm, ongoing, controlState.video);
+        const intent = CallEmbed.getIntent(dm, ongoing, false);
         const themeKind: ElementCallThemeKind = theme.kind === ThemeKind.Dark ? 'dark' : 'light';
         const widget = CallEmbed.getWidget(mx, room, intent, themeKind);
 
@@ -192,7 +192,7 @@ export const useCallPopin = () => {
 
       const rtcSession = mx.matrixRTC.getRoomSession(room);
       const ongoing = rtcSession.memberships.length > 0;
-      const intent = CallEmbed.getIntent(dm, ongoing, controlState.video);
+      const intent = CallEmbed.getIntent(dm, ongoing, false);
       const themeKind: ElementCallThemeKind = theme.kind === ThemeKind.Dark ? 'dark' : 'light';
       const widget = CallEmbed.getWidget(mx, room, intent, themeKind);
 
@@ -256,10 +256,11 @@ export const useCallEmbedPlacementSync = (containerViewRef: RefObject<HTMLDivEle
     const container = containerViewRef.current;
     if (!embedEl || !container) return;
 
-    embedEl.style.top = `${container.offsetTop}px`;
-    embedEl.style.left = `${container.offsetLeft}px`;
-    embedEl.style.width = `${container.clientWidth}px`;
-    embedEl.style.height = `${container.clientHeight}px`;
+    const rect = container.getBoundingClientRect();
+    embedEl.style.top = `${rect.top}px`;
+    embedEl.style.left = `${rect.left}px`;
+    embedEl.style.width = `${rect.width}px`;
+    embedEl.style.height = `${rect.height}px`;
   }, [callEmbedRef, containerViewRef]);
 
   useResizeObserver(

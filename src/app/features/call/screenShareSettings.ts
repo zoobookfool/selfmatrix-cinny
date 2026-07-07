@@ -9,16 +9,16 @@
  * 必ず両リポジトリを同期すること。
  */
 
-export type ScreenShareQuality = '480' | '720' | '1080' | '2160';
+export type ScreenShareQuality = '720' | '1080' | 'source';
 export type ScreenShareFps = 15 | 30 | 60;
 
 export const SCREEN_SHARE_QUALITY_KEY = 'matrix-setting-screen-share-quality';
 export const SCREEN_SHARE_FPS_KEY = 'matrix-setting-screen-share-fps';
 
-export const DEFAULT_SCREEN_SHARE_QUALITY: ScreenShareQuality = '2160';
+export const DEFAULT_SCREEN_SHARE_QUALITY: ScreenShareQuality = 'source';
 export const DEFAULT_SCREEN_SHARE_FPS: ScreenShareFps = 60;
 
-const VALID_QUALITIES: ScreenShareQuality[] = ['480', '720', '1080', '2160'];
+const VALID_QUALITIES: ScreenShareQuality[] = ['720', '1080', 'source'];
 const VALID_FPS: ScreenShareFps[] = [15, 30, 60];
 
 const isScreenShareQuality = (value: unknown): value is ScreenShareQuality =>

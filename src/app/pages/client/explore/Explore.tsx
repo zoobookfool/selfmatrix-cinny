@@ -36,7 +36,7 @@ import { useMatrixClient } from '../../../hooks/useMatrixClient';
 import { getMxIdServer } from '../../../utils/matrix';
 import { AsyncStatus, useAsyncCallback } from '../../../hooks/useAsyncCallback';
 import { useNavToActivePathMapper } from '../../../hooks/useNavToActivePathMapper';
-import { PageNav, PageNavContent, PageNavHeader } from '../../../components/page';
+import { PageNav, PageNavContent, PageNavHeader, useChipNavLayout } from '../../../components/page';
 import { stopPropagation } from '../../../utils/keyboard';
 
 export function AddServer() {
@@ -169,9 +169,10 @@ export function Explore() {
 
   const featuredSelected = useExploreFeaturedSelected();
   const selectedServer = useExploreServer();
+  const chipNav = useChipNavLayout(true);
 
   return (
-    <PageNav>
+    <PageNav chipNavSupported>
       <PageNavHeader>
         <Box grow="Yes" gap="300">
           <Box grow="Yes">
@@ -182,10 +183,15 @@ export function Explore() {
         </Box>
       </PageNavHeader>
 
-      <PageNavContent>
-        <Box direction="Column" gap="300">
+      <PageNavContent chipNavSupported>
+        <Box direction={chipNav ? 'Row' : 'Column'} gap="300">
           <NavCategory>
-            <NavItem variant="Background" radii="400" aria-selected={featuredSelected}>
+            <NavItem
+              variant="Background"
+              radii="400"
+              chip={chipNav}
+              aria-selected={featuredSelected}
+            >
               <NavLink to={getExploreFeaturedPath()}>
                 <NavItemContent>
                   <Box as="span" grow="Yes" alignItems="Center" gap="200">
@@ -205,6 +211,7 @@ export function Explore() {
               <NavItem
                 variant="Background"
                 radii="400"
+                chip={chipNav}
                 aria-selected={selectedServer === userServer}
               >
                 <NavLink to={getExploreServerPath(userServer)}>
@@ -230,16 +237,19 @@ export function Explore() {
           </NavCategory>
           {servers.length > 0 && (
             <NavCategory>
-              <NavCategoryHeader>
-                <Text size="O400" style={{ paddingLeft: config.space.S200 }}>
-                  {t('explore.servers_nav_category')}
-                </Text>
-              </NavCategoryHeader>
+              {!chipNav && (
+                <NavCategoryHeader>
+                  <Text size="O400" style={{ paddingLeft: config.space.S200 }}>
+                    {t('explore.servers_nav_category')}
+                  </Text>
+                </NavCategoryHeader>
+              )}
               {servers.map((server) => (
                 <NavItem
                   key={server}
                   variant="Background"
                   radii="400"
+                  chip={chipNav}
                   aria-selected={server === selectedServer}
                 >
                   <NavLink to={getExploreServerPath(server)}>
@@ -260,7 +270,7 @@ export function Explore() {
               ))}
             </NavCategory>
           )}
-          <Box direction="Column">
+          <Box direction={chipNav ? 'Row' : 'Column'}>
             <AddServer />
           </Box>
         </Box>

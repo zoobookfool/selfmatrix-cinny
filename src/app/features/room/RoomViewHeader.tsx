@@ -263,52 +263,36 @@ const RoomMenu = forwardRef<HTMLDivElement, RoomMenuProps>(({ room, requestClose
 
 type CallMenuProps = {
   onVoiceCall: () => void;
-  onVideoCall: () => void;
   requestClose: () => void;
 };
-const CallMenu = forwardRef<HTMLDivElement, CallMenuProps>(
-  ({ requestClose, onVoiceCall, onVideoCall }, ref) => {
-    const { t } = useTranslation();
-    const handleVoice = () => {
-      onVoiceCall();
-      requestClose();
-    };
-    const handleVideo = () => {
-      onVideoCall();
-      requestClose();
-    };
+const CallMenu = forwardRef<HTMLDivElement, CallMenuProps>(({ requestClose, onVoiceCall }, ref) => {
+  const { t } = useTranslation();
+  const handleVoice = () => {
+    onVoiceCall();
+    requestClose();
+  };
 
-    return (
-      <Menu ref={ref} style={{ padding: config.space.S200, minWidth: toRem(150) }}>
+  return (
+    <Menu ref={ref} style={{ padding: config.space.S200, minWidth: toRem(150) }}>
+      <Box direction="Column" gap="200">
+        <Text size="L400">{t('room.header.start_call')}</Text>
         <Box direction="Column" gap="200">
-          <Text size="L400">{t('room.header.start_call')}</Text>
-          <Box direction="Column" gap="200">
-            <Button
-              size="300"
-              variant="Success"
-              fill="Soft"
-              outlined
-              radii="300"
-              before={<Icon size="100" src={Icons.Phone} filled />}
-              onClick={handleVoice}
-            >
-              <Text size="B300">{t('room.header.voice_call')}</Text>
-            </Button>
-            <Button
-              size="300"
-              variant="Success"
-              radii="300"
-              before={<Icon size="100" src={Icons.VideoCamera} filled />}
-              onClick={handleVideo}
-            >
-              <Text size="B300">{t('room.header.video_call')}</Text>
-            </Button>
-          </Box>
+          <Button
+            size="300"
+            variant="Success"
+            fill="Soft"
+            outlined
+            radii="300"
+            before={<Icon size="100" src={Icons.Phone} filled />}
+            onClick={handleVoice}
+          >
+            <Text size="B300">{t('room.header.voice_call')}</Text>
+          </Button>
         </Box>
-      </Menu>
-    );
-  }
-);
+      </Box>
+    </Menu>
+  );
+});
 
 function CallButton() {
   const { t } = useTranslation();
@@ -350,7 +334,7 @@ function CallButton() {
               evt.preventDefault();
               startCall(room, {
                 microphone: true,
-                video: true,
+                video: false,
                 sound: true,
               });
             }}
@@ -378,7 +362,6 @@ function CallButton() {
             }}
           >
             <CallMenu
-              onVideoCall={() => startCall(room, { microphone: true, video: true, sound: true })}
               onVoiceCall={() => startCall(room, { microphone: true, video: false, sound: true })}
               requestClose={() => setMenuAnchor(undefined)}
             />

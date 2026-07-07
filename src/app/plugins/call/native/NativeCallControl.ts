@@ -3,7 +3,7 @@ import { ClientWidgetApi } from 'matrix-widget-api';
 import { CallControlState } from '../CallControlState';
 import { ElementMediaStateDetail, ElementMediaStatePayload, ElementWidgetActions } from '../types';
 import { CallControlEvent } from '../CallControl';
-import { SelfmatrixNativeWidgetTransport } from './nativeBridge';
+import { NativeCallControlStatePush, SelfmatrixNativeWidgetTransport } from './nativeBridge';
 
 /**
  * カテゴリ B (design §2.2: screenshare/spotlight/emphasis/reactions/settings — widget
@@ -45,16 +45,36 @@ function soundAction(sound: boolean): NativeCallControlAction {
 }
 
 /**
+ * G1 (受け入れレビュー修正): call-control-preload.cjs の invoke() は対象未検出時に例外を投げず
+ * `{ok:false, reason:"target_not_found"}` を **resolve** で返す契約 (call-control-preload.cjs
+ * 冒頭コメント参照)。そのため `.then()` に到達したからといって RPC が成功したとは限らない —
+ * resolve 値を duck-type 検査して `ok === true` のときだけ成功とみなす。
+ */
+function isCallControlSuccess(result: unknown): result is { ok: true } {
+  return typeof result === 'object' && result !== null && (result as { ok?: unknown }).ok === true;
+}
+
+/** ok:false の resolve 値から reason を取り出す (無ければ result 全体を返す、診断用)。 */
+function callControlFailureDetail(result: unknown): unknown {
+  if (typeof result === 'object' && result !== null && 'reason' in result) {
+    return (result as { reason?: unknown }).reason;
+  }
+  return result;
+}
+
+/**
  * `CallControl` (src/app/plugins/call/CallControl.ts) と同一の public インターフェースを
  * 持つネイティブシェル向け実装 (design §2.2)。継承ではなく並存 (design §2.3) のため、
  * カテゴリ A (widget action ベース、iframe/DOM に依存しない) のメソッドは元実装から
  * そのままコピーしている (出典コメントを個別に付与)。
  *
  * カテゴリ B のメソッドは `transport.callControlInvoke(action)` の RPC に置き換えている。
- * call view 側 preload からの実際の DOM 状態変化 push (元実装の MutationObserver 相当) は
- * まだ配線されていない (step 3b でシェル側の call-control preload と合わせて実装する)。
- * そのため、ここでの状態更新は「RPC が成功したら要求どおりの状態になったとみなす」楽観的な
- * 反映であり、TODO として明記してある。
+ * 各メソッドはクリック成功時に「要求どおりの状態になったとみなす」楽観的な反映もその場で行う
+ * (UI の体感レイテンシを抑えるため)。加えて M1 step 3b (design §3 step 3b 実装要件 4) で
+ * `transport.onCallControlState()` を購読し、call view 側 preload の MutationObserver 由来の
+ * 実 DOM 状態変化 push を受けて実状態に再同期するようにした — 楽観的反映が実 DOM とズレた場合
+ * (例: EC 側の内部要因でクリックが反映されなかった、他経路で状態が変わった等) でも、この push が
+ * 届き次第補正される。
  */
 export class NativeCallControl extends EventEmitter implements CallControlState {
   private state: CallControlState;
@@ -64,6 +84,9 @@ export class NativeCallControl extends EventEmitter implements CallControlState 
   private transport: SelfmatrixNativeWidgetTransport;
 
   private mediaStatePromiseResolver: undefined | (() => void);
+
+  // M1 step 3b: onCallControlState() の unsubscribe。dispose() で解除する。
+  private readonly unsubscribeCallControlState: () => void;
 
   constructor(
     state: CallControlState,
@@ -75,6 +98,9 @@ export class NativeCallControl extends EventEmitter implements CallControlState 
     this.state = state;
     this.call = call;
     this.transport = transport;
+    this.unsubscribeCallControlState = transport.onCallControlState(
+      this.onCallControlStatePush.bind(this)
+    );
   }
 
   public getState(): CallControlState {
@@ -186,11 +212,26 @@ export class NativeCallControl extends EventEmitter implements CallControlState 
    * call view 側 preload からの実際の状態 push (元 CallControl.ts の
    * MutationObserver 相当) が配線され次第、その到達をもって StateUpdate を
    * 発火する対称構造に置き換える (design §2.2)。
+   *
+   * G1 (受け入れレビュー修正、critical): call-control-preload.cjs は対象未検出時に
+   * `{ok:false, reason:"target_not_found"}` を **resolve** で返す (reject/throw ではない)。
+   * 以前は `.then()` に到達しただけで onSuccess() を呼んでいたため、失敗した RPC でも
+   * 楽観更新が確定してしまっていた (特に toggleSound は「成功した」前提でさらに
+   * toggleMicrophone() まで連鎖させるため、実際には何も変わっていないのに誤ってマイクを
+   * ミュートする実害があった)。resolve 値を duck-type 検査し、ok:true のときだけ
+   * onSuccess() を呼ぶ。ok:false は状態を一切変えず console.warn するだけに留める。
    */
   private fireAndForgetInvoke(action: NativeCallControlAction, onSuccess: () => void): void {
     this.invokeCallControl(action)
-      .then(() => {
-        onSuccess();
+      .then((result) => {
+        if (isCallControlSuccess(result)) {
+          onSuccess();
+          return;
+        }
+        console.warn(
+          `Native call control action "${action}" did not succeed (ok !== true); state left unchanged.`,
+          callControlFailureDetail(result)
+        );
       })
       .catch((e) => {
         console.error(`Error invoking native call control action "${action}": `, e);
@@ -298,10 +339,41 @@ export class NativeCallControl extends EventEmitter implements CallControlState 
     });
   }
 
+  /**
+   * M1 step 3b (design §3 step 3b 実装要件 4): call view 側 preload からの state push を
+   * 受けて実状態に再同期する。push は plain object の duck typing (`NativeCallControlStatePush`)
+   * であり、この環境に無関係な push (例: 3a 以前の単体実証用 action の push 形状) が届いても
+   * screenshare/spotlight/emphasis/sound のいずれのフィールドも持たなければ何もマージされない
+   * (安全に無視される)。
+   *
+   * G4 (受け入れレビュー修正、対称化): sound も他のカテゴリ B フィールドと同じ扱いでマージする
+   * (call-control-preload.cjs が setSoundOn/setSoundOff 成功時に実測 muted 状態由来の sound を
+   * push するようになったため)。
+   */
+  private onCallControlStatePush(pushed: NativeCallControlStatePush): void {
+    const hasKnownField =
+      typeof pushed.screenshare === 'boolean' ||
+      typeof pushed.spotlight === 'boolean' ||
+      typeof pushed.emphasis === 'boolean' ||
+      typeof pushed.sound === 'boolean';
+    if (!hasKnownField) return;
+
+    this.state = new CallControlState(
+      this.microphone,
+      this.video,
+      pushed.sound ?? this.sound,
+      pushed.screenshare ?? this.screenshare,
+      pushed.spotlight ?? this.spotlight,
+      pushed.emphasis ?? this.emphasis
+    );
+    this.emitStateUpdate();
+  }
+
   // 元実装の bodyMutationObserver/controlMutationObserver は iframe DOM 監視の
   // ためのものであり native には存在しないため、ここでは特に破棄するものがない。
-  // 将来 call view からの state push 購読を追加した場合はここで解除する。
+  // call view からの state push 購読 (M1 step 3b 新設) はここで解除する。
   public dispose(): void {
+    this.unsubscribeCallControlState();
     this.removeAllListeners();
   }
 

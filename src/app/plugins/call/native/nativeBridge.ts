@@ -1,20 +1,22 @@
 /**
- * SelfMatrix M1 step 3a — ネイティブシェル (selfmatrix-desktop 相当。現状は
+ * SelfMatrix M1 step 3a/3b — ネイティブシェル (selfmatrix-desktop 相当。現状は
  * selfmatrix-workspace/native-prototype) が cinny の window に公開する
  * `window.selfmatrixNative` の型定義と検出ヘルパ。
  *
- * この型は「cinny 側がシェルに要求する契約」であり、シェル側の実装は
- * まだこの形に揃っていない (step 3b で合わせる想定)。現行 prototype
- * (native-prototype/src/shell-preload.cjs) との既知の差分:
- *   - prototype の claimWidgetTransport() は
- *     { sendToView, notifyWidgetHostReady, callControlInvoke } を返し、
- *     通話 View の起動/停止は window.selfmatrixNative 直下の
- *     ensureCallView() / detachCallView() / attachCallView() という
- *     別チャンネル (URL 引数なし、静的な /widget-config.json を読む) で行っていた。
- *   - この契約は通話 1 本ごとに widget の完成 URL が異なる (room/user/intent 依存)
- *     cinny の実運用に合わせて、URL 引数付きの openCallView(completeWidgetUrl) /
- *     closeCallView() を claim 済みトランスポートに統合した形に変更している。
- *     shell 側の対応は step 3b のスコープ。
+ * この型は「cinny 側がシェルに要求する契約」。step 3b でシェル側 (native-prototype) が
+ * この契約に合わせて改修済み (`shell-preload.cjs`/`main.cjs`):
+ *   - `claimWidgetTransport()` は `{ sendToView, openCallView, closeCallView,
+ *     callControlInvoke, onCallControlState }` を返す。通話 View の起動/停止は
+ *     (旧 `window.selfmatrixNative.ensureCallView()`/`/widget-config.json` の静的方式ではなく)
+ *     通話ごとに異なる完成 URL を渡す `openCallView(completeWidgetUrl)`/`closeCallView()` に
+ *     統合されている。
+ *   - `notifyWidgetHostReady` 相当のチャンネルは無い — シェル側は
+ *     `new ClientWidgetApi(...)` の直後に呼び出し元 (このファイルの利用側、
+ *     `NativeCallEmbed` のコンストラクタ) が `openCallView()` を呼ぶ、という
+ *     呼び出し順序そのものを「'message' リスナー登録済み」の保証として扱う
+ *     (design の順序不変条件、`openCallView()` の契約コメント参照)。
+ *   - `onCallControlState(listener)` (step 3b 新設) で call view 側の
+ *     MutationObserver 由来 state push を購読できる。
  *
  * design/native-widget-transport.md §2.1 より:
  * widget→host のメッセージは、シェル preload が ipcRenderer 経由で受け取った後
@@ -26,6 +28,26 @@
  * PostmessageTransport で window の 'message' イベントを直接購読するため、
  * cinny 側から明示的に配線する必要が無い。
  */
+
+/**
+ * M1 step 3b (design §3 step 3b 実装要件 4): call view 側 preload の MutationObserver
+ * 由来 state push の形。契約上 main world へ渡すのは structured-clone 可能な plain object
+ * のみ (nativeBridge.ts 冒頭コメント参照)。シェル側は「main は解釈しない中継役」の方針を
+ * ここでも踏襲しており、この push の中身を一切解釈せずそのまま右から左へ流す。そのため
+ * 実際に届く plain object にはこの型に無いフィールド (例: 3a 以前の単体実証用 action の
+ * push 形状) が混ざり得る — `NativeCallControl` 側は screenshare/spotlight/emphasis/sound の
+ * うち実際に値が入っているフィールドだけを状態にマージし、それ以外は無視する (duck typing)。
+ *
+ * G4 (受け入れレビュー修正、対称化): setSoundOn/setSoundOff は他のカテゴリ B action と異なり
+ * push を伴っていなかった。call-control-preload.cjs 側で成功時に (audio 要素の実測 muted 状態
+ * から導出した) `sound` を push に含めるようにしたため、ここでもフィールドとして受け付ける。
+ */
+export interface NativeCallControlStatePush {
+  screenshare?: boolean;
+  spotlight?: boolean;
+  emphasis?: boolean;
+  sound?: boolean;
+}
 
 /** claimWidgetTransport() が通話 1 本につき 1 回だけ払い出す送信/制御 API。 */
 export interface SelfmatrixNativeWidgetTransport {
@@ -75,6 +97,15 @@ export interface SelfmatrixNativeWidgetTransport {
    * 「main は解釈しない correlationId 中継役」という設計方針を host 側にも適用)。
    */
   callControlInvoke(action: string): Promise<unknown>;
+
+  /**
+   * M1 step 3b 新設 (design §3 step 3b 実装要件 4): call view 側 preload の
+   * MutationObserver 由来 state push を購読する。3a の `NativeCallControl` は自分の
+   * クリック成功時のみ状態更新する optimistic 実装で、実 DOM とズレても補正されなかった
+   * (design の課題認識)。この購読が push を運ぶことで `NativeCallControl` が実状態に
+   * 再同期できるようになる。戻り値は unsubscribe 関数 (dispose() で呼ぶこと)。
+   */
+  onCallControlState(listener: (state: NativeCallControlStatePush) => void): () => void;
 }
 
 /** `window.selfmatrixNative` の型。シェル preload が contextBridge 経由で公開する。 */
@@ -106,4 +137,46 @@ export function hasSelfmatrixNativeBridge(): boolean {
 export function getSelfmatrixNativeBridge(): SelfmatrixNativeBridge | undefined {
   if (typeof window === 'undefined') return undefined;
   return window.selfmatrixNative;
+}
+
+/**
+ * G2 (受け入れレビュー修正、major): `claimWidgetTransport()` はシェル側の設計上
+ * プロセス寿命 (シェル window 1 個) につき 1 回しか呼び出せない (`SelfmatrixNativeBridge.
+ * claimWidgetTransport()` の JSDoc、shell-preload.cjs の claim-once ガード参照) — これは
+ * 「同一オリジンの子フレーム (cinny 埋め込み) から window.parent 経由で送信 API に到達される」
+ * 経路を塞ぐためのセキュリティ対策であり、この特性自体は変えてはならない (シェル側は無改造)。
+ *
+ * 一方 cinny 側の `NativeCallEmbed` は通話ごとに新しいインスタンスを生成し、そのコンストラクタで
+ * 毎回 `bridge.claimWidgetTransport()` を呼んでいた。1 通話目は claim-once ガードを消費して
+ * 成功するが、2 通話目 (hangup → 再入室等) のコンストラクタ実行時には 2 回目の呼び出しになり
+ * シェル側が例外を投げる — 結果として 2 通話目の `NativeCallEmbed` 構築そのものが throw する
+ * バグがあった。
+ *
+ * 修正はシェルの claim-once セキュリティ特性を変えずに cinny 側だけで完結させる: このモジュール
+ * スコープのキャッシュ (`WeakMap<bridge, transport>`) 付きヘルパーを経由させ、初回だけ実際に
+ * `claimWidgetTransport()` を呼び、以降はキャッシュ済みの transport をそのまま返す。
+ * `SelfmatrixNativeWidgetTransport` (sendToView/openCallView/closeCallView/callControlInvoke/
+ * onCallControlState) はいずれも通話固有の状態を保持しないステートレスな中継 API
+ * (call view 自体の生成/破棄は main プロセスの `state.callView` が管理し、transport はその薄い
+ * RPC 窓口に過ぎない) なので、通話をまたいで同じ transport インスタンスを再利用しても安全。
+ *
+ * 唯一「通話ごとに新しくする」必要があるのは `onCallControlState` の購読/購読解除であり、これは
+ * transport 自体ではなく呼び出し側 (`NativeCallControl`) の責務のまま変えていない —
+ * `NativeCallControl` は自分のコンストラクタで `transport.onCallControlState(...)` を呼んで
+ * インスタンスごとに subscribe し、`dispose()` で自分の unsubscribe 関数を呼ぶ。transport 自体を
+ * キャッシュ経由で使い回しても、購読はインスタンス単位で独立して積み増し/解除されるため
+ * 通話をまたいだリスナーの取りこぼしや二重配信にはならない (nativeBridge.ts の
+ * `onCallControlState` 契約コメント、NativeCallControl.ts のコンストラクタ/dispose() 参照)。
+ */
+const claimedTransports = new WeakMap<SelfmatrixNativeBridge, SelfmatrixNativeWidgetTransport>();
+
+export function getOrClaimWidgetTransport(
+  bridge: SelfmatrixNativeBridge
+): SelfmatrixNativeWidgetTransport {
+  const cached = claimedTransports.get(bridge);
+  if (cached) return cached;
+
+  const transport = bridge.claimWidgetTransport();
+  claimedTransports.set(bridge, transport);
+  return transport;
 }

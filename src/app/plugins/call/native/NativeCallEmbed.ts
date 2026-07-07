@@ -19,7 +19,11 @@ import { ElementCallThemeKind, ElementMediaStateDetail, ElementWidgetActions } f
 import { CallControlState } from '../CallControlState';
 import { NativeCallControl } from './NativeCallControl';
 import { createNativeIframeShim } from './NativeIframeShim';
-import { SelfmatrixNativeBridge, SelfmatrixNativeWidgetTransport } from './nativeBridge';
+import {
+  getOrClaimWidgetTransport,
+  SelfmatrixNativeBridge,
+  SelfmatrixNativeWidgetTransport,
+} from './nativeBridge';
 
 /**
  * `CallEmbed` (src/app/plugins/call/CallEmbed.ts) と並存するネイティブシェル向け実装
@@ -93,7 +97,11 @@ export class NativeCallEmbed {
     bridge: SelfmatrixNativeBridge,
     initialControlState?: CallControlState
   ) {
-    const transport = bridge.claimWidgetTransport();
+    // G2 (受け入れレビュー修正): claim-once はシェル側のプロセス寿命 1 回きりの制約 (同一オリジン
+    // iframe 対策、nativeBridge.ts の getOrClaimWidgetTransport() コメント参照) なので、2 通話目
+    // 以降もここで直接 bridge.claimWidgetTransport() を呼ぶと必ず throw する。キャッシュ付き
+    // ヘルパー経由にすることで、通話ごとに新しい NativeCallEmbed が構築されても安全に成立する。
+    const transport = getOrClaimWidgetTransport(bridge);
     const iframeShim = createNativeIframeShim(transport);
 
     const callWidgetDriver: WidgetDriver = new CallWidgetDriver(mx, room.roomId);

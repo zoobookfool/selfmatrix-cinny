@@ -48,6 +48,17 @@ export class CallEmbed {
 
   private readonly disposables: Array<() => void> = [];
 
+  // EventEmitter は参照同一性でリスナーを外すため、on/off の両方で同じ bound 関数を使う必要がある。
+  // 都度 .bind(this) すると off が別参照を渡すことになり、通話の参加/破棄のたびにリスナーが
+  // リークしていた (native/NativeCallEmbed.ts と同じ修正)。
+  private readonly onEventBound = this.onEvent.bind(this);
+
+  private readonly onEventDecryptedBound = this.onEventDecrypted.bind(this);
+
+  private readonly onStateUpdateBound = this.onStateUpdate.bind(this);
+
+  private readonly onToDeviceEventBound = this.onToDeviceEvent.bind(this);
+
   static getIntent(dm: boolean, ongoing: boolean, video?: boolean): ElementCallIntent {
     if (dm && ongoing) {
       return video ? ElementCallIntent.JoinExistingDM : ElementCallIntent.JoinExistingDMVoice;
@@ -251,10 +262,10 @@ export class CallEmbed {
     });
 
     // Attach listeners for feeding events - the underlying widget classes handle permissions for us
-    this.mx.on(ClientEvent.Event, this.onEvent.bind(this));
-    this.mx.on(MatrixEventEvent.Decrypted, this.onEventDecrypted.bind(this));
-    this.mx.on(RoomStateEvent.Events, this.onStateUpdate.bind(this));
-    this.mx.on(ClientEvent.ToDeviceEvent, this.onToDeviceEvent.bind(this));
+    this.mx.on(ClientEvent.Event, this.onEventBound);
+    this.mx.on(MatrixEventEvent.Decrypted, this.onEventDecryptedBound);
+    this.mx.on(RoomStateEvent.Events, this.onStateUpdateBound);
+    this.mx.on(ClientEvent.ToDeviceEvent, this.onToDeviceEventBound);
   }
 
   /**
@@ -270,10 +281,10 @@ export class CallEmbed {
     this.container.removeChild(this.iframe);
     this.control.dispose();
 
-    this.mx.off(ClientEvent.Event, this.onEvent.bind(this));
-    this.mx.off(MatrixEventEvent.Decrypted, this.onEventDecrypted.bind(this));
-    this.mx.off(RoomStateEvent.Events, this.onStateUpdate.bind(this));
-    this.mx.off(ClientEvent.ToDeviceEvent, this.onToDeviceEvent.bind(this));
+    this.mx.off(ClientEvent.Event, this.onEventBound);
+    this.mx.off(MatrixEventEvent.Decrypted, this.onEventDecryptedBound);
+    this.mx.off(RoomStateEvent.Events, this.onStateUpdateBound);
+    this.mx.off(ClientEvent.ToDeviceEvent, this.onToDeviceEventBound);
 
     // Clear internal state
     this.readUpToMap = {};

@@ -138,6 +138,47 @@ export interface SelfmatrixNativeWidgetTransport {
    * 再同期できるようになる。戻り値は unsubscribe 関数 (dispose() で呼ぶこと)。
    */
   onCallControlState(listener: (state: NativeCallControlStatePush) => void): () => void;
+
+  /**
+   * M2 (Fable 全体レビュー arch-major 解消、bounds 同期): web 版では
+   * `useCallEmbedPlacementSync` (hooks/useCallEmbed.ts) が CallView 内の実レイアウト座標
+   * (サイドバー開閉・チャット切替・ウィンドウリサイズに追従する `ResizeObserver` 計測値) を
+   * 毎フレーム計算し、`CallEmbedProvider` の `position:fixed` div (`data-call-embed-container`、
+   * iframe 実体入り) へ直接スタイル適用するだけで完結する。native では実描画が別プロセスの
+   * WebContentsView (シェル側の `state.callView`) にあり、DOM の外にあるため、この矩形を
+   * シェルへ伝える経路そのものが無いと call view は常にシェル側の固定式配置のままになる
+   * (これが本メソッド新設の動機)。
+   *
+   * fire-and-forget (戻り値なし)。呼び出し元 (`NativeCallEmbed.setPlacement()`) 側で
+   * 失敗を検知する手段は無いが、これは意図的 — call view の配置がずれても cinny 自身の
+   * 表示・機能には影響しないため、失敗時にレンダラの他の処理をブロック/エラー化する必要がない
+   * (`sendToView()`/`closeCallView()` 等、既存の他の fire-and-forget 系メソッドと同じ方針)。
+   *
+   * **座標系**: CSS px。Electron `BrowserWindow` の content 領域 (OS ネイティブのタイトルバー等を
+   * 除いた、`webContents` が実際に描画する領域) の左上を原点とする。`zoomFactor` が 1 であることが
+   * 前提 — cinny は `zoomFactor` を変更する UI を持たないため通常はこの前提が成立するが、将来
+   * ズーム機能が追加された場合はこの契約の再検討が必要になる (`getBoundingClientRect()` は
+   * CSS px を返す一方、シェル側の `View.setBounds()` は DIP 単位で、`zoomFactor !== 1` だと
+   * 両者がズレる)。`width`/`height` は非負であること。
+   *
+   * **送信頻度**: `useCallEmbedPlacementSync` の `ResizeObserver` 発火のたび (レイアウト変化 =
+   * サイドバー開閉・チャット切替・ウィンドウリサイズ等の都度)。過剰送信の抑制 (同値スキップ +
+   * `requestAnimationFrame` 1 回へのまとめ) は呼び出し元 `NativeCallEmbed.setPlacement()`
+   * 側の責務 (詳細は同メソッドのコメント参照) — シェル側は「多少の頻度・わずかな適用遅延」を
+   * 許容できる実装であること (厳密な毎フレーム同期までは保証しない)。
+   *
+   * **null**: call view を隠す/レイアウト外に置くべきことを表す (例: `CallView` コンポーネント
+   * 自体がアンマウントされた、または別 room を見ていて自分の通話が背景で継続しているだけで
+   * この room の CallView がその通話の表示先ではなくなった場合)。
+   *
+   * **detached (別窓 popout) 中**: M3 スコープの `callWindow` 再親子付け UI がまだ無いため、
+   * native では popout 自体を提供していない (`useCallPopout`/`useCallPopin` の
+   * `hasSelfmatrixNativeBridge()` ガード参照) — そのため cinny 側は detach 中にこのメソッドを
+   * 呼ぶ状況そのものが (現状) 発生しない。シェル側 (`main.cjs`) は念のため
+   * `callViewState !== "attached"` のときは受信しても適用しない防御を持つ (detached 中の
+   * 別窓のレイアウトは `callWindow` 側の責務、M3 スコープ)。
+   */
+  setCallViewBounds(bounds: { x: number; y: number; width: number; height: number } | null): void;
 }
 
 /** `window.selfmatrixNative` の型。シェル preload が contextBridge 経由で公開する。 */

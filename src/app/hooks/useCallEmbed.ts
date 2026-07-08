@@ -280,8 +280,30 @@ export const useCallThemeSync = (embed: CallEmbed) => {
   }, [theme.kind, embed]);
 };
 
-export const useCallEmbedPlacementSync = (containerViewRef: RefObject<HTMLDivElement>): void => {
+// SelfMatrix M2 bounds sync (Fable 全体レビュー arch-major 解消): この CallView が実際に表示
+// している通話 (roomId) を渡させる。callEmbed はアプリ全体で単一のグローバル atom
+// (state/callEmbed.ts) であり、CallView 自体は「別 room で進行中の通話がある」場合にも
+// マウントされ得る (features/room/Room.tsx の callView 判定式:
+// `callEmbed?.roomId === room.roomId || room.isCallRoom() || callMembers.length > 0` —
+// 自分がまだ参加していない他人の通話がある room を見ているだけでも CallView は出る)。roomId が
+// 一致しない CallView インスタンスにまで native 転送させると、無関係な room のコンテナ矩形を
+// 別 room で実際にアクティブな通話の view へ push してしまう。web 経路 (下記 4 行のスタイル適用)
+// はこの引数を使わず、これまでどおり無条件に動く — 1 バイトも変えていない。
+export const useCallEmbedPlacementSync = (
+  containerViewRef: RefObject<HTMLDivElement>,
+  roomId: string
+): void => {
   const callEmbedRef = useCallEmbedRef();
+  const callEmbed = useCallEmbed();
+
+  // native では createCallEmbed() が hasSelfmatrixNativeBridge() のときだけ NativeCallEmbed を
+  // 返す (このファイル冒頭の createCallEmbed() 参照) ため、hasSelfmatrixNativeBridge() が true な
+  // 環境で callEmbed が存在すれば、それは必ず NativeCallEmbed である。useCallPopout/useCallPopin が
+  // 同じ前提 (hasSelfmatrixNativeBridge() の真偽だけを見る) で native 分岐しているのと同じ簡略化。
+  const nativeEmbedForThisRoom =
+    hasSelfmatrixNativeBridge() && callEmbed && callEmbed.roomId === roomId
+      ? (callEmbed as unknown as NativeCallEmbed)
+      : undefined;
 
   const syncCallEmbedPlacement = useCallback(() => {
     const embedEl = callEmbedRef.current;
@@ -293,10 +315,25 @@ export const useCallEmbedPlacementSync = (containerViewRef: RefObject<HTMLDivEle
     embedEl.style.left = `${rect.left}px`;
     embedEl.style.width = `${rect.width}px`;
     embedEl.style.height = `${rect.height}px`;
-  }, [callEmbedRef, containerViewRef]);
+
+    // native 経路の追加配線。過剰送信の抑制 (同値スキップ + requestAnimationFrame まとめ) は
+    // 送信元である NativeCallEmbed.setPlacement() 側の責務 (詳細は同メソッドのコメント参照)。
+    nativeEmbedForThisRoom?.setPlacement(rect);
+  }, [callEmbedRef, containerViewRef, nativeEmbedForThisRoom]);
 
   useResizeObserver(
     syncCallEmbedPlacement,
     useCallback(() => containerViewRef.current, [containerViewRef])
+  );
+
+  // この CallView (containerViewRef) がこの通話にとってもう「表示すべき場所」ではなくなったとき
+  // (アンマウント、または別 room を見ている間に対象の通話が切り替わって nativeEmbedForThisRoom が
+  // 変わった/居なくなったとき) にシェルへ null を送り、「call view を隠す/レイアウト外」を明示する
+  // (nativeBridge.ts の setCallViewBounds() 契約参照)。
+  useEffect(
+    () => () => {
+      nativeEmbedForThisRoom?.setPlacement(null);
+    },
+    [nativeEmbedForThisRoom]
   );
 };

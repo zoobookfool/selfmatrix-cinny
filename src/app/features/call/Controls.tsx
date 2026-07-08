@@ -331,6 +331,10 @@ export function ChatButton() {
       {(anchorRef) => (
         <IconButton
           ref={anchorRef}
+          // SelfMatrix M2 bounds sync E2E (native-callflow.e2e.mjs): チャットパネル切替は
+          // CallView のコンテナ幅を実際に変える、実在するレイアウト変化操作なので
+          // boundsSync の追従検証に使う。既存の call_control_* testid 群と同じ命名規約。
+          data-testid="call_control_chat"
           variant={chat ? 'Success' : 'Surface'}
           fill="Soft"
           radii="400"

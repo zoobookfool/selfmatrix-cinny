@@ -81,6 +81,17 @@ export class NativeCallEmbed {
   private readonly onToDeviceEventBound = this.onToDeviceEvent.bind(this);
 
   /**
+   * M2 bounds sync (Fable 全体レビュー arch-major 解消): 直近シェルへ送った bounds。
+   * `undefined` = まだ 1 度も送っていない (setPlacement() 側の同値スキップが「一度も送って
+   * いないのに null が来て skip してしまう」誤判定をしないための区別。null (送信済みで
+   * 「隠す」状態) と undefined (未送信) を分けている)。
+   */
+  private lastSentBounds: { x: number; y: number; width: number; height: number } | null | undefined;
+
+  /** setPlacement() の requestAnimationFrame まとめ用ハンドル。 */
+  private pendingBoundsFrame: number | undefined;
+
+  /**
    * native では WebContentsView の実 DOM に host からアクセスできないため常に
    * undefined。唯一の呼び出し元 `useCallSpeakers.ts` はこれを optional chaining
    * (`callEmbed.document?.querySelectorAll(...)`) で読むため、安全に no-op 化される
@@ -165,6 +176,61 @@ export class NativeCallEmbed {
     return this.call.transport.send(ElementWidgetActions.HangupCall, {});
   }
 
+  /**
+   * M2 bounds sync (Fable 全体レビュー arch-major 解消): `useCallEmbedPlacementSync`
+   * (hooks/useCallEmbed.ts) が計算した「実際に call view を表示すべき領域」を transport 経由で
+   * シェルへ push する。web 版の `CallEmbed` はこの矩形を `CallEmbedProvider` の
+   * `position:fixed` div へ直接スタイル適用するだけで完結するが (`useCallEmbedPlacementSync` の
+   * 4 行、変更していない)、native では実描画がシェル側の別プロセス (WebContentsView) にあるため
+   * この push が要る (`nativeBridge.ts` の `setCallViewBounds()` 契約参照)。
+   *
+   * `rect` が `null` の場合は「隠す/レイアウト外」を意味する (呼び出し元:
+   * `useCallEmbedPlacementSync` のアンマウント時クリーンアップ、および本クラスの `dispose()`)。
+   *
+   * **過剰送信の抑制はここ (cinny 側、送信元) に置く**:
+   *   - 同値スキップ: `useCallEmbedPlacementSync` は `ResizeObserver` 発火のたびに毎回呼ぶ
+   *     (呼び出し側を単純に保つため、変化の有無をそちら側では判定させない)。ここで直前送信値と
+   *     比較し、実質的に変化が無ければ IPC 送信自体を省く。
+   *   - `requestAnimationFrame` まとめ: 同一フレーム内で複数回呼ばれても実際にシェルへ送るのは
+   *     最後の 1 回だけにする。`ResizeObserver` のコールバック頻度はブラウザ実装依存で「1 フレーム
+   *     1 回」が仕様として保証されているわけではないため、ここで明示的に保証する。
+   * シェル側 (`main.cjs` の `applyCallViewBoundsFromCinny()`) にも実際の View の現在値と比較して
+   * 同値なら `setBounds()` 自体を呼ばない防御を二重に持たせてある (`View.setBounds()` は同じ値でも
+   * 呼べば内部で再レイアウトが走り得るため、送信元側の抑制をすり抜けた場合の保険— 詳細は
+   * native-prototype の `main.cjs` 該当コメント参照)。
+   */
+  public setPlacement(rect: DOMRectReadOnly | null): void {
+    const bounds = rect
+      ? {
+          x: Math.round(rect.left),
+          y: Math.round(rect.top),
+          width: Math.round(rect.width),
+          height: Math.round(rect.height),
+        }
+      : null;
+
+    const unchanged =
+      this.lastSentBounds !== undefined &&
+      ((bounds === null && this.lastSentBounds === null) ||
+        (bounds !== null &&
+          this.lastSentBounds !== null &&
+          bounds.x === this.lastSentBounds.x &&
+          bounds.y === this.lastSentBounds.y &&
+          bounds.width === this.lastSentBounds.width &&
+          bounds.height === this.lastSentBounds.height));
+    if (unchanged) return;
+
+    this.lastSentBounds = bounds;
+
+    if (this.pendingBoundsFrame !== undefined) {
+      cancelAnimationFrame(this.pendingBoundsFrame);
+    }
+    this.pendingBoundsFrame = requestAnimationFrame(() => {
+      this.pendingBoundsFrame = undefined;
+      this.transport.setCallViewBounds(bounds);
+    });
+  }
+
   public onPreparing(callback: () => void) {
     return this.listenEvent('preparing', callback);
   }
@@ -213,6 +279,11 @@ export class NativeCallEmbed {
     });
     this.call.stop();
     this.control.dispose();
+    // M2 bounds sync: closeCallView() でシェルが view 自体を破棄するはずだが、
+    // useCallEmbedPlacementSync 側のアンマウント時クリーンアップ (roomId 不一致等) と経路が
+    // 独立しているため、通話終了 (hangup/エラー) 経由の破棄でも防御的に null を送っておく
+    // (setPlacement() の同値スキップにより、既に null 送信済みなら実質 no-op)。
+    this.setPlacement(null);
     this.transport.closeCallView().catch((e) => {
       console.error('Error closing native call view: ', e);
     });

@@ -10,6 +10,7 @@
   "scripts": {
     "start": "vite",
     "build": "vite build",
+    "build:native": "vite build --mode native",
     "preview": "vite preview",
     "lint": "npm run check:eslint && npm run check:prettier",
     "check:eslint": "eslint src/*",

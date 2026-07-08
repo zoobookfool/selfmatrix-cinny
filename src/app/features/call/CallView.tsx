@@ -269,7 +269,7 @@ function CallJoined({ joined, containerRef }: CallJoinedProps) {
 export function CallView() {
   const room = useRoom();
   const callContainerRef = useRef<HTMLDivElement>(null);
-  useCallEmbedPlacementSync(callContainerRef);
+  useCallEmbedPlacementSync(callContainerRef, room.roomId);
 
   const callEmbed = useCallEmbed();
   const callJoined = useCallJoined(callEmbed);

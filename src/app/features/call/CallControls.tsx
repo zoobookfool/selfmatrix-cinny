@@ -257,6 +257,7 @@ export function CallControls({ callEmbed }: CallControlsProps) {
                         variant="Surface"
                         radii="300"
                         onClick={handleSettingsClick}
+                        data-testid="call_menu_settings"
                       >
                         <Text size="B300" truncate>
                           {t('call.controls.settings')}
@@ -295,6 +296,7 @@ export function CallControls({ callEmbed }: CallControlsProps) {
                 )
               }
               disabled={exiting}
+              data-testid="call_hangup"
             >
               <Text size="B400">{t('call.controls.end')}</Text>
             </Button>

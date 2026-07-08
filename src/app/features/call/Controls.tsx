@@ -103,6 +103,8 @@ export function SoundButton({ enabled, onToggle }: SoundButtonProps) {
           size="400"
           onClick={() => onToggle()}
           outlined
+          data-testid="call_control_sound"
+          aria-pressed={enabled}
         >
           <Icon
             size="400"

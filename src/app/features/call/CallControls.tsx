@@ -99,7 +99,10 @@ export function CallControls({ callEmbed }: CallControlsProps) {
   // SelfMatrix M1 step 3a レビュー FIX-A: ネイティブシェルでは popout ボタン自体を
   // 描画しない (窓移動は M3 で WebContentsView 再親子付けに置き換わる想定、
   // useCallEmbed.ts の useCallPopout ガード参照)。web では従来どおり描画する。
-  const nativeShell = hasSelfmatrixNativeBridge();
+  // SelfMatrix M2: 同じ VITE_SELFMATRIX_NATIVE 定数でもゲートする (web ビルドでは常に false
+  // に畳み込まれ、popout ボタンは従来どおり常に描画される)。
+  const nativeShell =
+    Boolean(import.meta.env.VITE_SELFMATRIX_NATIVE) && hasSelfmatrixNativeBridge();
 
   return (
     <Box

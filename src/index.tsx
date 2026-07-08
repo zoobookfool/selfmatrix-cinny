@@ -22,10 +22,14 @@ document.body.classList.add(configClass, varsClass);
 
 // Register Service Worker
 if ('serviceWorker' in navigator) {
-  const swUrl =
-    import.meta.env.MODE === 'production'
-      ? `${trimTrailingSlash(import.meta.env.BASE_URL)}/sw.js`
-      : `/dev-sw.js?dev-sw`;
+  // SelfMatrix M2: `import.meta.env.PROD` (常に `vite build` かどうかで決まり、
+  // `--mode` の値には依存しない) を見る。`import.meta.env.MODE` を見ていた旧実装は
+  // `npm run build:native` (`vite build --mode native`) で MODE が 'native' になり
+  // production ビルドなのに開発用の `/dev-sw.js?dev-sw` を登録してしまっていた
+  // (native ビルドの dist には dev-sw.js が存在しないため 404 になる差分)。
+  const swUrl = import.meta.env.PROD
+    ? `${trimTrailingSlash(import.meta.env.BASE_URL)}/sw.js`
+    : `/dev-sw.js?dev-sw`;
 
   const sendSessionToSW = () => {
     const session = getFallbackSession();

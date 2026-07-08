@@ -73,10 +73,20 @@ export const createCallEmbed = (
   // listenAction/listenEvent/dispose) を同一シグネチャで提供するため、ここでのみ
   // 型を合わせて返す。呼び出し元 (createCallEmbed の他の利用箇所、useCallPopout/
   // useCallPopin 等) は一切変更していない。
-  const nativeBridge = getSelfmatrixNativeBridge();
-  if (nativeBridge) {
-    const nativeEmbed = new NativeCallEmbed(mx, room, widget, nativeBridge, controlState);
-    return nativeEmbed as unknown as CallEmbed;
+  //
+  // SelfMatrix M2 (Fable sec-critical #1 解消、web ビルドの native 分岐 tree-shake):
+  // この分岐全体を `import.meta.env.VITE_SELFMATRIX_NATIVE` (build:native スクリプト、
+  // .env.native 経由のビルド時定数) でゲートする。web ビルドではこの定数が静的に
+  // falsy へ置換されるため、`NativeCallEmbed` への `new` 呼び出し (このモジュールで
+  // `NativeCallEmbed` を実行時に参照する唯一の箇所) が dead code になり、
+  // `NativeCallEmbed`/`NativeCallControl`/`NativeIframeShim`/`nativeBridge.ts` の
+  // native 固有コードがバンドラの tree-shake で dist から除去される。
+  if (import.meta.env.VITE_SELFMATRIX_NATIVE) {
+    const nativeBridge = getSelfmatrixNativeBridge();
+    if (nativeBridge) {
+      const nativeEmbed = new NativeCallEmbed(mx, room, widget, nativeBridge, controlState);
+      return nativeEmbed as unknown as CallEmbed;
+    }
   }
 
   const embed = new CallEmbed(mx, room, widget, container, controlState);
@@ -121,7 +131,9 @@ export const useCallPopout = () => {
       // SelfMatrix M1 step 3a レビュー FIX-A: ネイティブ版の窓移動は M3 で
       // WebContentsView 再親子付けに置き換わる (design §2.3)。それまで native では
       // popout を提供しない。
-      if (hasSelfmatrixNativeBridge()) {
+      // SelfMatrix M2: 同じ VITE_SELFMATRIX_NATIVE 定数でもゲートする (nativeBridge.ts
+      // 側の内部ゲートと二重の防御。web ビルドでは常に false)。
+      if (import.meta.env.VITE_SELFMATRIX_NATIVE && hasSelfmatrixNativeBridge()) {
         return;
       }
 
@@ -194,7 +206,8 @@ export const useCallPopin = () => {
       // SelfMatrix M1 step 3a レビュー FIX-A: native では popin で web CallEmbed を
       // 構築しない防御ガード。popout 自体を native では提供しない (useCallPopout の
       // ガード参照) ため通常ここに到達しないはずだが、防御的に同様のガードを置く。
-      if (hasSelfmatrixNativeBridge()) {
+      // SelfMatrix M2: 同じ VITE_SELFMATRIX_NATIVE 定数でもゲートする (web ビルドでは常に false)。
+      if (import.meta.env.VITE_SELFMATRIX_NATIVE && hasSelfmatrixNativeBridge()) {
         return;
       }
 
@@ -300,8 +313,15 @@ export const useCallEmbedPlacementSync = (
   // 返す (このファイル冒頭の createCallEmbed() 参照) ため、hasSelfmatrixNativeBridge() が true な
   // 環境で callEmbed が存在すれば、それは必ず NativeCallEmbed である。useCallPopout/useCallPopin が
   // 同じ前提 (hasSelfmatrixNativeBridge() の真偽だけを見る) で native 分岐しているのと同じ簡略化。
+  // SelfMatrix M2: 同じ VITE_SELFMATRIX_NATIVE 定数でもゲートする (web ビルドでは常に undefined
+  // に畳み込まれ、`callEmbed as unknown as NativeCallEmbed` の型キャストは実行時コードを
+  // 生成しない — このファイルの `NativeCallEmbed` 実体参照は createCallEmbed() の dead 分岐
+  // 内の `new NativeCallEmbed(...)` のみ)。
   const nativeEmbedForThisRoom =
-    hasSelfmatrixNativeBridge() && callEmbed && callEmbed.roomId === roomId
+    import.meta.env.VITE_SELFMATRIX_NATIVE &&
+    hasSelfmatrixNativeBridge() &&
+    callEmbed &&
+    callEmbed.roomId === roomId
       ? (callEmbed as unknown as NativeCallEmbed)
       : undefined;
 

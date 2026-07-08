@@ -198,8 +198,20 @@ declare global {
   }
 }
 
-/** ネイティブシェル (WebContentsView ベースの通話ホスト) 内で動作しているかどうか。 */
+/**
+ * ネイティブシェル (WebContentsView ベースの通話ホスト) 内で動作しているかどうか。
+ *
+ * SelfMatrix M2 (Fable sec-critical #1 解消、web ビルドの native 分岐 tree-shake):
+ * `import.meta.env.VITE_SELFMATRIX_NATIVE` (`npm run build:native` = `vite build
+ * --mode native` のときだけ `.env.native` 経由で true になるビルド時定数、
+ * package.json の `build:native` スクリプト参照) が falsy な限り、
+ * `window.selfmatrixNative` を一切参照せず即 `false` を返す。web ビルドでは
+ * この定数が Vite によって静的に `undefined`/`false` へ置換されるため、後続の
+ * `window.selfmatrixNative` 参照は dead code としてバンドラに tree-shake される
+ * (植え込まれた `window.selfmatrixNative` が web ビルドでは一切効かなくなる)。
+ */
 export function hasSelfmatrixNativeBridge(): boolean {
+  if (!import.meta.env.VITE_SELFMATRIX_NATIVE) return false;
   return typeof window !== 'undefined' && window.selfmatrixNative !== undefined;
 }
 
@@ -231,8 +243,14 @@ export function collectNativeCallLocalStorageSnapshot(): Record<string, string> 
 /**
  * `window.selfmatrixNative` を返す。通常のブラウザ/web 版 cinny では常に undefined。
  * createCallEmbed() の native 分岐の検出に使う。
+ *
+ * SelfMatrix M2 (Fable sec-critical #1 解消): hasSelfmatrixNativeBridge() と同じ
+ * `import.meta.env.VITE_SELFMATRIX_NATIVE` ゲートを先頭に持つ。web ビルドでは
+ * この定数が静的に falsy へ置換されるため、`window.selfmatrixNative` への参照
+ * (植え込まれた global を拾ってしまう経路) 自体が dead code になり tree-shake される。
  */
 export function getSelfmatrixNativeBridge(): SelfmatrixNativeBridge | undefined {
+  if (!import.meta.env.VITE_SELFMATRIX_NATIVE) return undefined;
   if (typeof window === 'undefined') return undefined;
   return window.selfmatrixNative;
 }

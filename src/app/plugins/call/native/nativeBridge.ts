@@ -220,12 +220,14 @@ export interface SelfmatrixNativeWidgetTransport {
    * 自体がアンマウントされた、または別 room を見ていて自分の通話が背景で継続しているだけで
    * この room の CallView がその通話の表示先ではなくなった場合)。
    *
-   * **detached (別窓 popout) 中**: M3 スコープの `callWindow` 再親子付け UI がまだ無いため、
-   * native では popout 自体を提供していない (`useCallPopout`/`useCallPopin` の
-   * `hasSelfmatrixNativeBridge()` ガード参照) — そのため cinny 側は detach 中にこのメソッドを
-   * 呼ぶ状況そのものが (現状) 発生しない。シェル側 (`main.cjs`) は念のため
-   * `callViewState !== "attached"` のときは受信しても適用しない防御を持つ (detached 中の
-   * 別窓のレイアウトは `callWindow` 側の責務、M3 スコープ)。
+   * **detached (別窓 popout) 中**: M3 step 4 で ⧉ ボタン経由の popout 導線
+   * (`NativeCallEmbed.popout()`/`popin()`、CallControls.tsx の native 分岐) が実装された結果、
+   * detach 中も cinny 側の `CallView`/`CallControls` はマウントされたままで
+   * `useCallEmbedPlacementSync` の `ResizeObserver` は動き続けるため、本メソッドは detach 中も
+   * 通常どおり呼ばれ得る (呼ぶこと自体を止める分岐は cinny 側に無い)。ただしこれは無害 —
+   * シェル側 (`main.cjs`) が `callViewState !== "attached"` のときは受信しても適用しない防御を
+   * 持っている (detached 中の別窓のレイアウトは `callWindow` 側の責務、M3 スコープ) ため、
+   * detach 中に届いた bounds はシェル側で単に無視される。
    */
   setCallViewBounds(bounds: { x: number; y: number; width: number; height: number } | null): void;
 }

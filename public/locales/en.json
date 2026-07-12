@@ -1614,7 +1614,8 @@
       "fps": "Frame rate",
       "start_share": "Start sharing",
       "end": "End",
-      "popout": "Pop out call"
+      "popout": "Pop out call",
+      "popin": "Return call to this window"
     },
     "status": {
       "speaking_one": "<0>{{name1}}</0> is speaking...",

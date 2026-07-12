@@ -27,6 +27,13 @@ import {
 } from './nativeBridge';
 
 /**
+ * SelfMatrix M3 step 4: call view の attach 先。`nativeBridge.ts` の
+ * `onCallViewPlacement()` が push する値と同じ語彙 (design/m3-window-ux.md §2 サブステップ 4)。
+ * cinny 側 (hooks/useCallEmbed.ts、CallControls.tsx) の型注釈用に再エクスポートする。
+ */
+export type CallViewPlacement = 'main' | 'window' | 'none';
+
+/**
  * `CallEmbed` (src/app/plugins/call/CallEmbed.ts) と並存するネイティブシェル向け実装
  * (design/native-widget-transport.md §2.3)。`CallEmbed` を継承しない (継承すると
  * コンストラクタが iframe の生成/container への append を前提にしてしまい、
@@ -48,6 +55,13 @@ import {
  *   `undefined` として安全に no-op 化するため (`document` を明示的に
  *   `undefined` 固定で実装することでこれを保証している)、実行時エラーにはならないが
  *   話者ハイライト機能自体はネイティブでは動作しない。
+ *
+ * SelfMatrix M3 step 4 (design/m3-window-ux.md §2 サブステップ 4): `popout()`/`popin()`/
+ * `getCallViewPlacement()`/`onCallViewPlacementChange()` を追加。web 版の `CallPopout` (別クラス、
+ * 「離脱 → 別窓で再 join」の再接続方式) とは異なり、native は再親子付け方式 (無再接続、
+ * design §0) のため通話中ずっと同じ `NativeCallEmbed` インスタンスのまま — `callEmbedAtom`
+ * を差し替えない (state/callEmbed.ts の atom setter は差し替え時に旧 embed を dispose() する
+ * ため、web の popout のように新インスタンスへ差し替えると通話が切れてしまう)。
  */
 export class NativeCallEmbed {
   private mx: MatrixClient;
@@ -90,6 +104,17 @@ export class NativeCallEmbed {
 
   /** setPlacement() の requestAnimationFrame まとめ用ハンドル。 */
   private pendingBoundsFrame: number | undefined;
+
+  /**
+   * M3 step 4: call view が現在どの窓に attach されているか。既存の `setPlacement()`/
+   * `lastSentBounds` (M2 bounds sync、cinny 内レイアウト矩形の push) とは全くの別概念
+   * (nativeBridge.ts の `onCallViewPlacement()` 契約コメント参照) なので、命名の紛れを避けて
+   * `callViewPlacement` と名付けている。openCallView() は常に mainWindow へ描画を依頼する
+   * (design §2.3) ため初期値は "main"。以降は `onCallViewPlacementChange()` の購読者経由でのみ
+   * 更新される — 別窓をユーザーが X で閉じたときの "main" への自動復帰 (design §3-5) も
+   * この経路で反映される。
+   */
+  private callViewPlacement: CallViewPlacement = 'main';
 
   /**
    * native では WebContentsView の実 DOM に host からアクセスできないため常に
@@ -228,6 +253,54 @@ export class NativeCallEmbed {
     this.pendingBoundsFrame = requestAnimationFrame(() => {
       this.pendingBoundsFrame = undefined;
       this.transport.setCallViewBounds(bounds);
+    });
+  }
+
+  /**
+   * SelfMatrix M3 step 4 (design/m3-window-ux.md §2 サブステップ 4): ⧉ ボタン (native 分岐、
+   * CallControls.tsx) から呼ばれる。call view を別窓へ無再接続で出す
+   * (`nativeBridge.ts` の `popoutCallView()` 契約参照)。web 版の `useCallPopout` (離脱して
+   * 別窓で再 join) とは異なりこのインスタンス自体は差し替わらない — 呼び出し元は
+   * `callEmbedAtom` を一切操作しないこと (差し替えると旧 embed として dispose() されてしまう)。
+   */
+  public popout(): Promise<void> {
+    return this.transport.popoutCallView();
+  }
+
+  /**
+   * SelfMatrix M3 step 4: popout() の逆。「メインに戻す」導線 (CallControls.tsx の native 分岐、
+   * ⧉ ボタンが 'window' 状態のときのクリック) から呼ばれる (`nativeBridge.ts` の
+   * `popinCallView()` 契約参照)。既に "main" ならシェル側で no-op になる (popinCallView() の
+   * JSDoc 参照) ため、呼び出し元は現在の placement を確認せず無条件に呼んでよい。
+   */
+  public popin(): Promise<void> {
+    return this.transport.popinCallView();
+  }
+
+  /** 現在の call view の attach 先 (直近の push 済み値、または初期値 "main")。 */
+  public getCallViewPlacement(): CallViewPlacement {
+    return this.callViewPlacement;
+  }
+
+  /**
+   * SelfMatrix M3 step 4 (design §3-5「placement 状態の逆方向 push」): `nativeBridge.ts` の
+   * `onCallViewPlacement()` を購読するラッパー。**登録直後に現在値を同期的に 1 回 replay**
+   * してから以降の変化を流す — 呼び出し元 (`useNativeCallViewPlacement` フック、
+   * hooks/useCallEmbed.ts) が購読開始時点の状態を取りこぼさずに初期値を得られるようにするため
+   * (「別窓を X で閉じて main へ自動復帰」は cinny 側の操作を伴わず起こるため、
+   * CallControls が後から (再) マウントされた場合でも実状態に同期できる必要がある)。
+   *
+   * 呼び出しごとに `transport.onCallViewPlacement()` へ個別に subscribe する
+   * (`NativeCallControl.onCallControlState` と異なり、このクラス自身はコンストラクタで
+   * 一括購読しない — CallControls は通話が joined の間ずっとマウントされたままなので
+   * 単一の購読で十分足りる。複数箇所が同時に購読しても push チャンネル自体は
+   * `onCallControlState` と同じ多重購読対応の契約)。戻り値は unsubscribe 関数。
+   */
+  public onCallViewPlacementChange(listener: (placement: CallViewPlacement) => void): () => void {
+    listener(this.callViewPlacement);
+    return this.transport.onCallViewPlacement((placement) => {
+      this.callViewPlacement = placement;
+      listener(placement);
     });
   }
 

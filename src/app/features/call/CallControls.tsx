@@ -29,7 +29,11 @@ import {
   SoundButton,
 } from './Controls';
 import { CallEmbed, useCallControlState } from '../../plugins/call';
-import { useCallPopout } from '../../hooks/useCallEmbed';
+import {
+  useCallPopout,
+  useNativeCallPopoutToggle,
+  useNativeCallViewPlacement,
+} from '../../hooks/useCallEmbed';
 import { useResizeObserver } from '../../hooks/useResizeObserver';
 import { stopPropagation } from '../../utils/keyboard';
 import { AsyncStatus, useAsyncCallback } from '../../hooks/useAsyncCallback';
@@ -96,13 +100,40 @@ export function CallControls({ callEmbed }: CallControlsProps) {
   const popouting = popoutState.status === AsyncStatus.Loading;
   const popoutBlocked = popoutState.status === AsyncStatus.Error;
 
-  // SelfMatrix M1 step 3a レビュー FIX-A: ネイティブシェルでは popout ボタン自体を
-  // 描画しない (窓移動は M3 で WebContentsView 再親子付けに置き換わる想定、
-  // useCallEmbed.ts の useCallPopout ガード参照)。web では従来どおり描画する。
-  // SelfMatrix M2: 同じ VITE_SELFMATRIX_NATIVE 定数でもゲートする (web ビルドでは常に false
-  // に畳み込まれ、popout ボタンは従来どおり常に描画される)。
+  // SelfMatrix M2: web ビルドでは VITE_SELFMATRIX_NATIVE が静的に false へ畳み込まれるため
+  // nativeShell は常に false (この式全体・後続の native 分岐が dead code として tree-shake
+  // される、CallEmbed.ts createCallEmbed() 等と同じパターン)。
   const nativeShell =
     Boolean(import.meta.env.VITE_SELFMATRIX_NATIVE) && hasSelfmatrixNativeBridge();
+
+  // SelfMatrix M3 step 4 (design/m3-window-ux.md §2 サブステップ 4): ⧉ ボタンを native でも
+  // 描画する (M1 step 3a レビュー FIX-A の非描画ガードを撤廃)。native では web の
+  // useCallPopout/useCallPopin (離脱→別窓再 join の再接続方式) ではなく、claim 済み transport
+  // 経由の無再接続な再親子付け (NativeCallEmbed.popout()/popin()) を使う。
+  //
+  // 別窓をユーザーが X で閉じると cinny 側の操作なしに 'main' へ戻る push が来る (design §3-5)
+  // ため、ボタンの見た目/挙動はこの購読済み state だけで決める (クリック時の楽観的トグルは
+  // しない — push が実状態そのもの)。native 検出ゲート・NativeCallEmbed 参照
+  // (getOrClaimWidgetTransport() 経由の claim 済み transport 呼び出し) はどちらも
+  // useCallEmbed.ts 側のフック自身のスコープ内に閉じ込めてある (このコンポーネントには
+  // NativeCallEmbed の値としての参照を一切持ち込まない) — 呼び出し元をまたいでゲート判定を
+  // 使い回すと、tree-shake 時に native 分岐が web dist から確実には畳み込まれなくなるため
+  // (実装中に `npm run build` の dist を grep して実際にこの差を確認した)。
+  const nativePlacement = useNativeCallViewPlacement(callEmbed);
+  const nativePopin = nativeShell && nativePlacement === 'window';
+  const triggerNativePopout = useNativeCallPopoutToggle(callEmbed, nativePlacement);
+
+  const [nativePopoutState, runNativePopoutAction] = useAsyncCallback(triggerNativePopout);
+  const nativePopoutPending = nativePopoutState.status === AsyncStatus.Loading;
+
+  // web 経路 (nativeShell === false) では以下は全て元の値と一致する:
+  // popoutButtonTestId = 'call_popout' / popoutButtonLabel = t('call.controls.popout') /
+  // popoutButtonPending = popouting / popoutButtonOnClick = popout / popoutButtonIcon = External。
+  const popoutButtonTestId = nativePopin ? 'call_popin' : 'call_popout';
+  const popoutButtonLabel = nativePopin ? t('call.controls.popin') : t('call.controls.popout');
+  const popoutButtonPending = nativeShell ? nativePopoutPending : popouting;
+  const popoutButtonOnClick = nativeShell ? runNativePopoutAction : popout;
+  const popoutButtonIcon = nativePopin ? Icons.ArrowLeft : Icons.External;
 
   return (
     <Box
@@ -144,38 +175,36 @@ export function CallControls({ callEmbed }: CallControlsProps) {
         <Box alignItems="Center" gap="Inherit" grow="Yes" direction={compact ? 'Column' : 'Row'}>
           <Box shrink="No" alignItems="Inherit" justifyContent="Inherit" gap="200">
             <ChatButton />
-            {!nativeShell && (
-              <TooltipProvider
-                position="Top"
-                delay={500}
-                tooltip={
-                  <Tooltip>
-                    <Text size="T200">{t('call.controls.popout')}</Text>
-                  </Tooltip>
-                }
-              >
-                {(anchorRef) => (
-                  <IconButton
-                    ref={anchorRef}
-                    data-testid="call_popout"
-                    variant="Surface"
-                    fill="Soft"
-                    radii="400"
-                    size="400"
-                    onClick={popout}
-                    outlined
-                    disabled={popouting}
-                    aria-label={t('call.controls.popout')}
-                  >
-                    {popouting ? (
-                      <Spinner variant="Secondary" fill="Soft" size="200" />
-                    ) : (
-                      <Icon size="400" src={Icons.External} />
-                    )}
-                  </IconButton>
-                )}
-              </TooltipProvider>
-            )}
+            <TooltipProvider
+              position="Top"
+              delay={500}
+              tooltip={
+                <Tooltip>
+                  <Text size="T200">{popoutButtonLabel}</Text>
+                </Tooltip>
+              }
+            >
+              {(anchorRef) => (
+                <IconButton
+                  ref={anchorRef}
+                  data-testid={popoutButtonTestId}
+                  variant="Surface"
+                  fill="Soft"
+                  radii="400"
+                  size="400"
+                  onClick={popoutButtonOnClick}
+                  outlined
+                  disabled={popoutButtonPending}
+                  aria-label={popoutButtonLabel}
+                >
+                  {popoutButtonPending ? (
+                    <Spinner variant="Secondary" fill="Soft" size="200" />
+                  ) : (
+                    <Icon size="400" src={popoutButtonIcon} />
+                  )}
+                </IconButton>
+              )}
+            </TooltipProvider>
             <TooltipProvider
               position="Top"
               delay={500}

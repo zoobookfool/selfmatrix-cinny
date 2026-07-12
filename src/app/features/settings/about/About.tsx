@@ -8,6 +8,7 @@ import { SettingTile } from '../../../components/setting-tile';
 import CinnySVG from '../../../../../public/res/svg/cinny.svg';
 import { clearCacheAndReload } from '../../../../client/initMatrix';
 import { useMatrixClient } from '../../../hooks/useMatrixClient';
+import { version as clientVersion } from '../../../../../package.json';
 
 type AboutProps = {
   requestClose: () => void;
@@ -15,6 +16,9 @@ type AboutProps = {
 export function About({ requestClose }: AboutProps) {
   const { t } = useTranslation();
   const mx = useMatrixClient();
+  const desktopVersion = import.meta.env.VITE_SELFMATRIX_DESKTOP_VERSION;
+  const cinnyCommit = import.meta.env.VITE_SELFMATRIX_CINNY_SHA;
+  const elementCallCommit = import.meta.env.VITE_SELFMATRIX_ELEMENT_CALL_SHA;
 
   return (
     <Page>
@@ -46,10 +50,18 @@ export function About({ requestClose }: AboutProps) {
                 </Box>
                 <Box direction="Column" gap="300">
                   <Box direction="Column" gap="100">
-                    <Box gap="100" alignItems="End">
+                    <Box gap="100" alignItems="End" wrap="Wrap">
                       <Text size="H3">SelfMatrix</Text>
-                      <Text size="T200">v4.12.3</Text>
+                      <Text size="T200">Client {clientVersion}</Text>
+                      {desktopVersion && <Text size="T200">Desktop {desktopVersion}</Text>}
                     </Box>
+                    {desktopVersion && (cinnyCommit || elementCallCommit) && (
+                      <Text size="T200">
+                        {cinnyCommit && `Cinny ${cinnyCommit.slice(0, 12)}`}
+                        {cinnyCommit && elementCallCommit && ' / '}
+                        {elementCallCommit && `Element Call ${elementCallCommit.slice(0, 12)}`}
+                      </Text>
+                    )}
                     <Text>{t('settings.about.tagline')}</Text>
                   </Box>
 

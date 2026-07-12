@@ -105,6 +105,32 @@ export interface SelfmatrixNativeWidgetTransport {
   closeCallView(): Promise<void>;
 
   /**
+   * SelfMatrix M3 step 1 (design/m3-window-ux.md §2 サブステップ 1): 通話 View を別窓へ
+   * 無再接続で出す。シェル側の実体は `detachCallView()` (`main.cjs`) — 既存の call view
+   * (WebContentsView、生きた `RTCPeerConnection` を保持) を新しい `callWindow` へ
+   * `removeChildView`/`addChildView` で再親子付けするだけで、View 自体は作り直さない
+   * (M3 step 0 スパイクで無再接続復帰が実証済みの `close-preserve` 方式と同じ実体)。
+   *
+   * `openCallView()`/`closeCallView()` と同様に `Promise<void>` を返す — シェル側の
+   * 再親子付けが実際に完了したことを呼び出し元が `await` で待てるようにするため
+   * (fire-and-forget にしていない)。
+   *
+   * **別窓をユーザーが閉じた場合の復帰**: シェル側は別窓の実 close (X ボタン) を
+   * `close-preserve` 方式で横取りし、`popinCallView()` を呼んだのと同じ効果 (メインへの
+   * 再親子付け) を自動的に起こす (design §3-1/§3-2)。この場合 cinny 側は
+   * `popinCallView()` を能動的に呼んでいないため、その事実は本メソッドの戻り値では
+   * 検知できない — 必ず {@link onCallViewPlacement} の push を購読して同期すること。
+   */
+  popoutCallView(): Promise<void>;
+
+  /**
+   * SelfMatrix M3 step 1: 通話 View をメイン (mainWindow) へ戻す。シェル側の実体は
+   * `attachCallView()`。既に "main" 側にある場合は no-op (シェル側が `callViewState` を
+   * 見て冪等化している — `popoutCallView()` を経ずに呼んでも安全)。
+   */
+  popinCallView(): Promise<void>;
+
+  /**
    * カテゴリ B (screenshare/spotlight/emphasis/reactions/settings など、widget
    * action が存在せず call view 内の実 DOM 操作でしか実現できない操作。design §1.5/§2.2)
    * 用の RPC。action の文字列の意味解釈は call view 側 preload (シェル側、step 3b) の
@@ -140,6 +166,29 @@ export interface SelfmatrixNativeWidgetTransport {
   onCallControlState(listener: (state: NativeCallControlStatePush) => void): () => void;
 
   /**
+   * SelfMatrix M3 step 1 (design/m3-window-ux.md §2 サブステップ 1、§3-5「placement 状態の
+   * 逆方向 push」): call view の attach 先 ("main" | "window" | "none") が変化するたびに
+   * シェルから push される通知を購読する。
+   *
+   * **なぜ必要か**: `popoutCallView()`/`popinCallView()` の呼び出し元がその場で楽観的に
+   * UI 状態を更新するだけでは不十分。別窓を**ユーザーが X ボタンで閉じる**と、cinny 側は
+   * 何も呼んでいないのに main プロセス側で勝手に "main" への再親子付け (`close-preserve`
+   * 方式の復帰、design §3-1/§3-2) が起こる。この逆方向の状態変化を cinny UI (⧉ ボタンの
+   * 押下状態・「別窓表示中」表示など) に反映するには、この push チャンネルの購読が必須。
+   *
+   * {@link onCallControlState}（call view 内 DOM の `MutationObserver` 起点、
+   * screenshare/spotlight 等の状態）とは完全に別チャンネル — こちらは call view 自体が
+   * どのウィンドウに存在するかという、シェル側 (main プロセス) の `WebContentsView`
+   * 再親子付け状態が起点。
+   *
+   * `"none"` は通話が完全に終了した (`closeCallView()` 経由、hangup) ことを表す。
+   *
+   * 戻り値は unsubscribe 関数 (`onCallControlState()` と同じパターン、`dispose()` で
+   * 呼ぶこと)。
+   */
+  onCallViewPlacement(listener: (placement: 'main' | 'window' | 'none') => void): () => void;
+
+  /**
    * M2 (Fable 全体レビュー arch-major 解消、bounds 同期): web 版では
    * `useCallEmbedPlacementSync` (hooks/useCallEmbed.ts) が CallView 内の実レイアウト座標
    * (サイドバー開閉・チャット切替・ウィンドウリサイズに追従する `ResizeObserver` 計測値) を
@@ -171,12 +220,14 @@ export interface SelfmatrixNativeWidgetTransport {
    * 自体がアンマウントされた、または別 room を見ていて自分の通話が背景で継続しているだけで
    * この room の CallView がその通話の表示先ではなくなった場合)。
    *
-   * **detached (別窓 popout) 中**: M3 スコープの `callWindow` 再親子付け UI がまだ無いため、
-   * native では popout 自体を提供していない (`useCallPopout`/`useCallPopin` の
-   * `hasSelfmatrixNativeBridge()` ガード参照) — そのため cinny 側は detach 中にこのメソッドを
-   * 呼ぶ状況そのものが (現状) 発生しない。シェル側 (`main.cjs`) は念のため
-   * `callViewState !== "attached"` のときは受信しても適用しない防御を持つ (detached 中の
-   * 別窓のレイアウトは `callWindow` 側の責務、M3 スコープ)。
+   * **detached (別窓 popout) 中**: M3 step 4 で ⧉ ボタン経由の popout 導線
+   * (`NativeCallEmbed.popout()`/`popin()`、CallControls.tsx の native 分岐) が実装された結果、
+   * detach 中も cinny 側の `CallView`/`CallControls` はマウントされたままで
+   * `useCallEmbedPlacementSync` の `ResizeObserver` は動き続けるため、本メソッドは detach 中も
+   * 通常どおり呼ばれ得る (呼ぶこと自体を止める分岐は cinny 側に無い)。ただしこれは無害 —
+   * シェル側 (`main.cjs`) が `callViewState !== "attached"` のときは受信しても適用しない防御を
+   * 持っている (detached 中の別窓のレイアウトは `callWindow` 側の責務、M3 スコープ) ため、
+   * detach 中に届いた bounds はシェル側で単に無視される。
    */
   setCallViewBounds(bounds: { x: number; y: number; width: number; height: number } | null): void;
 }

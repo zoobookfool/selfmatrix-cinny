@@ -84,6 +84,77 @@ export function About({ requestClose }: AboutProps) {
                 </Box>
               </Box>
               <Box direction="Column" gap="100">
+                <Text size="L400">{t('settings.about.compliance.title')}</Text>
+                <SequenceCard
+                  className={SequenceCardStyle}
+                  variant="SurfaceVariant"
+                  direction="Column"
+                  gap="400"
+                >
+                  <Box
+                    as="ul"
+                    direction="Column"
+                    gap="200"
+                    style={{
+                      margin: 0,
+                      paddingLeft: config.space.S400,
+                    }}
+                  >
+                    <li>
+                      <Text size="T300">
+                        <Trans i18nKey="settings.about.compliance.fork_origin.cinny">
+                          <a
+                            href="https://github.com/cinnyapp/cinny"
+                            rel="noreferrer noopener"
+                            target="_blank"
+                          >
+                            Cinny
+                          </a>
+                        </Trans>
+                      </Text>
+                    </li>
+                    <li>
+                      <Text size="T300">
+                        <Trans i18nKey="settings.about.compliance.fork_origin.element_call">
+                          <a
+                            href="https://github.com/element-hq/element-call"
+                            rel="noreferrer noopener"
+                            target="_blank"
+                          >
+                            Element Call
+                          </a>
+                        </Trans>
+                      </Text>
+                    </li>
+                  </Box>
+                  <SettingTile
+                    title={t('settings.about.compliance.changes.title')}
+                    description={t('settings.about.compliance.changes.description')}
+                  />
+                  <SettingTile
+                    title={t('settings.about.compliance.license.title')}
+                    description={t('settings.about.compliance.license.description')}
+                    after={
+                      <Button
+                        as="a"
+                        href="https://www.gnu.org/licenses/agpl-3.0.html"
+                        rel="noreferrer noopener"
+                        target="_blank"
+                        variant="Secondary"
+                        fill="Soft"
+                        size="300"
+                        radii="300"
+                        outlined
+                      >
+                        <Text size="B300">
+                          {t('settings.about.compliance.license.full_text_button')}
+                        </Text>
+                      </Button>
+                    }
+                  />
+                </SequenceCard>
+              </Box>
+              <Box direction="Column" gap="100">
                 <Text size="L400">{t('settings.about.options')}</Text>
                 <SequenceCard
                   className={SequenceCardStyle}

@@ -989,6 +989,22 @@
       "tagline": "Discord-style chat on Matrix — a fork of Cinny.",
       "source_code": "ソースコード",
       "support": "サポート",
+      "compliance": {
+        "title": "オープンソースとライセンス",
+        "fork_origin": {
+          "cinny": "本アプリは、オープンソースの Matrix クライアント <0>Cinny</0> (cinnyapp/cinny) のフォークです。",
+          "element_call": "音声・ビデオ通話部分は <0>Element Call</0> (element-hq/element-call) のフォークを利用しています。"
+        },
+        "changes": {
+          "title": "主な変更点",
+          "description": "アップストリームのプロジェクトをベースに、Discord 風のサーバー/チャンネルレイアウトと通話に特化した UI、(デスクトップ版では) ネイティブアプリシェルを追加しています。"
+        },
+        "license": {
+          "title": "ライセンス",
+          "description": "本アプリは、アップストリームの Cinny と同じ GNU Affero General Public License v3.0 (AGPL-3.0) の下で提供されています。改変を含む完全なソースコードは、上記の「ソースコード」リンクから入手できます。",
+          "full_text_button": "ライセンス全文を見る"
+        }
+      },
       "options": "オプション",
       "clear_cache": {
         "title": "キャッシュを削除して再読み込み",
@@ -1598,7 +1614,8 @@
       "fps": "FPS",
       "start_share": "共有を開始",
       "end": "終了",
-      "popout": "通話を別ウィンドウで開く"
+      "popout": "通話を別ウィンドウで開く",
+      "popin": "通話をこのウィンドウに戻す"
     },
     "status": {
       "speaking_one": "<0>{{name1}}</0>さんが発言中です",

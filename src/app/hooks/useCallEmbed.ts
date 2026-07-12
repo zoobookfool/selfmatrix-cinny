@@ -25,7 +25,7 @@ import { useResizeObserver } from './useResizeObserver';
 import { CallControlState } from '../plugins/call/CallControlState';
 import { useCallMembersChange, useCallSession } from './useCall';
 import { CallPreferences } from '../state/callPreferences';
-import { NativeCallEmbed } from '../plugins/call/native/NativeCallEmbed';
+import { CallViewPlacement, NativeCallEmbed } from '../plugins/call/native/NativeCallEmbed';
 import {
   getSelfmatrixNativeBridge,
   hasSelfmatrixNativeBridge,
@@ -128,9 +128,13 @@ export const useCallPopout = () => {
 
   const popoutCall = useCallback(
     async (embed: CallEmbed) => {
-      // SelfMatrix M1 step 3a レビュー FIX-A: ネイティブ版の窓移動は M3 で
-      // WebContentsView 再親子付けに置き換わる (design §2.3)。それまで native では
-      // popout を提供しない。
+      // SelfMatrix M1 step 3a レビュー FIX-A: ネイティブ版の窓移動は「離脱 → 別窓で再 join」の
+      // 再接続方式ではなく、WebContentsView の無再接続な再親子付け (design §2.3) を使う。
+      // M3 step 4 でその経路 (NativeCallEmbed.popout()、CallControls.tsx の native 分岐) が
+      // 実装されたため、native の ⧉ ボタンは *この* フック (useCallPopout) を経由しない
+      // (CallControls.tsx 参照)。この early return は、native 分岐の配線ミス等で誤って
+      // この web 用フックが呼ばれてしまった場合に web の再接続方式 (callEmbedAtom の
+      // 差し替え) が native の通話を巻き込んで切断してしまわないための防御として残す。
       // SelfMatrix M2: 同じ VITE_SELFMATRIX_NATIVE 定数でもゲートする (nativeBridge.ts
       // 側の内部ゲートと二重の防御。web ビルドでは常に false)。
       if (import.meta.env.VITE_SELFMATRIX_NATIVE && hasSelfmatrixNativeBridge()) {
@@ -204,8 +208,10 @@ export const useCallPopin = () => {
   const popinCall = useCallback(
     async (embed: CallEmbed) => {
       // SelfMatrix M1 step 3a レビュー FIX-A: native では popin で web CallEmbed を
-      // 構築しない防御ガード。popout 自体を native では提供しない (useCallPopout の
-      // ガード参照) ため通常ここに到達しないはずだが、防御的に同様のガードを置く。
+      // 構築しない防御ガード。M3 step 4 で native の「メインに戻す」導線は
+      // NativeCallEmbed.popin() (CallControls.tsx の native 分岐) を経由するようになり、
+      // このフック (useCallPopin) は通常ここに到達しないが、防御的に同様のガードを置く
+      // (useCallPopout の同種コメント参照)。
       // SelfMatrix M2: 同じ VITE_SELFMATRIX_NATIVE 定数でもゲートする (web ビルドでは常に false)。
       if (import.meta.env.VITE_SELFMATRIX_NATIVE && hasSelfmatrixNativeBridge()) {
         return;
@@ -248,6 +254,76 @@ export const useCallPopin = () => {
   );
 
   return popinCall;
+};
+
+/**
+ * SelfMatrix M3 step 4 (design/m3-window-ux.md §2 サブステップ 4/§3-5): native の call view が
+ * 現在どちらの窓に attach されているか ("main" | "window" | "none") を React state として
+ * 購読する。web、または native 未検出のときは常に `undefined` を返す — 呼び出し元
+ * (CallControls.tsx) はこれで web/native を判別できる。
+ *
+ * 別窓をユーザーが X ボタンで閉じると cinny 側の操作を伴わずに "main" へ戻る push が来る
+ * (design §3-5) ため、この state は `NativeCallEmbed.onCallViewPlacementChange()` の購読だけで
+ * 追従させる (楽観的更新は行わない — push が実状態そのもの)。
+ *
+ * SelfMatrix M2 tree-shake との整合: native 検出ゲート (`import.meta.env.VITE_SELFMATRIX_NATIVE
+ * && hasSelfmatrixNativeBridge()`) は `useCallEmbedPlacementSync` の `nativeEmbedForThisRoom`
+ * と同様、**この関数自身のスコープ内**で行う (呼び出し元から渡された値を受け取るだけにしない)。
+ * web ビルドでは定数が静的に false へ畳み込まれるため、ゲートと `NativeCallEmbed` 参照が
+ * 同一スコープ内にあることでバンドラがこの関数全体を通して dead code として畳み込める
+ * (呼び出し元で先にゲート判定してから引数として渡す形にすると、この関数のコンパイル結果は
+ * 引数の実行時 truthiness にしか依存できず、`.getCallViewPlacement()`/
+ * `.onCallViewPlacementChange()` の呼び出し自体が web dist に残ってしまう — 実装中に
+ * `npm run build` の dist を grep して実際にこの差を確認した)。
+ */
+export const useNativeCallViewPlacement = (
+  embed: CallEmbed | undefined
+): CallViewPlacement | undefined => {
+  const nativeEmbed =
+    import.meta.env.VITE_SELFMATRIX_NATIVE && hasSelfmatrixNativeBridge() && embed
+      ? (embed as unknown as NativeCallEmbed)
+      : undefined;
+
+  const [placement, setPlacement] = useState<CallViewPlacement | undefined>(() =>
+    nativeEmbed?.getCallViewPlacement()
+  );
+
+  useEffect(() => {
+    if (!nativeEmbed) {
+      setPlacement(undefined);
+      return undefined;
+    }
+    // onCallViewPlacementChange() は購読直後に現在値を同期 replay するため、ここで改めて
+    // getCallViewPlacement() を読む必要はない (NativeCallEmbed.ts のコメント参照)。
+    return nativeEmbed.onCallViewPlacementChange(setPlacement);
+  }, [nativeEmbed]);
+
+  return placement;
+};
+
+/**
+ * SelfMatrix M3 step 4: ⧉ ボタン (native 分岐、CallControls.tsx) のクリックハンドラ。
+ * `placement` (`useNativeCallViewPlacement()` の戻り値) が `'window'` なら popin()、それ以外なら
+ * popout() を呼ぶ。web、または native 未検出のときは何もしない no-op を返す (呼び出し元が
+ * web/native で条件分岐せずそのまま onClick に渡せるようにするため)。
+ *
+ * `useNativeCallViewPlacement()` と同じ理由 (このファイル上のコメント参照) で native 検出ゲートは
+ * **この関数自身のスコープ内**で完結させている — CallControls.tsx 側で先にゲート判定した
+ * `NativeCallEmbed` 参照を引数として受け取る形にはしない。
+ */
+export const useNativeCallPopoutToggle = (
+  embed: CallEmbed | undefined,
+  placement: CallViewPlacement | undefined
+): (() => Promise<void>) => {
+  const nativeEmbed =
+    import.meta.env.VITE_SELFMATRIX_NATIVE && hasSelfmatrixNativeBridge() && embed
+      ? (embed as unknown as NativeCallEmbed)
+      : undefined;
+
+  return useCallback(() => {
+    if (!nativeEmbed) return Promise.resolve();
+    return placement === 'window' ? nativeEmbed.popin() : nativeEmbed.popout();
+  }, [nativeEmbed, placement]);
 };
 
 export const useCallJoined = (embed?: CallEmbed): boolean => {

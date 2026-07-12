@@ -1,0 +1,59 @@
+name: Web build tree-shake guard
+
+# SelfMatrix M4 R2 の恒久化: web ビルド (VITE_SELFMATRIX_NATIVE 無し) に native シェル専用の
+# コードが混入していないことを CI で常設検証する。native 分岐のゲート漏れ (tree-shake の回帰) が
+# 入ると、悪意ある拡張が window.selfmatrixNative を植え込んだ web 版で通話ホストが乗っ取られ得る
+# (Fable sec-critical #1)。この job が落ちたら web ビルドに native コードが入った合図。
+# 設計背景: selfmatrix-workspace/planning/web-native-parallel.md R2。
+#
+# トリガの意図: native シェルのコード (src/app/plugins/call/native/, .selfmatrix/) は現在
+# spike/native-shell にあり、そこでのみ web/native の出し分けが実在する。product への統合は
+# 運用者ゲート (M2/M3 と同型) の保留タスク。よって「今ガードが意味を持つ spike」と「統合後に
+# ガードが必要になる product」の両方をトリガにする。product には統合まで本ワークフロー自体が
+# 無いので、統合前の product push で空振り失敗することはない (GitHub Actions は push された
+# ブランチ上のワークフロー定義で発火する)。
+
+on:
+  push:
+    branches: [spike/native-shell, product/discord-style-shell]
+  pull_request:
+    branches: [spike/native-shell, product/discord-style-shell]
+  workflow_dispatch:
+
+concurrency:
+  group: web-native-treeshake-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tree-shake-guard:
+    name: web build has no native symbols
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout cinny
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Setup node
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version-file: .node-version
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # web ビルド (VITE_SELFMATRIX_NATIVE 無し)。--mode native は付けない。
+      - name: Build (web)
+        run: npm run build
+
+      # (本判定) dist/ に native シェル専用の識別子が残っていれば exit 1。
+      - name: Assert web build tree-shakes native code
+        run: node .selfmatrix/check-web-no-native.mjs dist
+
+      # (負の対照 / mutation gate) native ビルドに対しては同じガードが必ず native 識別子を
+      # 検知しなければならない。ここが pass しないと「ガード自体が壊れている (FORBIDDEN が空、
+      # 検査対象漏れ 等) のに本判定が通っているだけ」を見逃す。web build を上書きするので本判定の後に置く。
+      - name: Build (native)
+        run: npm run build:native
+
+      - name: Assert guard detects native code (self-test)
+        run: node .selfmatrix/check-web-no-native.mjs dist --expect-fail

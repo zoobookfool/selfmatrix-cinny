@@ -989,6 +989,22 @@
       "tagline": "Discord-style chat on Matrix — a fork of Cinny.",
       "source_code": "Source Code",
       "support": "Support",
+      "compliance": {
+        "title": "Open Source & License",
+        "fork_origin": {
+          "cinny": "This app is a fork of <0>Cinny</0>, an open-source Matrix client (cinnyapp/cinny).",
+          "element_call": "Voice and video calls are powered by a fork of <0>Element Call</0> (element-hq/element-call)."
+        },
+        "changes": {
+          "title": "What We Changed",
+          "description": "Adds a Discord-style server/channel layout and a call-focused UI, plus (on desktop) a native app shell, on top of the upstream projects."
+        },
+        "license": {
+          "title": "License",
+          "description": "This app is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0), the same as upstream Cinny. The complete source code, including local modifications, is available via the Source Code link above.",
+          "full_text_button": "View Full License Text"
+        }
+      },
       "options": "Options",
       "clear_cache": {
         "title": "Clear Cache & Reload",
@@ -1598,7 +1614,8 @@
       "fps": "Frame rate",
       "start_share": "Start sharing",
       "end": "End",
-      "popout": "Pop out call"
+      "popout": "Pop out call",
+      "popin": "Return call to this window"
     },
     "status": {
       "speaking_one": "<0>{{name1}}</0> is speaking...",

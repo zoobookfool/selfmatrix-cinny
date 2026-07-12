@@ -54,9 +54,7 @@ import {
   getMemberDisplayName,
 } from '../../../utils/room';
 import {
-  getCanonicalAliasOrRoomId,
   getMxIdLocalPart,
-  isRoomAlias,
   mxcUrlToHttp,
 } from '../../../utils/matrix';
 import { MessageLayout, MessageSpacing } from '../../../state/settings';
@@ -329,7 +327,6 @@ export const MessageCopyLinkItem = as<
   }
 >(({ room, mEvent, onClose, ...props }, ref) => {
   const { t } = useTranslation();
-  const mx = useMatrixClient();
 
   const handleCopy = () => {
     const eventId = mEvent.getId();

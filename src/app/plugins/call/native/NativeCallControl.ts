@@ -254,7 +254,9 @@ export class NativeCallControl extends EventEmitter implements CallControlState 
   // 送り届けておけば、web 版の契約と等価になる。
   public toggleScreenshare(): void {
     const screenshare = !this.screenshare;
-    void this.syncLocalStorageThenToggleScreenshare(screenshare);
+    this.syncLocalStorageThenToggleScreenshare(screenshare).catch((e) => {
+      console.error('Unexpected error toggling screenshare: ', e);
+    });
   }
 
   private async syncLocalStorageThenToggleScreenshare(screenshare: boolean): Promise<void> {

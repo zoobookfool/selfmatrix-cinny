@@ -13,7 +13,7 @@
     "build:native": "vite build --mode native",
     "preview": "vite preview",
     "lint": "npm run check:eslint && npm run check:prettier",
-    "check:eslint": "eslint src/*",
+    "check:eslint": "eslint src",
     "check:prettier": "prettier --check .",
     "fix:prettier": "prettier --write .",
     "typecheck": "tsc --noEmit",

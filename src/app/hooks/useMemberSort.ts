@@ -66,7 +66,7 @@ export const useMemberPowerSort = (
 
       return getPowerLevel(b.userId) - getPowerLevel(a.userId);
     },
-    [creators]
+    [creators, getPowerLevel]
   );
 
   return sort;

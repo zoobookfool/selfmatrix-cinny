@@ -42,6 +42,7 @@ const FORBIDDEN = [
   "collectNativeCallLocalStorageSnapshot",
   "getSelfmatrixNativeBridge",
   "hasSelfmatrixNativeBridge",
+  "onExternalMuteToggle",
 ];
 
 if (!existsSync(dir)) {

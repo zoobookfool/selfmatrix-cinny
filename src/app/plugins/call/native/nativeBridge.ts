@@ -230,6 +230,32 @@ export interface SelfmatrixNativeWidgetTransport {
    * detach 中に届いた bounds はシェル側で単に無視される。
    */
   setCallViewBounds(bounds: { x: number; y: number; width: number; height: number } | null): void;
+
+  /**
+   * 外部ミュート制御 選択肢 A (design/external-mute-control.md §4.1/§4.4、運用者確定要件
+   * 2026-07-12): シェルのグローバルホットキー callback / トレイのアクション項目「マイクミュート
+   * 切り替え」の click (どちらも main プロセス側で同一の関数に集約されている、design §4.1) から
+   * push される「ミュートをトグルせよ」という合図を購読する。onCallControlState()/
+   * onCallViewPlacement() と同じ「push を購読する」idiom だが、それらと異なり **中身を持たない
+   * 単発通知** (引数なしの listener) — main プロセスは「押されたことを検知する」役割に徹し、
+   * 実際にどう反応するか (現在の通話の toggleMicrophone() を呼ぶ、または通話が無ければ何もしない)
+   * は呼び出し元 (`NativeCallEmbed` のコンストラクタ) の責務。
+   *
+   * **常時待ち受けと claim-once の関係**: design §4.1 は「外部ミュート制御は通話の有無に関わらず
+   * 常時待ち受けたい」性質を持つと述べているが、この購読は `NativeCallEmbed` が構築されている間
+   * (= 通話中) だけ有効であればよい — `callEmbedAtom` は同時に高々 1 つの embed しか保持しない
+   * ため、通話中は常にその 1 通話の `NativeCallEmbed` が購読し、通話が無ければ購読者自体が
+   * 存在せず自然に no-op になる (「通話中でなければ自然に no-op」という運用者確定要件を、
+   * 追加の分岐を書かずに満たせる)。claim-once の対象 (`SelfmatrixNativeWidgetTransport` オブジェクト
+   * 自体) の中に置く理由は `claimWidgetTransport()` の JSDoc 参照 — この購読 API 自体は
+   * 「同一オリジンの子フレームから送信 API に到達される経路を塞ぐ」というセキュリティ境界の内側に
+   * 置くべき対象であり、`window.selfmatrixNative` 直下には追加しない
+   * (`.selfmatrix/check-web-no-native.mjs` の FORBIDDEN リストにもこの識別子を追加済み)。
+   *
+   * 戻り値は unsubscribe 関数 (`onCallControlState()`/`onCallViewPlacement()` と同じパターン、
+   * `NativeCallEmbed.dispose()` で必ず呼ぶこと)。
+   */
+  onExternalMuteToggle(listener: () => void): () => void;
 }
 
 /** `window.selfmatrixNative` の型。シェル preload が contextBridge 経由で公開する。 */

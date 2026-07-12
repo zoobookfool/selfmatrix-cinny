@@ -90,6 +90,12 @@ export class NativeCallEmbed {
 
   private readonly onEventDecryptedBound = this.onEventDecrypted.bind(this);
 
+  // 外部ミュート制御 選択肢 A (design/external-mute-control.md §4.1、運用者確定要件 2026-07-12):
+  // onEventBound と同じ理由で束縛済み関数をフィールドとして 1 度だけ生成する — ただしこちらは
+  // EventEmitter の off() 照合のためではなく、77d0196d の教訓 (CallEmbed でのリスナーリーク) を
+  // 踏まえ「登録した参照と同一の参照を確実に保持し、dispose で解除できるようにする」ため。
+  private readonly onExternalMuteToggleBound = this.onExternalMuteToggle.bind(this);
+
   private readonly onStateUpdateBound = this.onStateUpdate.bind(this);
 
   private readonly onToDeviceEventBound = this.onToDeviceEvent.bind(this);
@@ -159,6 +165,13 @@ export class NativeCallEmbed {
 
     const controlState = initialControlState ?? new CallControlState(true, false, true);
     this.control = new NativeCallControl(controlState, call, transport);
+
+    // 外部ミュート制御 選択肢 A (design/external-mute-control.md §4.1、運用者確定要件 2026-07-12):
+    // シェルのグローバルホットキー/トレイのアクション項目から届く「ミュートをトグルせよ」という
+    // 合図を購読する。this.control が既に構築済みの、この行より後に置く必要がある。dispose() は
+    // this.disposables を全て呼ぶため、他の listenAction() 由来の unsubscribe と同じ配列に積むだけで
+    // 解除される (77d0196d の教訓どおり、リスナーリークさせない)。
+    this.disposables.push(transport.onExternalMuteToggle(this.onExternalMuteToggleBound));
 
     let initialMediaEvent = true;
     this.disposables.push(
@@ -372,6 +385,17 @@ export class NativeCallEmbed {
 
   private onCallJoined(): void {
     this.joined = true;
+  }
+
+  /**
+   * 外部ミュート制御 選択肢 A (design/external-mute-control.md §4.1): シェルから届いた
+   * "ミュートをトグルせよ" の合図に反応する。`toggleMicrophone()` は widget action
+   * (`ElementWidgetActions.DeviceMute`) 経由で完結する既存メソッドで、無改造のまま呼ぶだけでよい
+   * (design 冒頭「結論サマリ」参照 — 外部制御が新設すべきなのは引き金の設計だけで、ミュート自体の
+   * ロジックは既に web/native 両方に存在する)。
+   */
+  private onExternalMuteToggle(): void {
+    this.control.toggleMicrophone();
   }
 
   private onEvent(ev: MatrixEvent): void {

@@ -1,7 +1,8 @@
 module.exports = {
-  // `check:eslint` (eslint src/*) は src 直下のファイルを拡張子問わず明示指定で渡すため、
-  // プレーン CSS の src/index.css が TS パーサーに食わされて parse error になる。
-  // ここで素の .css だけ除外する (vanilla-extract の .css.ts は末尾が .css でないため対象外)。
+  // `check:eslint` は `eslint src` (ディレクトリ走査。lint 対象は .js + overrides/preset が拡張する
+  // .ts/.tsx で、プレーン .css は入らない)。この ignorePatterns は、エディタ統合や手動実行で
+  // src/index.css のようなプレーン CSS が明示パスとして渡された場合に TS パーサーへ食わされて
+  // parse error になるのを防ぐ保険 (vanilla-extract の .css.ts は末尾が .css でないため対象外)。
   ignorePatterns: ['**/*.css'],
   env: {
     browser: true,

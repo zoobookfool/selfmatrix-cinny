@@ -35,6 +35,7 @@ import { useLivekitSupport } from '../../hooks/useLivekitSupport';
 import { webRTCSupported } from '../../utils/rtc';
 import { CallPopout } from '../../plugins/call';
 import { AsyncStatus, useAsyncCallback } from '../../hooks/useAsyncCallback';
+import { hasSelfmatrixNativeBridge } from '../../plugins/call/native/nativeBridge';
 
 function LivekitServerMissingMessage() {
   const { t } = useTranslation();
@@ -241,6 +242,7 @@ type CallJoinedProps = {
 function CallJoined({ joined, containerRef }: CallJoinedProps) {
   const callEmbed = useCallEmbed();
   const poppedOut = callEmbed instanceof CallPopout && joined;
+  const nativeShell = hasSelfmatrixNativeBridge();
 
   // SelfMatrix fix (敵対的レビュー FIX-2): ポップアウト中でも container の
   // <Box ref={containerRef}> は常時同じ場所に1つだけマウントしたままにする
@@ -261,7 +263,7 @@ function CallJoined({ joined, containerRef }: CallJoinedProps) {
       >
         <Box grow="Yes" ref={containerRef} />
       </Box>
-      {!poppedOut && callEmbed && joined && <CallControls callEmbed={callEmbed} />}
+      {!nativeShell && !poppedOut && callEmbed && joined && <CallControls callEmbed={callEmbed} />}
     </Box>
   );
 }

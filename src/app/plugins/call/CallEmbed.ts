@@ -26,7 +26,11 @@ import {
 } from './types';
 import { CallControl } from './CallControl';
 import { CallControlState } from './CallControlState';
-import { getCameraFeaturePolicy } from './cameraFeature';
+import {
+  getCallIframeAllow,
+  getCameraFeaturePolicy,
+  isCameraEnabledForWidgetUrl,
+} from './cameraFeature';
 
 export class CallEmbed {
   private mx: MatrixClient;
@@ -157,7 +161,7 @@ export class CallEmbed {
     iframe.title = 'Call Embed';
     iframe.sandbox =
       'allow-forms allow-scripts allow-same-origin allow-popups allow-modals allow-downloads';
-    iframe.allow = 'microphone; camera; display-capture; autoplay; clipboard-write;';
+    iframe.allow = getCallIframeAllow(isCameraEnabledForWidgetUrl(url));
     iframe.src = url;
 
     iframe.style.width = '100%';

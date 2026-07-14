@@ -63,6 +63,8 @@ import { useMessageSpacingItems } from '../../../hooks/useMessageSpacing';
 import { useDateFormatItems } from '../../../hooks/useDateFormat';
 import { useLanguageItems } from '../../../hooks/useLanguageItems';
 import { SequenceCardStyle } from '../styles.css';
+import { useCallPreferences } from '../../../state/hooks/callPreferences';
+import { useCallEmbed } from '../../../hooks/useCallEmbed';
 
 type ThemeSelectorProps = {
   themeNames: Record<string, string>;
@@ -580,6 +582,39 @@ function Layout() {
           title={t('settings.general.layout.channel_list_position.title')}
           description={t('settings.general.layout.channel_list_position.description')}
           after={<SelectDockPosition value={navPosition} onChange={handleNavPositionChange} />}
+        />
+      </SequenceCard>
+    </Box>
+  );
+}
+
+function Calls() {
+  const { t } = useTranslation();
+  const [cameraEnabled, setCameraEnabled] = useSetting(settingsAtom, 'cameraEnabled');
+  const { video, toggleVideo } = useCallPreferences();
+  const callEmbed = useCallEmbed();
+
+  const handleCameraEnabledChange = (enabled: boolean) => {
+    // Never carry a pre-call camera-on selection across a feature toggle.
+    if (video) toggleVideo();
+    setCameraEnabled(enabled);
+  };
+
+  return (
+    <Box direction="Column" gap="100">
+      <Text size="L400">{t('settings.general.calls.title')}</Text>
+      <SequenceCard className={SequenceCardStyle} variant="SurfaceVariant" direction="Column">
+        <SettingTile
+          title={t('settings.general.calls.camera.title')}
+          description={t('settings.general.calls.camera.description')}
+          after={
+            <Switch
+              variant="Primary"
+              value={cameraEnabled}
+              onChange={handleCameraEnabledChange}
+              disabled={callEmbed !== undefined}
+            />
+          }
         />
       </SequenceCard>
     </Box>
@@ -1261,6 +1296,7 @@ export function General({ requestClose }: GeneralProps) {
             <Box direction="Column" gap="700">
               <Appearance />
               <Layout />
+              <Calls />
               <DateAndTime />
               <Editor />
               <Messages />

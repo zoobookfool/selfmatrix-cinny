@@ -26,6 +26,7 @@ import {
 } from './types';
 import { CallControl } from './CallControl';
 import { CallControlState } from './CallControlState';
+import { getCameraFeaturePolicy } from './cameraFeature';
 
 export class CallEmbed {
   private mx: MatrixClient;
@@ -95,13 +96,15 @@ export class CallEmbed {
     mx: MatrixClient,
     room: Room,
     intent: ElementCallIntent,
-    themeKind: ElementCallThemeKind
+    themeKind: ElementCallThemeKind,
+    cameraEnabled = false
   ): Widget {
     const userId = mx.getSafeUserId();
     const deviceId = mx.getDeviceId() ?? '';
     const clientOrigin = window.location.origin;
     const widgetId = 'call-embed';
 
+    const cameraPolicy = getCameraFeaturePolicy(cameraEnabled);
     const params = new URLSearchParams({
       widgetId,
       parentUrl: clientOrigin,
@@ -114,8 +117,8 @@ export class CallEmbed {
       skipLobby: 'true',
       confineToRoom: 'true',
       appPrompt: 'false',
-      hideVideoButton: 'true',
-      disableVideo: 'true',
+      hideVideoButton: cameraPolicy.hideVideoButton.toString(),
+      disableVideo: cameraPolicy.disableVideo.toString(),
       perParticipantE2EE: room.hasEncryptionStateEvent().toString(),
       // SelfMatrix: 通話 UI の言語を cinny の選択言語に合わせる (EC の locales/<lng>/app.json が使われる)
       lang: i18n.resolvedLanguage ?? 'en',

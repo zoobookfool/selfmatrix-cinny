@@ -27,6 +27,7 @@ import {
   MicrophoneButton,
   ScreenShareButton,
   SoundButton,
+  VideoButton,
 } from './Controls';
 import { CallEmbed, useCallControlState } from '../../plugins/call';
 import {
@@ -38,6 +39,8 @@ import { useResizeObserver } from '../../hooks/useResizeObserver';
 import { stopPropagation } from '../../utils/keyboard';
 import { AsyncStatus, useAsyncCallback } from '../../hooks/useAsyncCallback';
 import { hasSelfmatrixNativeBridge } from '../../plugins/call/native/nativeBridge';
+import { useSetting } from '../../state/hooks/settings';
+import { settingsAtom } from '../../state/settings';
 
 type CallControlsProps = {
   callEmbed: CallEmbed;
@@ -56,8 +59,8 @@ export function CallControls({ callEmbed }: CallControlsProps) {
     useCallback(() => controlRef.current, [])
   );
 
-  // SelfMatrix: 配信特化のためカメラ UI は表示しない (機能は EC 側に温存)
-  const { microphone, sound, screenshare, spotlight, emphasis } = useCallControlState(
+  const [cameraEnabled] = useSetting(settingsAtom, 'cameraEnabled');
+  const { microphone, video, sound, screenshare, spotlight, emphasis } = useCallControlState(
     callEmbed.control
   );
 
@@ -86,6 +89,8 @@ export function CallControls({ callEmbed }: CallControlsProps) {
     () => callEmbed.control.toggleMicrophone(),
     [callEmbed]
   );
+
+  const handleVideoToggle = useCallback(() => callEmbed.control.toggleVideo(), [callEmbed]);
 
   const [hangupState, hangup] = useAsyncCallback(
     useCallback(() => callEmbed.hangup(), [callEmbed])
@@ -164,7 +169,7 @@ export function CallControls({ callEmbed }: CallControlsProps) {
           </Box>
           {!compact && <ControlDivider />}
           <Box shrink="No" alignItems="Inherit" justifyContent="Inherit" gap="200">
-            {/* SelfMatrix: 配信特化のためカメラ UI は表示しない (機能は EC 側に温存) */}
+            {cameraEnabled && <VideoButton enabled={video} onToggle={handleVideoToggle} />}
             <ScreenShareButton
               enabled={screenshare}
               onToggle={() => callEmbed.control.toggleScreenshare()}

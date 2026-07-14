@@ -125,6 +125,7 @@ export function VideoButton({ enabled, onToggle }: VideoButtonProps) {
   const { t } = useTranslation();
   const [videoState, toggleVideo] = useAsyncCallback(onToggle);
   const loading = videoState.status === AsyncStatus.Loading;
+  const label = enabled ? t('call.controls.camera_off') : t('call.controls.camera_on');
 
   return (
     <TooltipProvider
@@ -132,9 +133,7 @@ export function VideoButton({ enabled, onToggle }: VideoButtonProps) {
       delay={500}
       tooltip={
         <Tooltip>
-          <Text size="T200">
-            {enabled ? t('call.controls.camera_off') : t('call.controls.camera_on')}
-          </Text>
+          <Text size="T200">{label}</Text>
         </Tooltip>
       }
     >
@@ -148,6 +147,9 @@ export function VideoButton({ enabled, onToggle }: VideoButtonProps) {
           onClick={toggleVideo}
           outlined
           disabled={loading}
+          data-testid="call_control_video"
+          aria-label={label}
+          aria-pressed={enabled}
         >
           <Icon
             size="400"

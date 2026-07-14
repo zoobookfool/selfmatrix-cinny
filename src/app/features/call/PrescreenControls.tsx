@@ -3,10 +3,12 @@ import { Box, Button, Icon, Icons, Spinner, Text } from 'folds';
 import { useTranslation } from 'react-i18next';
 import { SequenceCard } from '../../components/sequence-card';
 import * as css from './styles.css';
-import { ChatButton, ControlDivider, MicrophoneButton, SoundButton } from './Controls';
+import { ChatButton, ControlDivider, MicrophoneButton, SoundButton, VideoButton } from './Controls';
 import { useIsDirectRoom, useRoom } from '../../hooks/useRoom';
 import { useCallEmbed, useCallJoined, useCallStart } from '../../hooks/useCallEmbed';
 import { useCallPreferences } from '../../state/hooks/callPreferences';
+import { useSetting } from '../../state/hooks/settings';
+import { settingsAtom } from '../../state/settings';
 
 type PrescreenControlsProps = {
   canJoin?: boolean;
@@ -17,6 +19,7 @@ export function PrescreenControls({ canJoin }: PrescreenControlsProps) {
   const callEmbed = useCallEmbed();
   const callJoined = useCallJoined(callEmbed);
   const direct = useIsDirectRoom();
+  const [cameraEnabled] = useSetting(settingsAtom, 'cameraEnabled');
 
   const inOtherCall = callEmbed && callEmbed.roomId !== room.roomId;
 
@@ -25,9 +28,16 @@ export function PrescreenControls({ canJoin }: PrescreenControlsProps) {
 
   const disabled = inOtherCall || !canJoin;
 
-  const { microphone, sound, toggleMicrophone, toggleSound } = useCallPreferences();
+  const { microphone, video, sound, toggleMicrophone, toggleVideo, toggleSound } =
+    useCallPreferences();
 
   const handleMicrophoneToggle = useCallback(async () => toggleMicrophone(), [toggleMicrophone]);
+  const handleVideoToggle = useCallback(async () => toggleVideo(), [toggleVideo]);
+  const handleJoin = useCallback(() => {
+    startCall(room, { microphone, video: cameraEnabled && video, sound });
+    // A pre-call camera choice applies to this join only.
+    if (video) toggleVideo();
+  }, [startCall, room, microphone, cameraEnabled, video, sound, toggleVideo]);
 
   return (
     <SequenceCard
@@ -45,14 +55,14 @@ export function PrescreenControls({ canJoin }: PrescreenControlsProps) {
       </Box>
       <ControlDivider />
       <Box shrink="No" alignItems="Inherit" justifyContent="SpaceBetween" gap="200">
-        {/* SelfMatrix: 配信特化のためカメラ UI は表示しない (機能は EC 側に温存) */}
+        {cameraEnabled && <VideoButton enabled={video} onToggle={handleVideoToggle} />}
         <ChatButton />
       </Box>
       <Box grow="Yes" direction="Column">
         <Button
           variant={disabled ? 'Secondary' : 'Success'}
           fill={disabled ? 'Soft' : 'Solid'}
-          onClick={() => startCall(room, { microphone, video: false, sound })}
+          onClick={handleJoin}
           disabled={disabled || joining}
           before={
             joining ? (

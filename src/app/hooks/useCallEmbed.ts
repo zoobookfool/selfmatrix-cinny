@@ -30,6 +30,9 @@ import {
   getSelfmatrixNativeBridge,
   hasSelfmatrixNativeBridge,
 } from '../plugins/call/native/nativeBridge';
+import { getCameraFeaturePolicy } from '../plugins/call/cameraFeature';
+import { useSetting } from '../state/hooks/settings';
+import { settingsAtom } from '../state/settings';
 
 const CallEmbedContext = createContext<CallEmbed | undefined>(undefined);
 
@@ -57,14 +60,17 @@ export const createCallEmbed = (
   dm: boolean,
   themeKind: ElementCallThemeKind,
   container: HTMLElement,
-  pref?: CallPreferences
+  pref?: CallPreferences,
+  cameraEnabled = false
 ): CallEmbed => {
   const rtcSession = mx.matrixRTC.getRoomSession(room);
   const ongoing = rtcSession.memberships.length > 0;
 
   const intent = CallEmbed.getIntent(dm, ongoing, false);
-  const widget = CallEmbed.getWidget(mx, room, intent, themeKind);
-  const controlState = pref && new CallControlState(pref.microphone, false, pref.sound);
+  const widget = CallEmbed.getWidget(mx, room, intent, themeKind, cameraEnabled);
+  const cameraPolicy = getCameraFeaturePolicy(cameraEnabled, pref?.video);
+  const controlState =
+    pref && new CallControlState(pref.microphone, cameraPolicy.initialVideoEnabled, pref.sound);
 
   // SelfMatrix M1 step 3a: ネイティブシェル (window.selfmatrixNative) 検出時は
   // WebContentsView 経由の NativeCallEmbed を使う。NativeCallEmbed は設計上
@@ -99,6 +105,7 @@ export const useCallStart = (dm = false) => {
   const theme = useTheme();
   const setCallEmbed = useSetAtom(callEmbedAtom);
   const callEmbedRef = useCallEmbedRef();
+  const [cameraEnabled] = useSetting(settingsAtom, 'cameraEnabled');
 
   const startCall = useCallback(
     (room: Room, pref?: CallPreferences) => {
@@ -106,11 +113,11 @@ export const useCallStart = (dm = false) => {
       if (!container) {
         throw new Error('Failed to start call, No embed container element found!');
       }
-      const callEmbed = createCallEmbed(mx, room, dm, theme.kind, container, pref);
+      const callEmbed = createCallEmbed(mx, room, dm, theme.kind, container, pref, cameraEnabled);
 
       setCallEmbed(callEmbed);
     },
-    [mx, dm, theme, setCallEmbed, callEmbedRef]
+    [mx, dm, theme, setCallEmbed, callEmbedRef, cameraEnabled]
   );
 
   return startCall;
@@ -125,6 +132,7 @@ export const useCallPopout = () => {
   const directs = useAtomValue(mDirectAtom);
   const setCallEmbed = useSetAtom(callEmbedAtom);
   const popoutInFlightRef = useRef(false);
+  const [cameraEnabled] = useSetting(settingsAtom, 'cameraEnabled');
 
   const popoutCall = useCallback(
     async (embed: CallEmbed) => {
@@ -182,7 +190,7 @@ export const useCallPopout = () => {
         const ongoing = rtcSession.memberships.length > 0;
         const intent = CallEmbed.getIntent(dm, ongoing, false);
         const themeKind: ElementCallThemeKind = theme.kind === ThemeKind.Dark ? 'dark' : 'light';
-        const widget = CallEmbed.getWidget(mx, room, intent, themeKind);
+        const widget = CallEmbed.getWidget(mx, room, intent, themeKind, cameraEnabled);
 
         const popout = new CallPopout(mx, room, widget, popup, controlState);
         setCallEmbed(popout);
@@ -190,7 +198,7 @@ export const useCallPopout = () => {
         popoutInFlightRef.current = false;
       }
     },
-    [mx, theme, directs, setCallEmbed]
+    [mx, theme, directs, setCallEmbed, cameraEnabled]
   );
 
   return popoutCall;
@@ -204,6 +212,7 @@ export const useCallPopin = () => {
   const directs = useAtomValue(mDirectAtom);
   const setCallEmbed = useSetAtom(callEmbedAtom);
   const callEmbedRef = useCallEmbedRef();
+  const [cameraEnabled] = useSetting(settingsAtom, 'cameraEnabled');
 
   const popinCall = useCallback(
     async (embed: CallEmbed) => {
@@ -245,12 +254,12 @@ export const useCallPopin = () => {
       const ongoing = rtcSession.memberships.length > 0;
       const intent = CallEmbed.getIntent(dm, ongoing, false);
       const themeKind: ElementCallThemeKind = theme.kind === ThemeKind.Dark ? 'dark' : 'light';
-      const widget = CallEmbed.getWidget(mx, room, intent, themeKind);
+      const widget = CallEmbed.getWidget(mx, room, intent, themeKind, cameraEnabled);
 
       const callEmbed = new CallEmbed(mx, room, widget, container, controlState);
       setCallEmbed(callEmbed);
     },
-    [mx, theme, directs, setCallEmbed, callEmbedRef]
+    [mx, theme, directs, setCallEmbed, callEmbedRef, cameraEnabled]
   );
 
   return popinCall;

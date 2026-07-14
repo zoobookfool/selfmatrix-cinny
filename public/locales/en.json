@@ -711,6 +711,13 @@
           "description": "Choose which side of the screen the channel list appears on."
         }
       },
+      "calls": {
+        "title": "Calls",
+        "camera": {
+          "title": "Enable camera",
+          "description": "Show camera controls in calls. The camera stays off unless you explicitly turn it on before or during a call. This setting cannot be changed during a call."
+        }
+      },
       "date_hint": {
         "formatting": "Formatting",
         "year": {

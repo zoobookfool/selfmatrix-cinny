@@ -19,6 +19,12 @@ const DEFAULT_PREFERENCES: CallPreferences = {
   sound: true,
 };
 
+export const normalizeStartupCallPreferences = (preferences: CallPreferences): CallPreferences => ({
+  ...preferences,
+  // Camera transmission is never remembered across app starts.
+  video: false,
+});
+
 export type CallPreferencesAtom = WritableAtom<CallPreferences, [CallPreferences], undefined>;
 
 export const makeCallPreferencesAtom = (userId: string): CallPreferencesAtom => {
@@ -28,7 +34,7 @@ export const makeCallPreferencesAtom = (userId: string): CallPreferencesAtom => 
     storeKey,
     (key) => {
       const v = getLocalStorageItem<CallPreferences>(key, DEFAULT_PREFERENCES);
-      return v;
+      return normalizeStartupCallPreferences(v);
     },
     (key, value) => {
       setLocalStorageItem(key, value);

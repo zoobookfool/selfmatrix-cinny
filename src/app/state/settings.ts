@@ -48,6 +48,8 @@ export interface Settings {
 
   developerTools: boolean;
 
+  cameraEnabled: boolean;
+
   language: string;
 }
 
@@ -83,6 +85,8 @@ const defaultSettings: Settings = {
   dateFormatString: 'D MMM YYYY',
 
   developerTools: false,
+
+  cameraEnabled: false,
 
   language: 'system',
 };
